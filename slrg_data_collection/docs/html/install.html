@@ -1,0 +1,164 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Getting Started &#8212; SLRG Data 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">SLRG Data</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="config.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Api Docs</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<p>On this page there can be technical information on getting setup to use the code and scripts to support data collection. If a person was just going to use our information to inspire their own code they could probably skip this part.</p>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>Download the slrg_data folder. Could involve downloading or cloning it from the schools gitlab or wherever we store it.</p>
+<p>CD into the downloaded folder and run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip3 install .
+</pre></div>
+</div>
+<p><strong>Note:</strong> You will need to have python3-pip installed.</p>
+<p>This will install the slrg_data module so that it can be imported
+as a python module as below</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">slrg_data</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="setup">
+<h2>Setup<a class="headerlink" href="#setup" title="Permalink to this headline">¶</a></h2>
+<p>Most of the collection functions/scripts assume a specific directory structure. Create a new folder for your data collection to take place in. Cd into it and run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ slgr_quickstart
+</pre></div>
+</div>
+<p>This will ask some questions about your database and github credentials. (Will probably be able to set some defualts if our current database and github accounts are still active).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Should I put an example of the setup script here?</span>
+</pre></div>
+</div>
+<p>Once complete you will have a directory structure created. Most examples assume that you will be in one of these directories to run code. This will enable scripts to find the configuration and data files, and store log information in the correct places. (link to a configuration section that explains the directory structure and the configuration options).</p>
+<p>You are now set up to use the module.</p>
+</div>
+<div class="section" id="running-the-scripts">
+<h2>Running The Scripts<a class="headerlink" href="#running-the-scripts" title="Permalink to this headline">¶</a></h2>
+<p>Some explanation of how to run the scripts can be given here.  There will be more detailed explanation for each script in the section that it is described and in the Api docs.</p>
+<p>All scripts will be able to be run in 2 different fashions.</p>
+<ol class="arabic">
+<li><p>At the command line</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ script_name
+</pre></div>
+</div>
+<p>Any information not stored in the configuration files, such as passwords and filenames, will be asked for before running the script. If you make a mistake entering something you will get an error message and have to start the script again.</p>
+</div></blockquote>
+</li>
+<li><p>As a function in the python interpreter</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">slrg_data</span> <span class="k">import</span> <span class="n">script_name</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">script_name</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The main difference here is that you can set variables to pass to the functions arguments. This way if you make a mistake or the script exits early you can start it again without having to retype all the information.</p>
+<p>Some of the scripts that process large files will return the entry that they left of with. So you can save it to a variable and call teh function again to start where you left off.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">start</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">start</span> <span class="o">=</span> <span class="n">script_name</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">start</span> <span class="o">=</span> <span class="n">script_name</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+<span class="go"># .... Until you are done</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+<p><strong>Note:</strong> Once again remember that all of these scripts should be run from somewhere inside the directory you have set up.</p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2019, Steven Deutekom.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/install.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

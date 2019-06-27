@@ -1,0 +1,311 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Scripts &#8212; SLRG Data 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Api Docs" href="modules.html" />
+    <link rel="prev" title="Configuration" href="config.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">SLRG Data</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="config.html">Configuration</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Scripts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-slrg_data_collection.collect_git_projects">Git Projects Collection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-slrg_data_collection.data.combine_json">Combine Json</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Api Docs</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="config.html" title="previous chapter">Configuration</a></li>
+      <li>Next: <a href="modules.html" title="next chapter">Api Docs</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="scripts">
+<h1>Scripts<a class="headerlink" href="#scripts" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-slrg_data_collection.collect_git_projects">
+<span id="git-projects-collection"></span><h2>Git Projects Collection<a class="headerlink" href="#module-slrg_data_collection.collect_git_projects" title="Permalink to this headline">¶</a></h2>
+<p>Script to collect source code from Ghtorrent records of git projects.</p>
+<p>Useable with the records collected with the git_projects.sql(link) from Google
+BigQuery and Ghtorrent.</p>
+<div class="section" id="usage">
+<h3>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h3>
+<p>Run as a command line script in the slrg_data_collection folder.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python3 collect_git_projects.py [-h] [-l &lt;programming language&gt;]
+    [-i &lt;input data file&gt;] [-s &lt;start index&gt;]
+    [-c &lt;records to process&gt;] [-d &lt;database username&gt;]
+    [-p &lt;database password&gt;] [--git=&lt;github username&gt;]
+    [--gitpass=&lt;github password&gt;]
+</pre></div>
+</div>
+<div class="section" id="options">
+<h4>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h4>
+<p>Unless otherwise stated all options default to config file and if
+the config file is None the user will be asked to input values.</p>
+<dl class="simple">
+<dt><strong>-h</strong></dt><dd><p>Print out help text.</p>
+</dd>
+<dt><strong>-l &lt;programming language&gt;</strong></dt><dd><p>The programming language that source is being collected from.
+Determines the table to use and the file extensions. See config.py
+for more info.
+* Default is to ask for it.</p>
+</dd>
+<dt><strong>-i &lt;input data file&gt;</strong></dt><dd><p>The data file to process. Can be a filepath relative to the current
+directory or a file name in the data/git_projects directory.
+* Default is to ask for it.</p>
+</dd>
+<dt><strong>-s &lt;start index&gt;</strong></dt><dd><p>The entry to start processing first.</p>
+</dd>
+<dt><strong>-c &lt;records to process&gt;</strong></dt><dd><p>The count for number of records to process in total.</p>
+</dd>
+<dt><strong>-d &lt;database username&gt;</strong></dt><dd><p>Database username.</p>
+</dd>
+<dt><strong>-p &lt;database password&gt;</strong></dt><dd><p>The database password.</p>
+</dd>
+<dt><strong>–git=&lt;github username&gt;</strong></dt><dd><p>The username of the github account to use with API calls.</p>
+</dd>
+<dt><strong>–gitpass=&lt;github password&gt;</strong></dt><dd><p>The password for the github account.</p>
+</dd>
+<dt><strong>Note</strong></dt><dd><p>If passwords are given they will be stored during the script’s
+execution in plain text. If not given or stored in the config file
+the python module getpass is used to pass them directly into the
+objects which need them: requests and pymysql. If you are concerned
+about how they might handle your passwords consult their
+documentation.</p>
+</dd>
+</dl>
+<dl class="function">
+<dt id="slrg_data_collection.collect_git_projects.main">
+<code class="sig-prename descclassname">slrg_data_collection.collect_git_projects.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><em class="sig-param">argv</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collect_git_projects.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collect_git_projects.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collect source code from GitHub projects.</p>
+<p>See module documentation for details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>argv</strong> (<em>list of str</em>) – List of command line arguments an options.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="slrg_data_collection.collect_git_projects.make_info">
+<code class="sig-prename descclassname">slrg_data_collection.collect_git_projects.</code><code class="sig-name descname">make_info</code><span class="sig-paren">(</span><em class="sig-param">lang</em>, <em class="sig-param">file</em>, <em class="sig-param">login</em>, <em class="sig-param">passwd</em>, <em class="sig-param">script_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collect_git_projects.html#make_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collect_git_projects.make_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes a github.CollectionInfo object for the script to use.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lang</strong> (<em>str</em>) – The projramming language to collect source in.</p></li>
+<li><p><strong>file</strong> (<em>str</em>) – The file the project data is stored in.</p></li>
+<li><p><strong>login</strong> (<em>str</em>) – A Github username. Can be None.</p></li>
+<li><p><strong>passwd</strong> (<em>str</em>) – The Github password. Can be None.</p></li>
+<li><p><strong>script_name</strong> (<em>str</em>) – The name of the script calling it.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A CollectionInfo object with
+the necessary information for source collection.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="modules.html#slrg_data_collection.collection.github.CollectionInfo" title="slrg_data_collection.collection.github.CollectionInfo">collection.github.CollectionInfo</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+</div>
+<div class="section" id="module-slrg_data_collection.data.combine_json">
+<span id="combine-json"></span><h2>Combine Json<a class="headerlink" href="#module-slrg_data_collection.data.combine_json" title="Permalink to this headline">¶</a></h2>
+<p>Script to combine multiple JSON files gathered from an API.</p>
+<p>Suitable for any api that returns results as JSON records that are
+not already in a list (like BigQuery).</p>
+<p>The combined .data files contain the JSON records in a list. These new
+files can be opened by the python json library as a list of dict.</p>
+<div class="section" id="id1">
+<h3>Usage<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>Run as a command line script in the folder that contains the JSON files
+you want combined.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python3 combine_json.py [-o &lt;output file&gt;] [-f &lt; raw json folder&gt; ]
+    [-g &lt; group size &gt; ] [&lt;json files&gt;]
+</pre></div>
+</div>
+<div class="section" id="id2">
+<h4>Options<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
+<dl class="simple">
+<dt><strong>-o &lt;output file&gt;</strong></dt><dd><p>The name without an extension to use for the output files.
+If more than one file is created a number will be added to all files
+after the first. eg) file.data, file1.data, file2.data, etc.
+Default is ‘combined’</p>
+</dd>
+<dt><strong>-f &lt;raw json folder&gt;</strong></dt><dd><p>The name of a folder to store the uncombined json files in.
+Default is to delete all uncombined json files.</p>
+</dd>
+<dt><strong>-g &lt;group size&gt;</strong></dt><dd><p>The number of json files to combine for each data file created.
+The default is to combine them into one file (up to 10,000).</p>
+</dd>
+<dt><strong>&lt;json files&gt;</strong></dt><dd><p>The names of all the json files to combine. Default is to collect
+all json files in current folder as wildcards are not supported.</p>
+</dd>
+</dl>
+<dl class="function">
+<dt id="slrg_data_collection.data.combine_json.combine_json">
+<code class="sig-prename descclassname">slrg_data_collection.data.combine_json.</code><code class="sig-name descname">combine_json</code><span class="sig-paren">(</span><em class="sig-param">json_filenames</em>, <em class="sig-param">group_size</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/data/combine_json.html#combine_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.data.combine_json.combine_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combine the records of a JSON file into a list.</p>
+<p>The returned list will contain multiple lists of records if group_size
+is small enough that more than one group is created.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>json_filenames</strong> (<em>list of str</em>) – A list of JSON filenames to combine.</p></li>
+<li><p><strong>group_size</strong> (<em>int</em>) – The number of files to combine for each group.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list containing lists of JSON dicts.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of lists of JSON dicts</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="slrg_data_collection.data.combine_json.get_all_json_files">
+<code class="sig-prename descclassname">slrg_data_collection.data.combine_json.</code><code class="sig-name descname">get_all_json_files</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/data/combine_json.html#get_all_json_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.data.combine_json.get_all_json_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collects the names of all JSON files in the current directory.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="slrg_data_collection.data.combine_json.main">
+<code class="sig-prename descclassname">slrg_data_collection.data.combine_json.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><em class="sig-param">argv</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/data/combine_json.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.data.combine_json.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main for script to combine json files into .data files.</p>
+<p>See module documentation for more details.</p>
+<dl class="simple">
+<dt>Arg:</dt><dd><p>argv (list of str): List of command line arguments and options.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="slrg_data_collection.data.combine_json.move_files">
+<code class="sig-prename descclassname">slrg_data_collection.data.combine_json.</code><code class="sig-name descname">move_files</code><span class="sig-paren">(</span><em class="sig-param">filenames</em>, <em class="sig-param">folder</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/data/combine_json.html#move_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.data.combine_json.move_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move filenames to the raw_folder or delete them.</p>
+<p><strong>If raw_folder is None the files will be deleted.</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filenames</strong> (<em>list of str</em>) – A list of file names that are to be
+moved or deleted.</p></li>
+<li><p><strong>folder</strong> (<em>str</em>) – The name of the folder to move the files to.
+If None the files will be deleted.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="slrg_data_collection.data.combine_json.write_results">
+<code class="sig-prename descclassname">slrg_data_collection.data.combine_json.</code><code class="sig-name descname">write_results</code><span class="sig-paren">(</span><em class="sig-param">out_file</em>, <em class="sig-param">combined</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/data/combine_json.html#write_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.data.combine_json.write_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the lists of combined json records to .data files.</p>
+<p>If more than one file is created numbers will be appended to the
+out_file name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>out_file</strong> (<em>str</em>) – The filename to write the results to.</p></li>
+<li><p><strong>combined</strong> (<em>list of lists of JSON dicts</em>) – A list containing one
+or more lists of JSON records.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2019, Steven Deutekom.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/scripts.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
