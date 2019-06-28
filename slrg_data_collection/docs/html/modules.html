@@ -441,7 +441,7 @@ slrg_data_collection.config.py</p></li>
 
 <dl class="function">
 <dt id="slrg_data_collection.collection.script.make_git_info">
-<code class="sig-prename descclassname">slrg_data_collection.collection.script.</code><code class="sig-name descname">make_git_info</code><span class="sig-paren">(</span><em class="sig-param">lang</em>, <em class="sig-param">file</em>, <em class="sig-param">login</em>, <em class="sig-param">passwd</em>, <em class="sig-param">script_name</em>, <em class="sig-param">tables</em>, <em class="sig-param">git_acct</em>, <em class="sig-param">extensions</em>, <em class="sig-param">exclude</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/script.html#make_git_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.script.make_git_info" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">slrg_data_collection.collection.script.</code><code class="sig-name descname">make_git_info</code><span class="sig-paren">(</span><em class="sig-param">lang</em>, <em class="sig-param">file</em>, <em class="sig-param">login</em>, <em class="sig-param">passwd</em>, <em class="sig-param">script_name</em>, <em class="sig-param">config</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/script.html#make_git_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.script.make_git_info" title="Permalink to this definition">¶</a></dt>
 <dd><p>Makes a github.CollectionInfo object for the script to use.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -451,6 +451,8 @@ slrg_data_collection.config.py</p></li>
 <li><p><strong>login</strong> (<em>str</em>) – A Github username. Can be None.</p></li>
 <li><p><strong>passwd</strong> (<em>str</em>) – The Github password. Can be None.</p></li>
 <li><p><strong>script_name</strong> (<em>str</em>) – The name of the script calling it.</p></li>
+<li><p><strong>config</strong> (<em>dict</em>) – The contents of the config file in a dict. See
+<a class="reference internal" href="config.html#config-lab"><span class="std std-ref">Configuration</span></a> for more details.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

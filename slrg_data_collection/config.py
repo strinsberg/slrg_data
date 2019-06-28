@@ -10,6 +10,8 @@ Attributes:
     exclude: ??
     git_acct: ??
     limits: ??
+    config: A dict of the config file's contents. Each of the above
+        attributes is a field in the dict.
 """
 
 # Information for the MySQL database connection
@@ -24,13 +26,21 @@ database = {
 
 # Table information for each script
 # This includes table names for each language (if applicable) and the
-# table column schemas?
+# table column schema.
 tables = {
     'git_projects': {
         'c++': 'git_projects_cpp',
         'python': 'git_projects_py',
         'java': 'git_projects_java',
-        'columns': []
+        'columns': [
+            "user_id", "user_login", "user_fullname",
+            "gender", "gender_probability",
+            "user_company", "user_created", "user_type",
+            "user_country_code", "user_state", "user_city", "user_location",
+            "project_id", "project_url", "project_name",
+            "project_language", "project_created",
+            "file_hash", "file_name", "file_contents", "file_lines"
+        ]
     },
     'git_commits': {
         'c++': 'git_commits_cpp',
@@ -45,24 +55,15 @@ tables = {
 
 # Fields that are present in the JSON records for each collection script
 # Should not be changed, unless you are sure you know what you are doing.
+# These are directly related to API call returns or JSON results
+# from BigQuery.
 fields = {
     'git_projects': [
-        'users_id',
-        'login',
-        'user_fullname',
-        'gender',
-        'gender_probability',
-        'company',
-        'users_created_at',
-        'type',
-        'country_code',
-        'state',
-        'city',
-        'location',
-        'projects_id',
-        'url',
-        'name',
-        'language',
+        'users_id', 'login', 'user_fullname',
+        'gender', 'gender_probability',
+        'company', 'type', 'users_created_at',
+        'country_code', 'state', 'city', 'location',
+        'projects_id', 'url', 'name', 'language',
         'projects_created_at'
     ],
     'git_commits': [],

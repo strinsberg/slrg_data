@@ -62,6 +62,8 @@ def make_git_info(lang, file, login, passwd, script_name, config):
         login (str): A Github username. Can be None.
         passwd (str): The Github password. Can be None.
         script_name (str): The name of the script calling it.
+        config (dict): The contents of the config file in a dict. See
+            :ref:`Configuration <config_lab>` for more details.
 
     Returns:
         collection.github.CollectionInfo: A CollectionInfo object with
