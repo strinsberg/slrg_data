@@ -32,33 +32,12 @@ def make_database(db_config, host=None, login=None, passwd=None, name=None):
     return common.Database(host, login, name, passwd)
 
 
-def make_limits(script, limits, start=None, count=None):
-    """Constructs a dictionary with a start and count field.
-
-    Args:
-        script (str): The name of the script being run.
-        limits (dict): A set of default limits.
-        start (int): The starting index.
-        count (int): The number of entries to process.
-
-    Returns:
-        dict: A dict with start and count values.
-    """
-    if start is None:
-        start = null_arg_int(limits[script]['start'], "Start index: ")
-    if count is None:
-        count = null_arg_int(limits[script]['count'], "Entries to process: ")
-
-    return {'start': start, 'count': count}
-
-
-# Takes way to many params. Split up or fix somehow.
-def make_git_info(lang, file, login, passwd, script_name, config):
+def make_git_info(lang, filename, login, passwd, script_name, config):
     """Makes a github.CollectionInfo object for the script to use.
 
     Args:
-        lang (str): The projramming language to collect source in.
-        file (str): The file the project data is stored in.
+        lang (str): The programming language to collect source in.
+        filename (str): The file the project data is stored in.
         login (str): A Github username. Can be None.
         passwd (str): The Github password. Can be None.
         script_name (str): The name of the script calling it.
@@ -72,22 +51,32 @@ def make_git_info(lang, file, login, passwd, script_name, config):
     if lang is None:
         lang = input('Language: ').lower()
 
-    file = input('Data file: ') if file is None else file
+    file_path = get_file_path(filename, script_name)
+    records = common.RecordsData(file_path, config['fields'][script_name])
+
+    table = common.TableData(config['tables'][script_name][lang],
+                             config['tables'][script_name]['columns'])
+
+    validation = common.ValidationData(config['extensions'][lang],
+                                       config['exclude']['files'],
+                                       config['exclude']['dirs'])
+
+    limits = common.LimitData(config.limits['start'],
+                              config.limits['count'])
+
+    login = config.git_acct['login'] if login is None else login
+    passwd = config.git_acct['passwd'] if passwd is None else passwd
+    git_data = github.GithubData(login, passwd)
+
+    return github.GitCollectionInfo(records, table, validation, limits,
+                                    git_data)
+
+
+def get_file_path(filename, script_name):
+    file = null_arg_str(filename, "Data file: ")
     if os.path.isfile(file):
-        file_path = file
-    else:
-        file_path = os.path.join('data', script_name, file)
-
-    git = {}
-    git['login'] = config['git_acct']['login'] if login is None else login
-    git['passwd'] = config['git_acct']['passwd'] if passwd is None else passwd
-
-    table = config['tables'][script_name][lang]
-    columns = config['tables'][script_name]['columns']
-    extensions = config['extensions'][lang]
-
-    return github.CollectionInfo(
-        file_path, columns, table, extensions, config['exclude'], git)
+        return file
+    return os.path.join('data', script_name, file)
 
 
 def null_arg_str(arg, prompt):

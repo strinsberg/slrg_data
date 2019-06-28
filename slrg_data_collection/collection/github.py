@@ -18,54 +18,52 @@ from . import common
 class ProjectsCollector(common.Collector):
     """Extracts source code from single contributor github projects."""
 
-    def __init__(self, database, collection_info, limits, log):
-        common.Collector.__init__(self, database, collection_info, limits, log)
+    def __init__(self, database, collection_info, log):
+        common.Collector.__init__(self, database, collection_info, log)
         self.totals.update({'projects': 0, 'files': 0, 'added': 0})
         self.gender_wait = []
 
     def set_up(self):
         """Creates session and set its credentials."""
         common.Collector.set_up(self)
-        login = self.collection_info.git_login
-        passwd = self.collection_info.git_passwd
+
+        login = self.collection_info.git_data.login
+        passwd = self.collection_info.git_data.passwd
+
         self.session = authenticated_session(login, passwd)
         self.times['session'] = time.time()
 
     def process(self, project_data):
         """Processes a github project and adds all valid files to the
         database."""
-        print("#", self.limits['start'] + self.totals['entry'], "###", end=" ")
-        project_data['user_fullname'] = "None"
-        project_data['gender'] = None
-        project_data['gender_probability'] = None
+        print("#", self.idx, "###", end=" ")
+
+        self.add_name_and_gender(project_data)
+        self.add_contributors(project_data)
 
         if not self.is_valid_project(project_data):
             self.log.info("Invalid project: " + project_data['name'] + " ###")
             return
 
-        try:
-            self.totals['projects'] += 1
-            print("Processing Project:", project_data['name'], "###")
+        self.totals['projects'] += 1
+        print("Processing Project:", project_data['name'], "###")
 
-            repo_path = "data/git_projects/temp_repos/temp_{}_{}".format(
-                str(time.time()), str(random.randint(0, 2000000)))
-            url = "https://:@github.com/{}/{}.git".format(
-                project_data['login'], project_data['name'])
-            files = get_single_author_files(url,
-                                            repo_path,
-                                            self.collection_info.extensions,
-                                            self.collection_info.exclude,
+        self.process_project(project_data)
+
+    def process_project(self, project_data):
+        try:
+            repo, repo_path = self.make_repo(project_data)
+            files = get_single_author_files(repo, repo_path,
+                                            self.collection_info.validation,
                                             project_data["user_fullname"],
                                             project_data["login"])
 
             for filename in files:
-                self.process_file(os.path.join(
-                    repo_path, filename), filename, project_data)
+                path = os.path.join(repo_path, filename)
+                self.process_file(path, filename, project_data)
 
         except git.GitError as error:
             self.log.error("In process", error)
-            # could also try to figure out how to catch the disconnect error
-            # but I think that only happens to me.
 
         finally:
             try:
@@ -73,12 +71,37 @@ class ProjectsCollector(common.Collector):
             except FileNotFoundError:
                 pass
 
-    def is_valid_project(self, project_data):
-        """Checks to make sure project is valid.
+    def make_repo(self, project_data):
+        repos_dir = "data/git_projects/temp_repos"
+        temp_dir = "temp_{}".format(str(random.randint(0, 2000000)))
+        repo_path = os.path.join(repos_dir, temp_dir)
 
-        This means checking for a username and gender, as well as making
-        sure that the repository has no more than 1 contributor.
-        """
+        url = "https://:@github.com/{}/{}.git".format(
+            project_data['login'], project_data['name'])
+
+        repo = git.Repo.clone_from(url, repo_path)
+        return repo, repo_path
+
+    def add_name_and_gender(self, project_data):
+        """Attempt to add fullname and gender data to a project."""
+        project_data['user_fullname'] = None
+        project_data['gender'] = None
+        project_data['gender_probability'] = None
+
+        fullname, gender, gender_probability = self.get_fullname_and_gender(
+            project_data)
+
+        if gender not in ['nil', None]:
+            project_data['user_fullname'] = fullname
+            project_data['gender'] = gender
+            project_data['gender_probability'] = gender_probability
+        elif gender is None:
+            self.gender_wait.append(project_data)
+        else:
+            self.log.info("Gender " + gender + ": " +
+                          project_data['login'])
+
+    def get_fullname_and_gender(self, project_data):
         fullname = get_fullname(
             project_data['login'], self.session, self.times['session'])
 
@@ -88,28 +111,32 @@ class ProjectsCollector(common.Collector):
                 name, self.database, 'genders')
         else:
             self.log.info("No User Name: " + project_data['login'])
-            return False
 
-        if gender not in ['nil', None]:
-            project_data['user_fullname'] = fullname
-            project_data['gender'] = gender
-            project_data['gender_probability'] = gender_probability
-        elif gender is None:
-            self.gender_wait.append(project_data)
-            return False
-        else:
-            self.log.info("Gender " + gender + ": " +
-                          project_data['login'])
-            return False
+        return fullname, gender, gender_probability
 
+    def add_contributors(self, project_data):
+        project_data['contributors'] = None
         contrib_url = "{}/stats/contributors".format(project_data['url'])
         contribs = self.session.get(contrib_url).json()
 
-        if not api_ok(contribs, self.times["session"], write=self.log.info):
+        if api_ok(contribs, self.times["session"], write=self.log.info):
+            project_data['contributors'] = contribs
+
+    def is_valid_project(self, project_data):
+        """Checks to make sure project is valid.
+
+        This means checking for a username and gender, as well as making
+        sure that the repository has no more than 1 contributor.
+        """
+        if project_data['fullname'] is None or project_data['gender'] is None:
             return False
 
-        if len(contribs) > 1 or (len(contribs) == 1 and project_data['login']
-                                 != contribs[0]['author']['login']):
+        contribs = project_data['contributors']
+        if contribs is None or len(contribs) > 1:
+            return False
+
+        if (len(contribs) == 1
+                and project_data['login'] != contribs[0]['author']['login']):
             return False
 
         return True
@@ -140,6 +167,7 @@ class ProjectsCollector(common.Collector):
         if self.is_valid_file(path, source, line_count):
             hash_name = hashlib.md5(filename.encode()).hexdigest()
             return [hash_name, filename, source, line_count]
+
         self.log.info("Lines out of range: " + str(line_count))
         return None
 
@@ -151,19 +179,12 @@ class ProjectsCollector(common.Collector):
 
     def add_file_to_db(self, file_data, project_data):
         """Adds a file to the database."""
-        columns = [
-            "user_id", "user_login", "user_fullname", "gender",
-            "gender_probability", "user_company", "user_created", "user_type",
-            "user_country_code", "user_state", "user_city", "user_location",
-            "project_id", "project_url", "project_name", "project_language",
-            "project_created", "file_hash", "file_name", "file_contents",
-            "file_lines"
-        ]
         values = self.get_entry_values(project_data)
         values.extend(file_data)
 
         try:
-            self.database.insert(columns, self.collection_info.table, values)
+            self.database.insert(self.collection_info.columns,
+                                 self.collection_info.table, values)
         except common.DatabaseError as error:
             self.log.error("In add_file_to_db", error)
             return False
@@ -191,30 +212,39 @@ class ProjectsCollector(common.Collector):
                 str(time.time())), self.gender_wait)
 
 
+class GitCollectionInfo(common.CollectionInfo):
+    def __init__(self, records, table, validation, limits, git_data):
+        super(GitCollectionInfo, self).__init__(
+            records, table, validation, limits)
+        self.git_data = git_data
+
+
 class CollectionInfo:
     """Data required for collecting source from github."""
 
-    def __init__(self, data_file, db_fields, table, exts, exclude, github_info):
-        self.data_file = data_file
-        self.db_fields = db_fields
+    def __init__(self, records, table, file_data, git_data):
+        self.records = records
         self.table = table
-        self.extensions = exts
-        self.exclude = exclude
-        self.git_login = github_info['login']
-        self.git_passwd = github_info['passwd']
+        self.file_data = file_data
+        self.git_data = git_data
+
+
+class GithubData:
+    def __init__(self, login, passwd):
+        self.login = login
+        self.passwd = passwd
 
 
 class SingleAuthorFilter:
     """Helper class to collect paths for all the single author files
     in a repo."""
 
-    def __init__(self, url, repo_path, extensions, exclude, name, login):
+    def __init__(self, repo, repo_path, validation, name, login):
+        self.repo = repo
         self.repo_path = repo_path
-        self.extensions = extensions
-        self.exclude = exclude
+        self.validation = validation
         self.name = name
         self.login = login
-        self.repo = git.Repo.clone_from(url, repo_path)
 
     def get_valid_files(self, full_path, relative_path):
         """Gets all the file paths in a repo that are by one author and
@@ -248,13 +278,13 @@ class SingleAuthorFilter:
 
     def is_valid_file(self, filename):
         """Checks if a filename is not excluded and has the right extension."""
-        if filename in self.exclude['files']:
+        if filename in self.validation.exclude_files:
             return False
-        return has_extensions(filename, self.extensions)
+        return has_extensions(filename, self.validation.extensions)
 
     def is_excluded_dir(self, dirname):
         """Checks a directory name to se if it is excluded."""
-        if dirname in self.exclude['dirs']:
+        if dirname in self.validation.exclude_dirs:
             return True
         return False
 
@@ -331,6 +361,7 @@ def get_fullname(login, request_session, session_time):
     """Get a fullname for a github user login."""
     url = "https://api.github.com/users/" + login
     data = request_session.get(url).json()
+
     try:
         if api_ok(data, session_time) and 'name' in data:
             return data['name']
@@ -342,11 +373,10 @@ def get_fullname(login, request_session, session_time):
     return None
 
 
-def get_single_author_files(url, repo_path, extensions, exclude, name, login):
+def get_single_author_files(repo, repo_path, validation, name, login):
     """Returns the filepaths for all single author files from a github
     repository."""
-    file_filter = SingleAuthorFilter(url, repo_path, extensions, exclude, name,
-                                     login)
+    file_filter = SingleAuthorFilter(repo, repo_path, validation, name, login)
     try:
         return file_filter.get_valid_files(repo_path, "")
 

@@ -18,20 +18,19 @@ import pymysql
 class Collector:
     """Abstract Class for collecting information from the internet."""
 
-    def __init__(self, database, collection_info, limits, log):
+    def __init__(self, database, collection_info, log):
         self.database = database
         self.collection_info = collection_info
-        self.limits = limits
         self.log = log
         self.times = {'start': time.time()}
         self.totals = {'entry': 0}
-        self.idx = self.limits['start']
+        self.idx = self.collection_info.limits.start
 
     def main(self):
         """Runs the extraction."""
         try:
             self.set_up()
-            data = get_json_data(self.collection_info.data_file)
+            data = get_json_data(self.collection_info.records.file)
             self.process_data(data)
 
         except DatabaseError as error:
@@ -53,9 +52,9 @@ class Collector:
         """Processes each entry in the data within the desired range."""
         for idx, entry in enumerate(data):
             # Only process records in the desired range
-            if idx < self.limits['start']:
+            if idx < self.collection_info.limits.start:
                 continue
-            elif idx >= self.limits['start'] + self.limits['count']:
+            elif idx >= self.collection_info.limits.end():
                 break
 
             # Process the entry as a derived class needs
@@ -72,7 +71,7 @@ class Collector:
     def get_entry_values(self, entry):
         """Gets a files associated info from an entry to add to database."""
         values = []
-        for field in self.collection_info.db_fields:
+        for field in self.collection_info.records.fields:
             value = entry[field] if field in entry else None
             values.append(self.transform_entry_value(value, field))
 
@@ -89,7 +88,7 @@ class Collector:
         self.log.info('Elapsed time: {}'.format(
             find_time(time.time() - self.times['start'])))
         self.log.info('Start={}, Count={}'.format(
-            self.limits['start'], self.limits['count']))
+            self.collection_info.limits.start, self.collection_info.limits.count))
         self.log.info('Total Entries Processed: {}'.format(
             self.totals['entry']))
 
@@ -192,6 +191,43 @@ class Log:
         logging.error('%s: %s', message, str(error))
         if critical:
             sys.exit()
+
+
+class CollectionInfo:
+    def __init__(self, records, table, validation, limits):
+        self.records = records
+        self.table = table
+        self.validation = validation
+        self.limits = limits
+
+
+class RecordsData:
+    def __init__(self, filename, fields):
+        self.filename = filename
+        self.fields = fields
+
+
+class TableData:
+    def __init__(self, name, columns):
+        self.name = name
+        self.columns = columns
+
+
+class ValidationData:
+    def __init__(self, extensions, exclude_files, exclude_dirs):
+        self.extensions = extensions
+        self.exclude_files = exclude_files
+        self.exclude_dirs = exclude_dirs
+
+
+class LimitData:
+    def __init__(self, start, count):
+        self.start = start
+        self.count = count
+
+    def end(self):
+        return self.start + self.count
+
 
 # Functions ############################################################
 
