@@ -30,15 +30,16 @@ Options
 
 **-f <raw json folder>**
     The name of a folder to store the uncombined json files in.
-    Default is to delete all uncombined json files.
+    * Default is to delete all uncombined json files.
 
 **-g <group size>**
     The number of json files to combine for each data file created.
-    The default is to combine them into one file (up to 10,000).
+    * Default is to combine them into one file (up to 10,000).
 
 **<json files>**
-    The names of all the json files to combine. Default is to collect
-    all json files in current folder as wildcards are not supported.
+    The names of all the json files to combine.
+    * Default is to collect all json files in current folder as
+    wildcards are not supported.
 
 """
 import os
@@ -48,7 +49,7 @@ import sys
 import getopt
 
 
-def get_all_json_files():
+def _get_all_json_files():
     """Collects the names of all JSON files in the current directory."""
     json_filenames = []
     for file in os.listdir():
@@ -58,7 +59,7 @@ def get_all_json_files():
     return json_filenames
 
 
-def combine_json(json_filenames, group_size):
+def _combine_json(json_filenames, group_size):
     """Combine the records of a JSON file into a list.
 
     The returned list will contain multiple lists of records if group_size
@@ -90,7 +91,7 @@ def combine_json(json_filenames, group_size):
     return combined
 
 
-def write_results(out_file, combined):
+def _write_results(out_file, combined):
     """Write the lists of combined json records to .data files.
 
     If more than one file is created numbers will be appended to the
@@ -113,7 +114,7 @@ def write_results(out_file, combined):
         print("Created", name)
 
 
-def move_files(filenames, folder):
+def _move_files(filenames, folder):
     """Move filenames to the raw_folder or delete them.
 
     **If raw_folder is None the files will be deleted.**
@@ -143,7 +144,7 @@ def main(argv):
 
     See module documentation for more details.
 
-    Arg:
+    Args:
         argv (list of str): List of command line arguments and options.
     """
     try:
@@ -168,11 +169,11 @@ def main(argv):
             return
 
     if not filenames:
-        filenames = get_all_json_files()
+        filenames = _get_all_json_files()
 
-    combined = combine_json(filenames, group_size)
-    write_results(out_file, combined)
-    move_files(filenames, raw_folder)
+    combined = _combine_json(filenames, group_size)
+    _write_results(out_file, combined)
+    _move_files(filenames, raw_folder)
 
 
 HELP_TEXT = """

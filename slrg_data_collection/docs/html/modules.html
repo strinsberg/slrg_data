@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Api Docs &#8212; SLRG Data 1.0 documentation</title>
+    <title>Modules &#8212; SLRG Data 1.0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -39,7 +39,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="config.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="scripts.html">Scripts</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Api Docs</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Modules</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-slrg_data_collection.collection.common">Common</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-slrg_data_collection.collection.github">Github</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-slrg_data_collection.collection.script">Script</a></li>
@@ -81,15 +81,21 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="api-docs">
-<h1>Api Docs<a class="headerlink" href="#api-docs" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="modules">
+<h1>Modules<a class="headerlink" href="#modules" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-slrg_data_collection.collection.common">
 <span id="common"></span><h2>Common<a class="headerlink" href="#module-slrg_data_collection.collection.common" title="Permalink to this headline">¶</a></h2>
 <p>Common classes and functions to support collecting source code from
 the internet.</p>
 <dl class="class">
+<dt id="slrg_data_collection.collection.common.CollectionInfo">
+<em class="property">class </em><code class="sig-prename descclassname">slrg_data_collection.collection.common.</code><code class="sig-name descname">CollectionInfo</code><span class="sig-paren">(</span><em class="sig-param">records</em>, <em class="sig-param">table</em>, <em class="sig-param">validation</em>, <em class="sig-param">limits</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/common.html#CollectionInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.common.CollectionInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="class">
 <dt id="slrg_data_collection.collection.common.Collector">
-<em class="property">class </em><code class="sig-prename descclassname">slrg_data_collection.collection.common.</code><code class="sig-name descname">Collector</code><span class="sig-paren">(</span><em class="sig-param">database</em>, <em class="sig-param">collection_info</em>, <em class="sig-param">limits</em>, <em class="sig-param">log</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/common.html#Collector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.common.Collector" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">slrg_data_collection.collection.common.</code><code class="sig-name descname">Collector</code><span class="sig-paren">(</span><em class="sig-param">database</em>, <em class="sig-param">collection_info</em>, <em class="sig-param">log</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/common.html#Collector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.common.Collector" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Abstract Class for collecting information from the internet.</p>
 <dl class="method">
@@ -181,6 +187,17 @@ table in the database.</p>
 </dd></dl>
 
 <dl class="class">
+<dt id="slrg_data_collection.collection.common.LimitData">
+<em class="property">class </em><code class="sig-prename descclassname">slrg_data_collection.collection.common.</code><code class="sig-name descname">LimitData</code><span class="sig-paren">(</span><em class="sig-param">start</em>, <em class="sig-param">count</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/common.html#LimitData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.common.LimitData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="slrg_data_collection.collection.common.LimitData.end">
+<code class="sig-name descname">end</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/common.html#LimitData.end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.common.LimitData.end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="slrg_data_collection.collection.common.Log">
 <em class="property">class </em><code class="sig-prename descclassname">slrg_data_collection.collection.common.</code><code class="sig-name descname">Log</code><span class="sig-paren">(</span><em class="sig-param">dir_path</em>, <em class="sig-param">file_prefix='log'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/common.html#Log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.common.Log" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
@@ -195,6 +212,24 @@ table in the database.</p>
 <code class="sig-name descname">info</code><span class="sig-paren">(</span><em class="sig-param">message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/common.html#Log.info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.common.Log.info" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+</dd></dl>
+
+<dl class="class">
+<dt id="slrg_data_collection.collection.common.RecordsData">
+<em class="property">class </em><code class="sig-prename descclassname">slrg_data_collection.collection.common.</code><code class="sig-name descname">RecordsData</code><span class="sig-paren">(</span><em class="sig-param">filename</em>, <em class="sig-param">fields</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/common.html#RecordsData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.common.RecordsData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="slrg_data_collection.collection.common.TableData">
+<em class="property">class </em><code class="sig-prename descclassname">slrg_data_collection.collection.common.</code><code class="sig-name descname">TableData</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">columns</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/common.html#TableData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.common.TableData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="slrg_data_collection.collection.common.ValidationData">
+<em class="property">class </em><code class="sig-prename descclassname">slrg_data_collection.collection.common.</code><code class="sig-name descname">ValidationData</code><span class="sig-paren">(</span><em class="sig-param">extensions</em>, <em class="sig-param">exclude_files</em>, <em class="sig-param">exclude_dirs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/common.html#ValidationData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.common.ValidationData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 </dd></dl>
 
 <dl class="function">
@@ -257,13 +292,6 @@ genderize.io api.</p>
 <span id="github"></span><h2>Github<a class="headerlink" href="#module-slrg_data_collection.collection.github" title="Permalink to this headline">¶</a></h2>
 <p>Collectors and other github collection related functions to support
 collecting source code from github.</p>
-<dl class="class">
-<dt id="slrg_data_collection.collection.github.CollectionInfo">
-<em class="property">class </em><code class="sig-prename descclassname">slrg_data_collection.collection.github.</code><code class="sig-name descname">CollectionInfo</code><span class="sig-paren">(</span><em class="sig-param">data_file</em>, <em class="sig-param">db_fields</em>, <em class="sig-param">table</em>, <em class="sig-param">exts</em>, <em class="sig-param">exclude</em>, <em class="sig-param">github_info</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/github.html#CollectionInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.github.CollectionInfo" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Data required for collecting source from github.</p>
-</dd></dl>
-
 <dl class="exception">
 <dt id="slrg_data_collection.collection.github.GitApiError">
 <em class="property">exception </em><code class="sig-prename descclassname">slrg_data_collection.collection.github.</code><code class="sig-name descname">GitApiError</code><a class="reference internal" href="_modules/slrg_data_collection/collection/github.html#GitApiError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.github.GitApiError" title="Permalink to this definition">¶</a></dt>
@@ -272,14 +300,40 @@ collecting source code from github.</p>
 </dd></dl>
 
 <dl class="class">
+<dt id="slrg_data_collection.collection.github.GitCollectionInfo">
+<em class="property">class </em><code class="sig-prename descclassname">slrg_data_collection.collection.github.</code><code class="sig-name descname">GitCollectionInfo</code><span class="sig-paren">(</span><em class="sig-param">records</em>, <em class="sig-param">table</em>, <em class="sig-param">validation</em>, <em class="sig-param">limits</em>, <em class="sig-param">git_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/github.html#GitCollectionInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.github.GitCollectionInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#slrg_data_collection.collection.common.CollectionInfo" title="slrg_data_collection.collection.common.CollectionInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">slrg_data_collection.collection.common.CollectionInfo</span></code></a></p>
+<p>Information required for collecting source from github.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="slrg_data_collection.collection.github.GithubData">
+<em class="property">class </em><code class="sig-prename descclassname">slrg_data_collection.collection.github.</code><code class="sig-name descname">GithubData</code><span class="sig-paren">(</span><em class="sig-param">login</em>, <em class="sig-param">passwd</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/github.html#GithubData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.github.GithubData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Data for a github account.</p>
+</dd></dl>
+
+<dl class="class">
 <dt id="slrg_data_collection.collection.github.ProjectsCollector">
-<em class="property">class </em><code class="sig-prename descclassname">slrg_data_collection.collection.github.</code><code class="sig-name descname">ProjectsCollector</code><span class="sig-paren">(</span><em class="sig-param">database</em>, <em class="sig-param">collection_info</em>, <em class="sig-param">limits</em>, <em class="sig-param">log</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/github.html#ProjectsCollector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.github.ProjectsCollector" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">slrg_data_collection.collection.github.</code><code class="sig-name descname">ProjectsCollector</code><span class="sig-paren">(</span><em class="sig-param">database</em>, <em class="sig-param">collection_info</em>, <em class="sig-param">log</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/github.html#ProjectsCollector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.github.ProjectsCollector" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#slrg_data_collection.collection.common.Collector" title="slrg_data_collection.collection.common.Collector"><code class="xref py py-class docutils literal notranslate"><span class="pre">slrg_data_collection.collection.common.Collector</span></code></a></p>
 <p>Extracts source code from single contributor github projects.</p>
+<dl class="method">
+<dt id="slrg_data_collection.collection.github.ProjectsCollector.add_contributors">
+<code class="sig-name descname">add_contributors</code><span class="sig-paren">(</span><em class="sig-param">project_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/github.html#ProjectsCollector.add_contributors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.github.ProjectsCollector.add_contributors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a list of contributors to project data.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="slrg_data_collection.collection.github.ProjectsCollector.add_file_to_db">
 <code class="sig-name descname">add_file_to_db</code><span class="sig-paren">(</span><em class="sig-param">file_data</em>, <em class="sig-param">project_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/github.html#ProjectsCollector.add_file_to_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.github.ProjectsCollector.add_file_to_db" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds a file to the database.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slrg_data_collection.collection.github.ProjectsCollector.add_name_and_gender">
+<code class="sig-name descname">add_name_and_gender</code><span class="sig-paren">(</span><em class="sig-param">project_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/github.html#ProjectsCollector.add_name_and_gender"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.github.ProjectsCollector.add_name_and_gender" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add fullname and gender data to project data.</p>
 </dd></dl>
 
 <dl class="method">
@@ -295,9 +349,18 @@ collecting source code from github.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="slrg_data_collection.collection.github.ProjectsCollector.get_fullname_and_gender">
+<code class="sig-name descname">get_fullname_and_gender</code><span class="sig-paren">(</span><em class="sig-param">project_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/github.html#ProjectsCollector.get_fullname_and_gender"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.github.ProjectsCollector.get_fullname_and_gender" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collect a github users fullname and gender data if available.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="slrg_data_collection.collection.github.ProjectsCollector.is_valid_file">
 <code class="sig-name descname">is_valid_file</code><span class="sig-paren">(</span><em class="sig-param">path</em>, <em class="sig-param">source</em>, <em class="sig-param">line_count</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/github.html#ProjectsCollector.is_valid_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.github.ProjectsCollector.is_valid_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Does some additional file validation.</p>
+<dd><p>Checks to see if a file is valid.</p>
+<p>A large part of the validation for files in this class is done
+by github.get_single_author_files. So this is where any final
+validation can be done before adding source code to the database.</p>
 </dd></dl>
 
 <dl class="method">
@@ -309,16 +372,28 @@ sure that the repository has no more than 1 contributor.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="slrg_data_collection.collection.github.ProjectsCollector.make_repo">
+<code class="sig-name descname">make_repo</code><span class="sig-paren">(</span><em class="sig-param">project_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/github.html#ProjectsCollector.make_repo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.github.ProjectsCollector.make_repo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clone a repository and return a git.Repo object for it.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="slrg_data_collection.collection.github.ProjectsCollector.process">
 <code class="sig-name descname">process</code><span class="sig-paren">(</span><em class="sig-param">project_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/github.html#ProjectsCollector.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.github.ProjectsCollector.process" title="Permalink to this definition">¶</a></dt>
-<dd><p>Processes a github project and adds all valid files to the
-database.</p>
+<dd><p>Process a github project.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="slrg_data_collection.collection.github.ProjectsCollector.process_file">
 <code class="sig-name descname">process_file</code><span class="sig-paren">(</span><em class="sig-param">path</em>, <em class="sig-param">filename</em>, <em class="sig-param">project_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/github.html#ProjectsCollector.process_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.github.ProjectsCollector.process_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Process a file and add it to the database if valid.</p>
+<dd><p>Process a file and add it to the database if it is valid.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="slrg_data_collection.collection.github.ProjectsCollector.process_valid_project">
+<code class="sig-name descname">process_valid_project</code><span class="sig-paren">(</span><em class="sig-param">project_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/github.html#ProjectsCollector.process_valid_project"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.github.ProjectsCollector.process_valid_project" title="Permalink to this definition">¶</a></dt>
+<dd><p>Process a valid project by cloning the repo and adding any
+valid files to the databse.</p>
 </dd></dl>
 
 <dl class="method">
@@ -338,7 +413,7 @@ database.</p>
 
 <dl class="class">
 <dt id="slrg_data_collection.collection.github.SingleAuthorFilter">
-<em class="property">class </em><code class="sig-prename descclassname">slrg_data_collection.collection.github.</code><code class="sig-name descname">SingleAuthorFilter</code><span class="sig-paren">(</span><em class="sig-param">url</em>, <em class="sig-param">repo_path</em>, <em class="sig-param">extensions</em>, <em class="sig-param">exclude</em>, <em class="sig-param">name</em>, <em class="sig-param">login</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/github.html#SingleAuthorFilter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.github.SingleAuthorFilter" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">slrg_data_collection.collection.github.</code><code class="sig-name descname">SingleAuthorFilter</code><span class="sig-paren">(</span><em class="sig-param">repo</em>, <em class="sig-param">repo_path</em>, <em class="sig-param">validation</em>, <em class="sig-param">name</em>, <em class="sig-param">login</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/github.html#SingleAuthorFilter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.github.SingleAuthorFilter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Helper class to collect paths for all the single author files
 in a repo.</p>
@@ -391,7 +466,7 @@ github api.</p>
 
 <dl class="function">
 <dt id="slrg_data_collection.collection.github.get_single_author_files">
-<code class="sig-prename descclassname">slrg_data_collection.collection.github.</code><code class="sig-name descname">get_single_author_files</code><span class="sig-paren">(</span><em class="sig-param">url</em>, <em class="sig-param">repo_path</em>, <em class="sig-param">extensions</em>, <em class="sig-param">exclude</em>, <em class="sig-param">name</em>, <em class="sig-param">login</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/github.html#get_single_author_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.github.get_single_author_files" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">slrg_data_collection.collection.github.</code><code class="sig-name descname">get_single_author_files</code><span class="sig-paren">(</span><em class="sig-param">repo</em>, <em class="sig-param">repo_path</em>, <em class="sig-param">validation</em>, <em class="sig-param">name</em>, <em class="sig-param">login</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/github.html#get_single_author_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.github.get_single_author_files" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the filepaths for all single author files from a github
 repository.</p>
 </dd></dl>
@@ -412,6 +487,11 @@ repository.</p>
 <div class="section" id="module-slrg_data_collection.collection.script">
 <span id="script"></span><h2>Script<a class="headerlink" href="#module-slrg_data_collection.collection.script" title="Permalink to this headline">¶</a></h2>
 <p>Helper functions for running scripts.</p>
+<dl class="function">
+<dt id="slrg_data_collection.collection.script.get_file_path">
+<code class="sig-prename descclassname">slrg_data_collection.collection.script.</code><code class="sig-name descname">get_file_path</code><span class="sig-paren">(</span><em class="sig-param">filename</em>, <em class="sig-param">script_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/script.html#get_file_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.script.get_file_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="function">
 <dt id="slrg_data_collection.collection.script.make_database">
 <code class="sig-prename descclassname">slrg_data_collection.collection.script.</code><code class="sig-name descname">make_database</code><span class="sig-paren">(</span><em class="sig-param">db_config</em>, <em class="sig-param">host=None</em>, <em class="sig-param">login=None</em>, <em class="sig-param">passwd=None</em>, <em class="sig-param">name=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/script.html#make_database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.script.make_database" title="Permalink to this definition">¶</a></dt>
@@ -440,16 +520,21 @@ slrg_data_collection.config.py</p></li>
 </dd></dl>
 
 <dl class="function">
+<dt id="slrg_data_collection.collection.script.make_git_data">
+<code class="sig-prename descclassname">slrg_data_collection.collection.script.</code><code class="sig-name descname">make_git_data</code><span class="sig-paren">(</span><em class="sig-param">login</em>, <em class="sig-param">passwd</em>, <em class="sig-param">default</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/script.html#make_git_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.script.make_git_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
 <dt id="slrg_data_collection.collection.script.make_git_info">
-<code class="sig-prename descclassname">slrg_data_collection.collection.script.</code><code class="sig-name descname">make_git_info</code><span class="sig-paren">(</span><em class="sig-param">lang</em>, <em class="sig-param">file</em>, <em class="sig-param">login</em>, <em class="sig-param">passwd</em>, <em class="sig-param">script_name</em>, <em class="sig-param">config</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/script.html#make_git_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.script.make_git_info" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">slrg_data_collection.collection.script.</code><code class="sig-name descname">make_git_info</code><span class="sig-paren">(</span><em class="sig-param">lang</em>, <em class="sig-param">filename</em>, <em class="sig-param">git_data</em>, <em class="sig-param">limits</em>, <em class="sig-param">script_name</em>, <em class="sig-param">config</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/script.html#make_git_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.script.make_git_info" title="Permalink to this definition">¶</a></dt>
 <dd><p>Makes a github.CollectionInfo object for the script to use.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>lang</strong> (<em>str</em>) – The projramming language to collect source in.</p></li>
-<li><p><strong>file</strong> (<em>str</em>) – The file the project data is stored in.</p></li>
-<li><p><strong>login</strong> (<em>str</em>) – A Github username. Can be None.</p></li>
-<li><p><strong>passwd</strong> (<em>str</em>) – The Github password. Can be None.</p></li>
+<li><p><strong>lang</strong> (<em>str</em>) – The programming language to collect source in.</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – The file the project data is stored in.</p></li>
+<li><p><strong>git_data</strong> (<em>github.GitData</em>) – Github account data.</p></li>
+<li><p><strong>limits</strong> (<a class="reference internal" href="#slrg_data_collection.collection.common.LimitData" title="slrg_data_collection.collection.common.LimitData"><em>common.LimitData</em></a>) – Limits for the collection.</p></li>
 <li><p><strong>script_name</strong> (<em>str</em>) – The name of the script calling it.</p></li>
 <li><p><strong>config</strong> (<em>dict</em>) – The contents of the config file in a dict. See
 <a class="reference internal" href="config.html#config-lab"><span class="std std-ref">Configuration</span></a> for more details.</p></li>
@@ -460,36 +545,19 @@ slrg_data_collection.config.py</p></li>
 the necessary information for source collection.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#slrg_data_collection.collection.github.CollectionInfo" title="slrg_data_collection.collection.github.CollectionInfo">collection.github.CollectionInfo</a></p>
+<dd class="field-odd"><p>collection.github.CollectionInfo</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="slrg_data_collection.collection.script.make_limits">
-<code class="sig-prename descclassname">slrg_data_collection.collection.script.</code><code class="sig-name descname">make_limits</code><span class="sig-paren">(</span><em class="sig-param">script</em>, <em class="sig-param">limits</em>, <em class="sig-param">start=None</em>, <em class="sig-param">count=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/script.html#make_limits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.script.make_limits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Constructs a dictionary with a start and count field.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>script</strong> (<em>str</em>) – The name of the script being run.</p></li>
-<li><p><strong>limits</strong> (<em>dict</em>) – A set of default limits.</p></li>
-<li><p><strong>start</strong> (<em>int</em>) – The starting index.</p></li>
-<li><p><strong>count</strong> (<em>int</em>) – The number of entries to process.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A dict with start and count values.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dict</p>
-</dd>
-</dl>
-</dd></dl>
+<code class="sig-prename descclassname">slrg_data_collection.collection.script.</code><code class="sig-name descname">make_limits</code><span class="sig-paren">(</span><em class="sig-param">start</em>, <em class="sig-param">count</em>, <em class="sig-param">default</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/script.html#make_limits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.script.make_limits" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="function">
 <dt id="slrg_data_collection.collection.script.null_arg_int">
-<code class="sig-prename descclassname">slrg_data_collection.collection.script.</code><code class="sig-name descname">null_arg_int</code><span class="sig-paren">(</span><em class="sig-param">arg</em>, <em class="sig-param">prompt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/script.html#null_arg_int"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.script.null_arg_int" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">slrg_data_collection.collection.script.</code><code class="sig-name descname">null_arg_int</code><span class="sig-paren">(</span><em class="sig-param">arg</em>, <em class="sig-param">default</em>, <em class="sig-param">prompt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/script.html#null_arg_int"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.script.null_arg_int" title="Permalink to this definition">¶</a></dt>
 <dd><p>If a given arg is None then ask for a value.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -509,7 +577,7 @@ the necessary information for source collection.</p>
 
 <dl class="function">
 <dt id="slrg_data_collection.collection.script.null_arg_str">
-<code class="sig-prename descclassname">slrg_data_collection.collection.script.</code><code class="sig-name descname">null_arg_str</code><span class="sig-paren">(</span><em class="sig-param">arg</em>, <em class="sig-param">prompt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/script.html#null_arg_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.script.null_arg_str" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">slrg_data_collection.collection.script.</code><code class="sig-name descname">null_arg_str</code><span class="sig-paren">(</span><em class="sig-param">arg</em>, <em class="sig-param">default</em>, <em class="sig-param">prompt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collection/script.html#null_arg_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collection.script.null_arg_str" title="Permalink to this definition">¶</a></dt>
 <dd><p>If a given arg is None then ask for a value.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

@@ -7,9 +7,9 @@ sphinx:
 .PHONY: reports
 reports:
 	cd docs/reports/; xelatex *.tex; xelatex *.tex
-	cp slrg_data_collection/docs/report/*.pdf docs/html/_static/
-	cp slrg_data_collection/docs/report/*.pdf docs/sphinx/source/_static
+	cp docs/reports/*.pdf docs/sphinx/source/_static/
+	cp docs/reports/*.pdf slrg_data_collection/docs/reports/
 	rm -rf texput.log
 
 .PHONY: docs
-docs: sphinx reports
+docs: reports sphinx

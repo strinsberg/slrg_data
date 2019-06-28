@@ -14,7 +14,7 @@
     <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Api Docs" href="modules.html" />
+    <link rel="next" title="Modules" href="modules.html" />
     <link rel="prev" title="Configuration" href="config.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -45,7 +45,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-slrg_data_collection.select">Select</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">Api Docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Modules</a></li>
 </ul>
 
 <div class="relations">
@@ -53,7 +53,7 @@
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
       <li>Previous: <a href="config.html" title="previous chapter">Configuration</a></li>
-      <li>Next: <a href="modules.html" title="next chapter">Api Docs</a></li>
+      <li>Next: <a href="modules.html" title="next chapter">Modules</a></li>
   </ul></li>
 </ul>
 </div>
@@ -177,84 +177,24 @@ after the first. eg) file.data, file1.data, file2.data, etc.
 Default is ‘combined’</p>
 </dd>
 <dt><strong>-f &lt;raw json folder&gt;</strong></dt><dd><p>The name of a folder to store the uncombined json files in.
-Default is to delete all uncombined json files.</p>
+* Default is to delete all uncombined json files.</p>
 </dd>
 <dt><strong>-g &lt;group size&gt;</strong></dt><dd><p>The number of json files to combine for each data file created.
-The default is to combine them into one file (up to 10,000).</p>
+* Default is to combine them into one file (up to 10,000).</p>
 </dd>
-<dt><strong>&lt;json files&gt;</strong></dt><dd><p>The names of all the json files to combine. Default is to collect
-all json files in current folder as wildcards are not supported.</p>
-</dd>
-</dl>
-<dl class="function">
-<dt id="slrg_data_collection.data.combine_json.combine_json">
-<code class="sig-prename descclassname">slrg_data_collection.data.combine_json.</code><code class="sig-name descname">combine_json</code><span class="sig-paren">(</span><em class="sig-param">json_filenames</em>, <em class="sig-param">group_size</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/data/combine_json.html#combine_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.data.combine_json.combine_json" title="Permalink to this definition">¶</a></dt>
-<dd><p>Combine the records of a JSON file into a list.</p>
-<p>The returned list will contain multiple lists of records if group_size
-is small enough that more than one group is created.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>json_filenames</strong> (<em>list of str</em>) – A list of JSON filenames to combine.</p></li>
-<li><p><strong>group_size</strong> (<em>int</em>) – The number of files to combine for each group.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A list containing lists of JSON dicts.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>list of lists of JSON dicts</p>
+<dt><strong>&lt;json files&gt;</strong></dt><dd><p>The names of all the json files to combine.
+* Default is to collect all json files in current folder as
+wildcards are not supported.</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="slrg_data_collection.data.combine_json.get_all_json_files">
-<code class="sig-prename descclassname">slrg_data_collection.data.combine_json.</code><code class="sig-name descname">get_all_json_files</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/data/combine_json.html#get_all_json_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.data.combine_json.get_all_json_files" title="Permalink to this definition">¶</a></dt>
-<dd><p>Collects the names of all JSON files in the current directory.</p>
-</dd></dl>
-
 <dl class="function">
 <dt id="slrg_data_collection.data.combine_json.main">
 <code class="sig-prename descclassname">slrg_data_collection.data.combine_json.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><em class="sig-param">argv</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/data/combine_json.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.data.combine_json.main" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main for script to combine json files into .data files.</p>
 <p>See module documentation for more details.</p>
-<dl class="simple">
-<dt>Arg:</dt><dd><p>argv (list of str): List of command line arguments and options.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="slrg_data_collection.data.combine_json.move_files">
-<code class="sig-prename descclassname">slrg_data_collection.data.combine_json.</code><code class="sig-name descname">move_files</code><span class="sig-paren">(</span><em class="sig-param">filenames</em>, <em class="sig-param">folder</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/data/combine_json.html#move_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.data.combine_json.move_files" title="Permalink to this definition">¶</a></dt>
-<dd><p>Move filenames to the raw_folder or delete them.</p>
-<p><strong>If raw_folder is None the files will be deleted.</strong></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>filenames</strong> (<em>list of str</em>) – A list of file names that are to be
-moved or deleted.</p></li>
-<li><p><strong>folder</strong> (<em>str</em>) – The name of the folder to move the files to.
-If None the files will be deleted.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="slrg_data_collection.data.combine_json.write_results">
-<code class="sig-prename descclassname">slrg_data_collection.data.combine_json.</code><code class="sig-name descname">write_results</code><span class="sig-paren">(</span><em class="sig-param">out_file</em>, <em class="sig-param">combined</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/data/combine_json.html#write_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.data.combine_json.write_results" title="Permalink to this definition">¶</a></dt>
-<dd><p>Write the lists of combined json records to .data files.</p>
-<p>If more than one file is created numbers will be appended to the
-out_file name.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>out_file</strong> (<em>str</em>) – The filename to write the results to.</p></li>
-<li><p><strong>combined</strong> (<em>list of lists of JSON dicts</em>) – A list containing one
-or more lists of JSON records.</p></li>
-</ul>
+<dd class="field-odd"><p><strong>argv</strong> (<em>list of str</em>) – List of command line arguments and options.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -264,11 +204,50 @@ or more lists of JSON records.</p></li>
 </div>
 <div class="section" id="module-slrg_data_collection.select">
 <span id="select"></span><h2>Select<a class="headerlink" href="#module-slrg_data_collection.select" title="Permalink to this headline">¶</a></h2>
+<p>Script to run a SELECT query on a database and get the results as
+a CSV or JSON file.</p>
+<div class="section" id="id3">
+<h3>Usage<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>Run as a command line script in the slrg_data_collection folder</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python3 select.py [-h] [-j | -c] [-o &lt;output file&gt;] [-i &lt;input sql file&gt;]
+    [-u &lt;database username&gt;] [-p &lt;database password&gt;]
+</pre></div>
+</div>
+<div class="section" id="id4">
+<h4>Options<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
+<dl class="simple">
+<dt><strong>-h</strong></dt><dd><p>Print help text.</p>
+</dd>
+<dt><strong>-j | -c</strong></dt><dd><p>Output in JSON or CSV format. If both are given the first
+will be used.</p>
+</dd>
+<dt><strong>-o &lt;output file&gt;</strong></dt><dd><p>The file to write the results to. If a path is given it must be
+relative to the slrg_data_collection directory.</p>
+</dd>
+<dt><strong>-i &lt;input sql file&gt;</strong></dt><dd><p>A file with the SQL SELECT query. If a path is given it must be
+relative to the slrg_data_collection directory.</p>
+</dd>
+<dt><strong>-u &lt;database username&gt;</strong></dt><dd><p>The database username. Defaults to value in config file, if it is
+None value will be asked for.</p>
+</dd>
+<dt><strong>-p &lt;database password&gt;</strong></dt><dd><p>The database password. Defaults to value in config file. If config
+value is None it will be asked for.</p>
+</dd>
+</dl>
 <dl class="function">
 <dt id="slrg_data_collection.select.main">
 <code class="sig-prename descclassname">slrg_data_collection.select.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><em class="sig-param">argv</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/select.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.select.main" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Main for script to SELECT records from a database.</p>
+<p>See module documentation for more details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>argv</strong> (<em>list of str</em>) – List of command line arguments and options.</p>
+</dd>
+</dl>
+</dd></dl>
 
+</div>
+</div>
 </div>
 </div>
 

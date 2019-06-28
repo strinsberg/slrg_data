@@ -38,7 +38,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../config.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../scripts.html">Scripts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Api Docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Modules</a></li>
 </ul>
 
 <div class="relations">
@@ -97,54 +97,53 @@
 <div class="viewcode-block" id="ProjectsCollector"><a class="viewcode-back" href="../../../modules.html#slrg_data_collection.collection.github.ProjectsCollector">[docs]</a><span class="k">class</span> <span class="nc">ProjectsCollector</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">Collector</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Extracts source code from single contributor github projects.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">,</span> <span class="n">collection_info</span><span class="p">,</span> <span class="n">limits</span><span class="p">,</span> <span class="n">log</span><span class="p">):</span>
-        <span class="n">common</span><span class="o">.</span><span class="n">Collector</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">,</span> <span class="n">collection_info</span><span class="p">,</span> <span class="n">limits</span><span class="p">,</span> <span class="n">log</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">,</span> <span class="n">collection_info</span><span class="p">,</span> <span class="n">log</span><span class="p">):</span>
+        <span class="n">common</span><span class="o">.</span><span class="n">Collector</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">,</span> <span class="n">collection_info</span><span class="p">,</span> <span class="n">log</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">totals</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;projects&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;files&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;added&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gender_wait</span> <span class="o">=</span> <span class="p">[]</span>
 
 <div class="viewcode-block" id="ProjectsCollector.set_up"><a class="viewcode-back" href="../../../modules.html#slrg_data_collection.collection.github.ProjectsCollector.set_up">[docs]</a>    <span class="k">def</span> <span class="nf">set_up</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Creates session and set its credentials.&quot;&quot;&quot;</span>
         <span class="n">common</span><span class="o">.</span><span class="n">Collector</span><span class="o">.</span><span class="n">set_up</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="n">login</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">collection_info</span><span class="o">.</span><span class="n">git_login</span>
-        <span class="n">passwd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">collection_info</span><span class="o">.</span><span class="n">git_passwd</span>
+
+        <span class="n">login</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">collection_info</span><span class="o">.</span><span class="n">git_data</span><span class="o">.</span><span class="n">login</span>
+        <span class="n">passwd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">collection_info</span><span class="o">.</span><span class="n">git_data</span><span class="o">.</span><span class="n">passwd</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">authenticated_session</span><span class="p">(</span><span class="n">login</span><span class="p">,</span> <span class="n">passwd</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">times</span><span class="p">[</span><span class="s1">&#39;session&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="ProjectsCollector.process"><a class="viewcode-back" href="../../../modules.html#slrg_data_collection.collection.github.ProjectsCollector.process">[docs]</a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_data</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Processes a github project and adds all valid files to the</span>
-<span class="sd">        database.&quot;&quot;&quot;</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">limits</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">totals</span><span class="p">[</span><span class="s1">&#39;entry&#39;</span><span class="p">],</span> <span class="s2">&quot;###&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
-        <span class="n">project_data</span><span class="p">[</span><span class="s1">&#39;user_fullname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;None&quot;</span>
-        <span class="n">project_data</span><span class="p">[</span><span class="s1">&#39;gender&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">project_data</span><span class="p">[</span><span class="s1">&#39;gender_probability&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="sd">&quot;&quot;&quot;Process a github project.&quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="p">,</span> <span class="s2">&quot;###&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_name_and_gender</span><span class="p">(</span><span class="n">project_data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_contributors</span><span class="p">(</span><span class="n">project_data</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_valid_project</span><span class="p">(</span><span class="n">project_data</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Invalid project: &quot;</span> <span class="o">+</span> <span class="n">project_data</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot; ###&quot;</span><span class="p">)</span>
             <span class="k">return</span>
 
-        <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">totals</span><span class="p">[</span><span class="s1">&#39;projects&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Processing Project:&quot;</span><span class="p">,</span> <span class="n">project_data</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="s2">&quot;###&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">totals</span><span class="p">[</span><span class="s1">&#39;projects&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Processing Project:&quot;</span><span class="p">,</span> <span class="n">project_data</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="s2">&quot;###&quot;</span><span class="p">)</span>
 
-            <span class="n">repo_path</span> <span class="o">=</span> <span class="s2">&quot;data/git_projects/temp_repos/temp_</span><span class="si">{}</span><span class="s2">_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()),</span> <span class="nb">str</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2000000</span><span class="p">)))</span>
-            <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://:@github.com/</span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2">.git&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">project_data</span><span class="p">[</span><span class="s1">&#39;login&#39;</span><span class="p">],</span> <span class="n">project_data</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
-            <span class="n">files</span> <span class="o">=</span> <span class="n">get_single_author_files</span><span class="p">(</span><span class="n">url</span><span class="p">,</span>
-                                            <span class="n">repo_path</span><span class="p">,</span>
-                                            <span class="bp">self</span><span class="o">.</span><span class="n">collection_info</span><span class="o">.</span><span class="n">extensions</span><span class="p">,</span>
-                                            <span class="bp">self</span><span class="o">.</span><span class="n">collection_info</span><span class="o">.</span><span class="n">exclude</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process_valid_project</span><span class="p">(</span><span class="n">project_data</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ProjectsCollector.process_valid_project"><a class="viewcode-back" href="../../../modules.html#slrg_data_collection.collection.github.ProjectsCollector.process_valid_project">[docs]</a>    <span class="k">def</span> <span class="nf">process_valid_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Process a valid project by cloning the repo and adding any</span>
+<span class="sd">        valid files to the databse.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">repo</span><span class="p">,</span> <span class="n">repo_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_repo</span><span class="p">(</span><span class="n">project_data</span><span class="p">)</span>
+            <span class="n">files</span> <span class="o">=</span> <span class="n">get_single_author_files</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">repo_path</span><span class="p">,</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">collection_info</span><span class="o">.</span><span class="n">validation</span><span class="p">,</span>
                                             <span class="n">project_data</span><span class="p">[</span><span class="s2">&quot;user_fullname&quot;</span><span class="p">],</span>
                                             <span class="n">project_data</span><span class="p">[</span><span class="s2">&quot;login&quot;</span><span class="p">])</span>
 
             <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">process_file</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                    <span class="n">repo_path</span><span class="p">,</span> <span class="n">filename</span><span class="p">),</span> <span class="n">filename</span><span class="p">,</span> <span class="n">project_data</span><span class="p">)</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">repo_path</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">process_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">project_data</span><span class="p">)</span>
 
         <span class="k">except</span> <span class="n">git</span><span class="o">.</span><span class="n">GitError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;In process&quot;</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span>
-            <span class="c1"># could also try to figure out how to catch the disconnect error</span>
-            <span class="c1"># but I think that only happens to me.</span>
 
         <span class="k">finally</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
@@ -152,12 +151,39 @@
             <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
                 <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="ProjectsCollector.is_valid_project"><a class="viewcode-back" href="../../../modules.html#slrg_data_collection.collection.github.ProjectsCollector.is_valid_project">[docs]</a>    <span class="k">def</span> <span class="nf">is_valid_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_data</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Checks to make sure project is valid.</span>
+<div class="viewcode-block" id="ProjectsCollector.make_repo"><a class="viewcode-back" href="../../../modules.html#slrg_data_collection.collection.github.ProjectsCollector.make_repo">[docs]</a>    <span class="k">def</span> <span class="nf">make_repo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Clone a repository and return a git.Repo object for it.&quot;&quot;&quot;</span>
+        <span class="n">repos_dir</span> <span class="o">=</span> <span class="s2">&quot;data/git_projects/temp_repos&quot;</span>
+        <span class="n">temp_dir</span> <span class="o">=</span> <span class="s2">&quot;temp_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2000000</span><span class="p">)))</span>
+        <span class="n">repo_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">repos_dir</span><span class="p">,</span> <span class="n">temp_dir</span><span class="p">)</span>
 
-<span class="sd">        This means checking for a username and gender, as well as making</span>
-<span class="sd">        sure that the repository has no more than 1 contributor.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://:@github.com/</span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2">.git&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">project_data</span><span class="p">[</span><span class="s1">&#39;login&#39;</span><span class="p">],</span> <span class="n">project_data</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+
+        <span class="n">repo</span> <span class="o">=</span> <span class="n">git</span><span class="o">.</span><span class="n">Repo</span><span class="o">.</span><span class="n">clone_from</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">repo_path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">repo</span><span class="p">,</span> <span class="n">repo_path</span></div>
+
+<div class="viewcode-block" id="ProjectsCollector.add_name_and_gender"><a class="viewcode-back" href="../../../modules.html#slrg_data_collection.collection.github.ProjectsCollector.add_name_and_gender">[docs]</a>    <span class="k">def</span> <span class="nf">add_name_and_gender</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add fullname and gender data to project data.&quot;&quot;&quot;</span>
+        <span class="n">project_data</span><span class="p">[</span><span class="s1">&#39;user_fullname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">project_data</span><span class="p">[</span><span class="s1">&#39;gender&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">project_data</span><span class="p">[</span><span class="s1">&#39;gender_probability&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">fullname</span><span class="p">,</span> <span class="n">gender</span><span class="p">,</span> <span class="n">gender_probability</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_fullname_and_gender</span><span class="p">(</span>
+            <span class="n">project_data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">gender</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;nil&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+            <span class="n">project_data</span><span class="p">[</span><span class="s1">&#39;user_fullname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fullname</span>
+            <span class="n">project_data</span><span class="p">[</span><span class="s1">&#39;gender&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gender</span>
+            <span class="n">project_data</span><span class="p">[</span><span class="s1">&#39;gender_probability&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gender_probability</span>
+        <span class="k">elif</span> <span class="n">gender</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gender_wait</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">project_data</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Gender &quot;</span> <span class="o">+</span> <span class="n">gender</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span>
+                          <span class="n">project_data</span><span class="p">[</span><span class="s1">&#39;login&#39;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="ProjectsCollector.get_fullname_and_gender"><a class="viewcode-back" href="../../../modules.html#slrg_data_collection.collection.github.ProjectsCollector.get_fullname_and_gender">[docs]</a>    <span class="k">def</span> <span class="nf">get_fullname_and_gender</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Collect a github users fullname and gender data if available.&quot;&quot;&quot;</span>
         <span class="n">fullname</span> <span class="o">=</span> <span class="n">get_fullname</span><span class="p">(</span>
             <span class="n">project_data</span><span class="p">[</span><span class="s1">&#39;login&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">times</span><span class="p">[</span><span class="s1">&#39;session&#39;</span><span class="p">])</span>
 
@@ -167,34 +193,39 @@
                 <span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="p">,</span> <span class="s1">&#39;genders&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No User Name: &quot;</span> <span class="o">+</span> <span class="n">project_data</span><span class="p">[</span><span class="s1">&#39;login&#39;</span><span class="p">])</span>
-            <span class="k">return</span> <span class="kc">False</span>
 
-        <span class="k">if</span> <span class="n">gender</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;nil&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-            <span class="n">project_data</span><span class="p">[</span><span class="s1">&#39;user_fullname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fullname</span>
-            <span class="n">project_data</span><span class="p">[</span><span class="s1">&#39;gender&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gender</span>
-            <span class="n">project_data</span><span class="p">[</span><span class="s1">&#39;gender_probability&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gender_probability</span>
-        <span class="k">elif</span> <span class="n">gender</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">gender_wait</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">project_data</span><span class="p">)</span>
-            <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Gender &quot;</span> <span class="o">+</span> <span class="n">gender</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span>
-                          <span class="n">project_data</span><span class="p">[</span><span class="s1">&#39;login&#39;</span><span class="p">])</span>
-            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="n">fullname</span><span class="p">,</span> <span class="n">gender</span><span class="p">,</span> <span class="n">gender_probability</span></div>
 
+<div class="viewcode-block" id="ProjectsCollector.add_contributors"><a class="viewcode-back" href="../../../modules.html#slrg_data_collection.collection.github.ProjectsCollector.add_contributors">[docs]</a>    <span class="k">def</span> <span class="nf">add_contributors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a list of contributors to project data.&quot;&quot;&quot;</span>
+        <span class="n">project_data</span><span class="p">[</span><span class="s1">&#39;contributors&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">contrib_url</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/stats/contributors&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">project_data</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">])</span>
         <span class="n">contribs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">contrib_url</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">api_ok</span><span class="p">(</span><span class="n">contribs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">times</span><span class="p">[</span><span class="s2">&quot;session&quot;</span><span class="p">],</span> <span class="n">write</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">api_ok</span><span class="p">(</span><span class="n">contribs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">times</span><span class="p">[</span><span class="s2">&quot;session&quot;</span><span class="p">],</span> <span class="n">write</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">):</span>
+            <span class="n">project_data</span><span class="p">[</span><span class="s1">&#39;contributors&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">contribs</span></div>
+
+<div class="viewcode-block" id="ProjectsCollector.is_valid_project"><a class="viewcode-back" href="../../../modules.html#slrg_data_collection.collection.github.ProjectsCollector.is_valid_project">[docs]</a>    <span class="k">def</span> <span class="nf">is_valid_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Checks to make sure project is valid.</span>
+
+<span class="sd">        This means checking for a username and gender, as well as making</span>
+<span class="sd">        sure that the repository has no more than 1 contributor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">project_data</span><span class="p">[</span><span class="s1">&#39;fullname&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">project_data</span><span class="p">[</span><span class="s1">&#39;gender&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
 
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">contribs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">contribs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">project_data</span><span class="p">[</span><span class="s1">&#39;login&#39;</span><span class="p">]</span>
-                                 <span class="o">!=</span> <span class="n">contribs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;author&#39;</span><span class="p">][</span><span class="s1">&#39;login&#39;</span><span class="p">]):</span>
+        <span class="n">contribs</span> <span class="o">=</span> <span class="n">project_data</span><span class="p">[</span><span class="s1">&#39;contributors&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">contribs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">contribs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">contribs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+                <span class="ow">and</span> <span class="n">project_data</span><span class="p">[</span><span class="s1">&#39;login&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">contribs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;author&#39;</span><span class="p">][</span><span class="s1">&#39;login&#39;</span><span class="p">]):</span>
             <span class="k">return</span> <span class="kc">False</span>
 
         <span class="k">return</span> <span class="kc">True</span></div>
 
 <div class="viewcode-block" id="ProjectsCollector.process_file"><a class="viewcode-back" href="../../../modules.html#slrg_data_collection.collection.github.ProjectsCollector.process_file">[docs]</a>    <span class="k">def</span> <span class="nf">process_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">project_data</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Process a file and add it to the database if valid.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Process a file and add it to the database if it is valid.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">totals</span><span class="p">[</span><span class="s1">&#39;files&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="n">file_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_file_data</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
 
@@ -219,30 +250,29 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_valid_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">line_count</span><span class="p">):</span>
             <span class="n">hash_name</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
             <span class="k">return</span> <span class="p">[</span><span class="n">hash_name</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">line_count</span><span class="p">]</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Lines out of range: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">line_count</span><span class="p">))</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="ProjectsCollector.is_valid_file"><a class="viewcode-back" href="../../../modules.html#slrg_data_collection.collection.github.ProjectsCollector.is_valid_file">[docs]</a>    <span class="k">def</span> <span class="nf">is_valid_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">line_count</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Does some additional file validation.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Checks to see if a file is valid.</span>
+
+<span class="sd">        A large part of the validation for files in this class is done</span>
+<span class="sd">        by github.get_single_author_files. So this is where any final</span>
+<span class="sd">        validation can be done before adding source code to the database.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="mi">10</span> <span class="o">&lt;=</span> <span class="n">line_count</span> <span class="o">&lt;=</span> <span class="mi">1000</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span></div>
 
 <div class="viewcode-block" id="ProjectsCollector.add_file_to_db"><a class="viewcode-back" href="../../../modules.html#slrg_data_collection.collection.github.ProjectsCollector.add_file_to_db">[docs]</a>    <span class="k">def</span> <span class="nf">add_file_to_db</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_data</span><span class="p">,</span> <span class="n">project_data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Adds a file to the database.&quot;&quot;&quot;</span>
-        <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="s2">&quot;user_id&quot;</span><span class="p">,</span> <span class="s2">&quot;user_login&quot;</span><span class="p">,</span> <span class="s2">&quot;user_fullname&quot;</span><span class="p">,</span> <span class="s2">&quot;gender&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;gender_probability&quot;</span><span class="p">,</span> <span class="s2">&quot;user_company&quot;</span><span class="p">,</span> <span class="s2">&quot;user_created&quot;</span><span class="p">,</span> <span class="s2">&quot;user_type&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;user_country_code&quot;</span><span class="p">,</span> <span class="s2">&quot;user_state&quot;</span><span class="p">,</span> <span class="s2">&quot;user_city&quot;</span><span class="p">,</span> <span class="s2">&quot;user_location&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;project_id&quot;</span><span class="p">,</span> <span class="s2">&quot;project_url&quot;</span><span class="p">,</span> <span class="s2">&quot;project_name&quot;</span><span class="p">,</span> <span class="s2">&quot;project_language&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;project_created&quot;</span><span class="p">,</span> <span class="s2">&quot;file_hash&quot;</span><span class="p">,</span> <span class="s2">&quot;file_name&quot;</span><span class="p">,</span> <span class="s2">&quot;file_contents&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;file_lines&quot;</span>
-        <span class="p">]</span>
         <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_entry_values</span><span class="p">(</span><span class="n">project_data</span><span class="p">)</span>
         <span class="n">values</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">file_data</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">columns</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">collection_info</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">collection_info</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>
+                                 <span class="bp">self</span><span class="o">.</span><span class="n">collection_info</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">common</span><span class="o">.</span><span class="n">DatabaseError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;In add_file_to_db&quot;</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">False</span>
@@ -270,30 +300,33 @@
                 <span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())),</span> <span class="bp">self</span><span class="o">.</span><span class="n">gender_wait</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="CollectionInfo"><a class="viewcode-back" href="../../../modules.html#slrg_data_collection.collection.github.CollectionInfo">[docs]</a><span class="k">class</span> <span class="nc">CollectionInfo</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Data required for collecting source from github.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="GitCollectionInfo"><a class="viewcode-back" href="../../../modules.html#slrg_data_collection.collection.github.GitCollectionInfo">[docs]</a><span class="k">class</span> <span class="nc">GitCollectionInfo</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">CollectionInfo</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Information required for collecting source from github.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_file</span><span class="p">,</span> <span class="n">db_fields</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">exts</span><span class="p">,</span> <span class="n">exclude</span><span class="p">,</span> <span class="n">github_info</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data_file</span> <span class="o">=</span> <span class="n">data_file</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">db_fields</span> <span class="o">=</span> <span class="n">db_fields</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="n">table</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">extensions</span> <span class="o">=</span> <span class="n">exts</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">exclude</span> <span class="o">=</span> <span class="n">exclude</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">git_login</span> <span class="o">=</span> <span class="n">github_info</span><span class="p">[</span><span class="s1">&#39;login&#39;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">git_passwd</span> <span class="o">=</span> <span class="n">github_info</span><span class="p">[</span><span class="s1">&#39;passwd&#39;</span><span class="p">]</span></div>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">records</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">validation</span><span class="p">,</span> <span class="n">limits</span><span class="p">,</span> <span class="n">git_data</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GitCollectionInfo</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">records</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">validation</span><span class="p">,</span> <span class="n">limits</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">git_data</span> <span class="o">=</span> <span class="n">git_data</span></div>
+
+
+<div class="viewcode-block" id="GithubData"><a class="viewcode-back" href="../../../modules.html#slrg_data_collection.collection.github.GithubData">[docs]</a><span class="k">class</span> <span class="nc">GithubData</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Data for a github account.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">login</span><span class="p">,</span> <span class="n">passwd</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">login</span> <span class="o">=</span> <span class="n">login</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">passwd</span> <span class="o">=</span> <span class="n">passwd</span></div>
 
 
 <div class="viewcode-block" id="SingleAuthorFilter"><a class="viewcode-back" href="../../../modules.html#slrg_data_collection.collection.github.SingleAuthorFilter">[docs]</a><span class="k">class</span> <span class="nc">SingleAuthorFilter</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Helper class to collect paths for all the single author files</span>
 <span class="sd">    in a repo.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">repo_path</span><span class="p">,</span> <span class="n">extensions</span><span class="p">,</span> <span class="n">exclude</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">login</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">repo_path</span><span class="p">,</span> <span class="n">validation</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">login</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">repo</span> <span class="o">=</span> <span class="n">repo</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span> <span class="o">=</span> <span class="n">repo_path</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">extensions</span> <span class="o">=</span> <span class="n">extensions</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">exclude</span> <span class="o">=</span> <span class="n">exclude</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validation</span> <span class="o">=</span> <span class="n">validation</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">login</span> <span class="o">=</span> <span class="n">login</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">repo</span> <span class="o">=</span> <span class="n">git</span><span class="o">.</span><span class="n">Repo</span><span class="o">.</span><span class="n">clone_from</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">repo_path</span><span class="p">)</span>
 
 <div class="viewcode-block" id="SingleAuthorFilter.get_valid_files"><a class="viewcode-back" href="../../../modules.html#slrg_data_collection.collection.github.SingleAuthorFilter.get_valid_files">[docs]</a>    <span class="k">def</span> <span class="nf">get_valid_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">full_path</span><span class="p">,</span> <span class="n">relative_path</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Gets all the file paths in a repo that are by one author and</span>
@@ -327,13 +360,13 @@
 
 <div class="viewcode-block" id="SingleAuthorFilter.is_valid_file"><a class="viewcode-back" href="../../../modules.html#slrg_data_collection.collection.github.SingleAuthorFilter.is_valid_file">[docs]</a>    <span class="k">def</span> <span class="nf">is_valid_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Checks if a filename is not excluded and has the right extension.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">filename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">exclude</span><span class="p">[</span><span class="s1">&#39;files&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">filename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">validation</span><span class="o">.</span><span class="n">exclude_files</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">return</span> <span class="n">has_extensions</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">extensions</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">has_extensions</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">validation</span><span class="o">.</span><span class="n">extensions</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="SingleAuthorFilter.is_excluded_dir"><a class="viewcode-back" href="../../../modules.html#slrg_data_collection.collection.github.SingleAuthorFilter.is_excluded_dir">[docs]</a>    <span class="k">def</span> <span class="nf">is_excluded_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dirname</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Checks a directory name to se if it is excluded.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">dirname</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">exclude</span><span class="p">[</span><span class="s1">&#39;dirs&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">dirname</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">validation</span><span class="o">.</span><span class="n">exclude_dirs</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span></div>
 
@@ -410,6 +443,7 @@
     <span class="sd">&quot;&quot;&quot;Get a fullname for a github user login.&quot;&quot;&quot;</span>
     <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://api.github.com/users/&quot;</span> <span class="o">+</span> <span class="n">login</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">request_session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
     <span class="k">try</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">api_ok</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">session_time</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">&#39;name&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
@@ -421,11 +455,10 @@
     <span class="k">return</span> <span class="kc">None</span></div>
 
 
-<div class="viewcode-block" id="get_single_author_files"><a class="viewcode-back" href="../../../modules.html#slrg_data_collection.collection.github.get_single_author_files">[docs]</a><span class="k">def</span> <span class="nf">get_single_author_files</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">repo_path</span><span class="p">,</span> <span class="n">extensions</span><span class="p">,</span> <span class="n">exclude</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">login</span><span class="p">):</span>
+<div class="viewcode-block" id="get_single_author_files"><a class="viewcode-back" href="../../../modules.html#slrg_data_collection.collection.github.get_single_author_files">[docs]</a><span class="k">def</span> <span class="nf">get_single_author_files</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">repo_path</span><span class="p">,</span> <span class="n">validation</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">login</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns the filepaths for all single author files from a github</span>
 <span class="sd">    repository.&quot;&quot;&quot;</span>
-    <span class="n">file_filter</span> <span class="o">=</span> <span class="n">SingleAuthorFilter</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">repo_path</span><span class="p">,</span> <span class="n">extensions</span><span class="p">,</span> <span class="n">exclude</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span>
-                                     <span class="n">login</span><span class="p">)</span>
+    <span class="n">file_filter</span> <span class="o">=</span> <span class="n">SingleAuthorFilter</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">repo_path</span><span class="p">,</span> <span class="n">validation</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">login</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">file_filter</span><span class="o">.</span><span class="n">get_valid_files</span><span class="p">(</span><span class="n">repo_path</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 

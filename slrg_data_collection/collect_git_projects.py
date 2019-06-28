@@ -11,7 +11,7 @@ Run as a command line script in the slrg_data_collection folder.
 
     $ python3 collect_git_projects.py [-h] [-l <programming language>]
         [-i <input data file>] [-s <start index>]
-        [-c <records to process>] [-d <database username>]
+        [-c <records to process>] [-u <database username>]
         [-p <database password>] [--git=<github username>]
         [--gitpass=<github password>]
 
@@ -40,7 +40,7 @@ the config file is None the user will be asked to input values.
 **-c <records to process>**
     The count for number of records to process in total.
 
-**-d <database username>**
+**-u <database username>**
     Database username.
 
 **-p <database password>**
@@ -93,7 +93,7 @@ def main(argv):
 
     # Parse command line arguments
     try:
-        opts, _ = getopt.getopt(argv, "l:i:s:c:d:p:h", ['git=', 'gitpass='])
+        opts, _ = getopt.getopt(argv, "l:i:s:c:u:p:h", ['git=', 'gitpass='])
     except getopt.GetoptError:
         print(HELP_TEXT)
         sys.exit()
@@ -107,7 +107,7 @@ def main(argv):
             start = arg
         elif opt == '-c':
             count = arg
-        elif opt == '-d':
+        elif opt == '-u':
             db_login = arg
         elif opt == '-p':
             db_passwd = arg
@@ -127,7 +127,7 @@ def main(argv):
     limits = collection.script.make_limits(start, count, config.limits)
     git_data = collection.script.make_git_data(git_login, git_passwd,
                                                config.git_acct)
-    info = collection.script.make_git_info(lang, file, git_login, git_passwd,
+    info = collection.script.make_git_info(lang, file, git_data, limits,
                                            script_name, config.config)
     log = collection.common.Log(os.path.join('logs', script_name), script_name)
 
@@ -139,7 +139,7 @@ def main(argv):
 HELP_TEXT = """
 $ python3 collect_git_projects.py [-h] [-l < programming language > ]
     [-i < input data file > ] [-s < start index > ] [-c < records to process > ]
-    [-d < database username >] [-p < database password > ]
+    [-u < database username >] [-p < database password > ]
     [--git = <github username >] [--gitpass = <github password > ]
 
 Options
@@ -167,7 +167,7 @@ the config file is None the user will be asked to input values.
 -c < records to process >
     The count for number records to process in total.
 
--d < database username >
+-u < database username >
     Database username.
 
 -p < database password >

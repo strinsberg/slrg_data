@@ -38,7 +38,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../config.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../scripts.html">Scripts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Api Docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Modules</a></li>
 </ul>
 
 <div class="relations">
@@ -201,17 +201,17 @@
     <span class="c1"># Create objects for collection</span>
     <span class="n">script_name</span> <span class="o">=</span> <span class="s1">&#39;git_projects&#39;</span>
 
-    <span class="n">database</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">script</span><span class="o">.</span><span class="n">make_database</span><span class="p">(</span>
-        <span class="n">config</span><span class="o">.</span><span class="n">database</span><span class="p">,</span> <span class="n">login</span><span class="o">=</span><span class="n">db_login</span><span class="p">,</span> <span class="n">passwd</span><span class="o">=</span><span class="n">db_passwd</span><span class="p">)</span>
-    <span class="n">info</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">script</span><span class="o">.</span><span class="n">make_git_info</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">git_login</span><span class="p">,</span> <span class="n">git_passwd</span><span class="p">,</span>
+    <span class="n">database</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">script</span><span class="o">.</span><span class="n">make_database</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">database</span><span class="p">,</span> <span class="n">login</span><span class="o">=</span><span class="n">db_login</span><span class="p">,</span>
+                                               <span class="n">passwd</span><span class="o">=</span><span class="n">db_passwd</span><span class="p">)</span>
+    <span class="n">limits</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">script</span><span class="o">.</span><span class="n">make_limits</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">limits</span><span class="p">)</span>
+    <span class="n">git_data</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">script</span><span class="o">.</span><span class="n">make_git_data</span><span class="p">(</span><span class="n">git_login</span><span class="p">,</span> <span class="n">git_passwd</span><span class="p">,</span>
+                                               <span class="n">config</span><span class="o">.</span><span class="n">git_acct</span><span class="p">)</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">script</span><span class="o">.</span><span class="n">make_git_info</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">git_data</span><span class="p">,</span> <span class="n">limits</span><span class="p">,</span>
                                            <span class="n">script_name</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
-    <span class="n">limits</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">script</span><span class="o">.</span><span class="n">make_limits</span><span class="p">(</span>
-        <span class="n">script_name</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">limits</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
     <span class="n">log</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">Log</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;logs&#39;</span><span class="p">,</span> <span class="n">script_name</span><span class="p">),</span> <span class="n">script_name</span><span class="p">)</span>
 
     <span class="c1"># Create and run collector</span>
-    <span class="n">collector</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">github</span><span class="o">.</span><span class="n">ProjectsCollector</span><span class="p">(</span>
-        <span class="n">database</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">limits</span><span class="p">,</span> <span class="n">log</span><span class="p">)</span>
+    <span class="n">collector</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">github</span><span class="o">.</span><span class="n">ProjectsCollector</span><span class="p">(</span><span class="n">database</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">log</span><span class="p">)</span>
     <span class="n">collector</span><span class="o">.</span><span class="n">main</span><span class="p">()</span></div>
 
 

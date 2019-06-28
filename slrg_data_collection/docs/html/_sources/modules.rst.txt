@@ -1,5 +1,5 @@
-Api Docs
-========
+Modules
+=======
 
 Common
 ------

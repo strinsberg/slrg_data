@@ -38,7 +38,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../config.html">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../scripts.html">Scripts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Api Docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Modules</a></li>
 </ul>
 
 <div class="relations">
@@ -97,20 +97,19 @@
 <div class="viewcode-block" id="Collector"><a class="viewcode-back" href="../../../modules.html#slrg_data_collection.collection.common.Collector">[docs]</a><span class="k">class</span> <span class="nc">Collector</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Abstract Class for collecting information from the internet.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">,</span> <span class="n">collection_info</span><span class="p">,</span> <span class="n">limits</span><span class="p">,</span> <span class="n">log</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">,</span> <span class="n">collection_info</span><span class="p">,</span> <span class="n">log</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">database</span> <span class="o">=</span> <span class="n">database</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">collection_info</span> <span class="o">=</span> <span class="n">collection_info</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">limits</span> <span class="o">=</span> <span class="n">limits</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span> <span class="o">=</span> <span class="n">log</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">times</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;start&#39;</span><span class="p">:</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">totals</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;entry&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">limits</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">collection_info</span><span class="o">.</span><span class="n">limits</span><span class="o">.</span><span class="n">start</span>
 
 <div class="viewcode-block" id="Collector.main"><a class="viewcode-back" href="../../../modules.html#slrg_data_collection.collection.common.Collector.main">[docs]</a>    <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Runs the extraction.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">set_up</span><span class="p">()</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">get_json_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">collection_info</span><span class="o">.</span><span class="n">data_file</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">get_json_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">collection_info</span><span class="o">.</span><span class="n">records</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">process_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
         <span class="k">except</span> <span class="n">DatabaseError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
@@ -132,9 +131,9 @@
         <span class="sd">&quot;&quot;&quot;Processes each entry in the data within the desired range.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">entry</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
             <span class="c1"># Only process records in the desired range</span>
-            <span class="k">if</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">limits</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">collection_info</span><span class="o">.</span><span class="n">limits</span><span class="o">.</span><span class="n">start</span><span class="p">:</span>
                 <span class="k">continue</span>
-            <span class="k">elif</span> <span class="n">idx</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">limits</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">limits</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]:</span>
+            <span class="k">elif</span> <span class="n">idx</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">collection_info</span><span class="o">.</span><span class="n">limits</span><span class="o">.</span><span class="n">end</span><span class="p">():</span>
                 <span class="k">break</span>
 
             <span class="c1"># Process the entry as a derived class needs</span>
@@ -151,7 +150,7 @@
 <div class="viewcode-block" id="Collector.get_entry_values"><a class="viewcode-back" href="../../../modules.html#slrg_data_collection.collection.common.Collector.get_entry_values">[docs]</a>    <span class="k">def</span> <span class="nf">get_entry_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Gets a files associated info from an entry to add to database.&quot;&quot;&quot;</span>
         <span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">collection_info</span><span class="o">.</span><span class="n">db_fields</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">collection_info</span><span class="o">.</span><span class="n">records</span><span class="o">.</span><span class="n">fields</span><span class="p">:</span>
             <span class="n">value</span> <span class="o">=</span> <span class="n">entry</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="k">if</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">entry</span> <span class="k">else</span> <span class="kc">None</span>
             <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transform_entry_value</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">field</span><span class="p">))</span>
 
@@ -168,7 +167,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Elapsed time: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">find_time</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">times</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">])))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Start=</span><span class="si">{}</span><span class="s1">, Count=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">limits</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">limits</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">collection_info</span><span class="o">.</span><span class="n">limits</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">collection_info</span><span class="o">.</span><span class="n">limits</span><span class="o">.</span><span class="n">count</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Total Entries Processed: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">totals</span><span class="p">[</span><span class="s1">&#39;entry&#39;</span><span class="p">]))</span></div></div>
 
@@ -271,6 +270,43 @@
         <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">critical</span><span class="p">:</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="CollectionInfo"><a class="viewcode-back" href="../../../modules.html#slrg_data_collection.collection.common.CollectionInfo">[docs]</a><span class="k">class</span> <span class="nc">CollectionInfo</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">records</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">validation</span><span class="p">,</span> <span class="n">limits</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">records</span> <span class="o">=</span> <span class="n">records</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="n">table</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validation</span> <span class="o">=</span> <span class="n">validation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">limits</span> <span class="o">=</span> <span class="n">limits</span></div>
+
+
+<div class="viewcode-block" id="RecordsData"><a class="viewcode-back" href="../../../modules.html#slrg_data_collection.collection.common.RecordsData">[docs]</a><span class="k">class</span> <span class="nc">RecordsData</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">fields</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fields</span> <span class="o">=</span> <span class="n">fields</span></div>
+
+
+<div class="viewcode-block" id="TableData"><a class="viewcode-back" href="../../../modules.html#slrg_data_collection.collection.common.TableData">[docs]</a><span class="k">class</span> <span class="nc">TableData</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">columns</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">columns</span></div>
+
+
+<div class="viewcode-block" id="ValidationData"><a class="viewcode-back" href="../../../modules.html#slrg_data_collection.collection.common.ValidationData">[docs]</a><span class="k">class</span> <span class="nc">ValidationData</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extensions</span><span class="p">,</span> <span class="n">exclude_files</span><span class="p">,</span> <span class="n">exclude_dirs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extensions</span> <span class="o">=</span> <span class="n">extensions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exclude_files</span> <span class="o">=</span> <span class="n">exclude_files</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exclude_dirs</span> <span class="o">=</span> <span class="n">exclude_dirs</span></div>
+
+
+<div class="viewcode-block" id="LimitData"><a class="viewcode-back" href="../../../modules.html#slrg_data_collection.collection.common.LimitData">[docs]</a><span class="k">class</span> <span class="nc">LimitData</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">count</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="n">start</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="n">count</span>
+
+<div class="viewcode-block" id="LimitData.end"><a class="viewcode-back" href="../../../modules.html#slrg_data_collection.collection.common.LimitData.end">[docs]</a>    <span class="k">def</span> <span class="nf">end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span></div></div>
+
 
 <span class="c1"># Functions ############################################################</span>
 
