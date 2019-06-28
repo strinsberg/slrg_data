@@ -122,17 +122,17 @@ def main(argv):
     # Create objects for collection
     script_name = 'git_projects'
 
-    database = collection.script.make_database(
-        config.database, login=db_login, passwd=db_passwd)
+    database = collection.script.make_database(config.database, login=db_login,
+                                               passwd=db_passwd)
+    limits = collection.script.make_limits(start, count, config.limits)
+    git_data = collection.script.make_git_data(git_login, git_passwd,
+                                               config.git_acct)
     info = collection.script.make_git_info(lang, file, git_login, git_passwd,
                                            script_name, config.config)
-    limits = collection.script.make_limits(
-        script_name, config.limits, start, count)
     log = collection.common.Log(os.path.join('logs', script_name), script_name)
 
     # Create and run collector
-    collector = collection.github.ProjectsCollector(
-        database, info, limits, log)
+    collector = collection.github.ProjectsCollector(database, info, log)
     collector.main()
 
 

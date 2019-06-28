@@ -34,8 +34,7 @@ class ProjectsCollector(common.Collector):
         self.times['session'] = time.time()
 
     def process(self, project_data):
-        """Processes a github project and adds all valid files to the
-        database."""
+        """Process a github project."""
         print("#", self.idx, "###", end=" ")
 
         self.add_name_and_gender(project_data)
@@ -48,9 +47,11 @@ class ProjectsCollector(common.Collector):
         self.totals['projects'] += 1
         print("Processing Project:", project_data['name'], "###")
 
-        self.process_project(project_data)
+        self.process_valid_project(project_data)
 
-    def process_project(self, project_data):
+    def process_valid_project(self, project_data):
+        """Process a valid project by cloning the repo and adding any
+        valid files to the databse."""
         try:
             repo, repo_path = self.make_repo(project_data)
             files = get_single_author_files(repo, repo_path,
@@ -72,6 +73,7 @@ class ProjectsCollector(common.Collector):
                 pass
 
     def make_repo(self, project_data):
+        """Clone a repository and return a git.Repo object for it."""
         repos_dir = "data/git_projects/temp_repos"
         temp_dir = "temp_{}".format(str(random.randint(0, 2000000)))
         repo_path = os.path.join(repos_dir, temp_dir)
@@ -83,7 +85,7 @@ class ProjectsCollector(common.Collector):
         return repo, repo_path
 
     def add_name_and_gender(self, project_data):
-        """Attempt to add fullname and gender data to a project."""
+        """Add fullname and gender data to project data."""
         project_data['user_fullname'] = None
         project_data['gender'] = None
         project_data['gender_probability'] = None
@@ -102,6 +104,7 @@ class ProjectsCollector(common.Collector):
                           project_data['login'])
 
     def get_fullname_and_gender(self, project_data):
+        """Collect a github users fullname and gender data if available."""
         fullname = get_fullname(
             project_data['login'], self.session, self.times['session'])
 
@@ -115,6 +118,7 @@ class ProjectsCollector(common.Collector):
         return fullname, gender, gender_probability
 
     def add_contributors(self, project_data):
+        """Add a list of contributors to project data."""
         project_data['contributors'] = None
         contrib_url = "{}/stats/contributors".format(project_data['url'])
         contribs = self.session.get(contrib_url).json()
@@ -142,7 +146,7 @@ class ProjectsCollector(common.Collector):
         return True
 
     def process_file(self, path, filename, project_data):
-        """Process a file and add it to the database if valid."""
+        """Process a file and add it to the database if it is valid."""
         self.totals['files'] += 1
         file_data = self.get_file_data(path, filename)
 
@@ -172,7 +176,12 @@ class ProjectsCollector(common.Collector):
         return None
 
     def is_valid_file(self, path, source, line_count):
-        """Does some additional file validation."""
+        """Checks to see if a file is valid.
+
+        A large part of the validation for files in this class is done
+        by github.get_single_author_files. So this is where any final
+        validation can be done before adding source code to the database.
+        """
         if 10 <= line_count <= 1000:
             return True
         return False
@@ -213,23 +222,17 @@ class ProjectsCollector(common.Collector):
 
 
 class GitCollectionInfo(common.CollectionInfo):
+    """Information required for collecting source from github."""
+
     def __init__(self, records, table, validation, limits, git_data):
         super(GitCollectionInfo, self).__init__(
             records, table, validation, limits)
         self.git_data = git_data
 
 
-class CollectionInfo:
-    """Data required for collecting source from github."""
-
-    def __init__(self, records, table, file_data, git_data):
-        self.records = records
-        self.table = table
-        self.file_data = file_data
-        self.git_data = git_data
-
-
 class GithubData:
+    """Data for a github account."""
+
     def __init__(self, login, passwd):
         self.login = login
         self.passwd = passwd
