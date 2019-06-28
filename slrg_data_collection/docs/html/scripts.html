@@ -42,6 +42,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Scripts</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-slrg_data_collection.collect_git_projects">Git Projects Collection</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-slrg_data_collection.data.combine_json">Combine Json</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-slrg_data_collection.select">Select</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">Api Docs</a></li>
@@ -147,30 +148,6 @@ documentation.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="slrg_data_collection.collect_git_projects.make_info">
-<code class="sig-prename descclassname">slrg_data_collection.collect_git_projects.</code><code class="sig-name descname">make_info</code><span class="sig-paren">(</span><em class="sig-param">lang</em>, <em class="sig-param">file</em>, <em class="sig-param">login</em>, <em class="sig-param">passwd</em>, <em class="sig-param">script_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/collect_git_projects.html#make_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.collect_git_projects.make_info" title="Permalink to this definition">¶</a></dt>
-<dd><p>Makes a github.CollectionInfo object for the script to use.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>lang</strong> (<em>str</em>) – The projramming language to collect source in.</p></li>
-<li><p><strong>file</strong> (<em>str</em>) – The file the project data is stored in.</p></li>
-<li><p><strong>login</strong> (<em>str</em>) – A Github username. Can be None.</p></li>
-<li><p><strong>passwd</strong> (<em>str</em>) – The Github password. Can be None.</p></li>
-<li><p><strong>script_name</strong> (<em>str</em>) – The name of the script calling it.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A CollectionInfo object with
-the necessary information for source collection.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="modules.html#slrg_data_collection.collection.github.CollectionInfo" title="slrg_data_collection.collection.github.CollectionInfo">collection.github.CollectionInfo</a></p>
-</dd>
-</dl>
-</dd></dl>
-
 </div>
 </div>
 </div>
@@ -185,13 +162,15 @@ files can be opened by the python json library as a list of dict.</p>
 <h3>Usage<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <p>Run as a command line script in the folder that contains the JSON files
 you want combined.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python3 combine_json.py [-o &lt;output file&gt;] [-f &lt; raw json folder&gt; ]
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python3 combine_json.py [-h] [-o &lt;output file&gt;] [-f &lt; raw json folder&gt; ]
     [-g &lt; group size &gt; ] [&lt;json files&gt;]
 </pre></div>
 </div>
 <div class="section" id="id2">
 <h4>Options<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
 <dl class="simple">
+<dt><strong>-h</strong></dt><dd><p>print help text.</p>
+</dd>
 <dt><strong>-o &lt;output file&gt;</strong></dt><dd><p>The name without an extension to use for the output files.
 If more than one file is created a number will be added to all files
 after the first. eg) file.data, file1.data, file2.data, etc.
@@ -282,6 +261,14 @@ or more lists of JSON records.</p></li>
 
 </div>
 </div>
+</div>
+<div class="section" id="module-slrg_data_collection.select">
+<span id="select"></span><h2>Select<a class="headerlink" href="#module-slrg_data_collection.select" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="slrg_data_collection.select.main">
+<code class="sig-prename descclassname">slrg_data_collection.select.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><em class="sig-param">argv</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/slrg_data_collection/select.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slrg_data_collection.select.main" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 </div>
 

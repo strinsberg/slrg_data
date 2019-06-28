@@ -125,3 +125,15 @@ limits = {
         'count': 100
     }
 }
+
+# To make it possible to pass the whole config file contents around
+# easily if needed
+config = {
+    'database': database,
+    'tables': tables,
+    'fields': fields,
+    'extensions': extensions,
+    'exclude': exclude,
+    'git_acct': git_acct,
+    'limits': limits
+}

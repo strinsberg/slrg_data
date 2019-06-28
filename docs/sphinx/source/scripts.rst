@@ -18,3 +18,11 @@ Combine Json
    :undoc-members:
    :show-inheritance:
 
+
+Select
+------
+
+.. automodule:: slrg_data_collection.select
+   :members:
+   :undoc-members:
+   :show-inheritance:

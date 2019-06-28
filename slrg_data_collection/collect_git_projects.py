@@ -65,18 +65,12 @@ import getopt
 import sys
 import os
 
-# Had to use the relative imports for sphinx to work properly
-# with automodule. It is a little gross, but necessary for now.
-try:
-    from . import collection
-    from . import config
-except (ImportError, AttributeError):
-    import collection
+if __name__ == '__main__':
     import config
-    # Gets an attribute error for collection.script.function()
-    # if I don't include this even though I did not change the
-    # useage to script.function()
-    from collection import script
+    import collection
+else:
+    from . import config
+    from . import collection
 
 
 def main(argv):
@@ -131,9 +125,7 @@ def main(argv):
     database = collection.script.make_database(
         config.database, login=db_login, passwd=db_passwd)
     info = collection.script.make_git_info(lang, file, git_login, git_passwd,
-                                           script_name, config.tables,
-                                           config.git_acct, config.extensions,
-                                           config.exclude)
+                                           script_name, config.config)
     limits = collection.script.make_limits(
         script_name, config.limits, start, count)
     log = collection.common.Log(os.path.join('logs', script_name), script_name)

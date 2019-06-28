@@ -53,8 +53,7 @@ def make_limits(script, limits, start=None, count=None):
 
 
 # Takes way to many params. Split up or fix somehow.
-def make_git_info(lang, file, login, passwd, script_name, tables, git_acct,
-                  extensions, exclude):
+def make_git_info(lang, file, login, passwd, script_name, config):
     """Makes a github.CollectionInfo object for the script to use.
 
     Args:
@@ -78,15 +77,15 @@ def make_git_info(lang, file, login, passwd, script_name, tables, git_acct,
         file_path = os.path.join('data', script_name, file)
 
     git = {}
-    git['login'] = git_acct['login'] if login is None else login
-    git['passwd'] = git_acct['passwd'] if passwd is None else passwd
+    git['login'] = config['git_acct']['login'] if login is None else login
+    git['passwd'] = config['git_acct']['passwd'] if passwd is None else passwd
 
-    table = tables[script_name][lang]
-    columns = tables[script_name]['columns']
-    extensions = extensions[lang]
+    table = config['tables'][script_name][lang]
+    columns = config['tables'][script_name]['columns']
+    extensions = config['extensions'][lang]
 
     return github.CollectionInfo(
-        file_path, columns, table, extensions, exclude, git)
+        file_path, columns, table, extensions, config['exclude'], git)
 
 
 def null_arg_str(arg, prompt):

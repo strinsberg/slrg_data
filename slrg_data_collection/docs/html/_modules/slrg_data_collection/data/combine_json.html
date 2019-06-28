@@ -92,11 +92,14 @@
 
 <span class="sd">::</span>
 
-<span class="sd">    $ python3 combine_json.py [-o &lt;output file&gt;] [-f &lt; raw json folder&gt; ]</span>
+<span class="sd">    $ python3 combine_json.py [-h] [-o &lt;output file&gt;] [-f &lt; raw json folder&gt; ]</span>
 <span class="sd">        [-g &lt; group size &gt; ] [&lt;json files&gt;]</span>
 
 <span class="sd">Options</span>
 <span class="sd">~~~~~~~</span>
+
+<span class="sd">**-h**</span>
+<span class="sd">    print help text.</span>
 
 <span class="sd">**-o &lt;output file&gt;**</span>
 <span class="sd">    The name without an extension to use for the output files.</span>
@@ -241,6 +244,7 @@
             <span class="n">group_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">opt</span> <span class="o">==</span> <span class="s1">&#39;-h&#39;</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">HELP_TEXT</span><span class="p">)</span>
+            <span class="k">return</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">filenames</span><span class="p">:</span>
         <span class="n">filenames</span> <span class="o">=</span> <span class="n">get_all_json_files</span><span class="p">()</span>
@@ -251,11 +255,14 @@
 
 
 <span class="n">HELP_TEXT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">combine_json.py [-o &lt;output file&gt;] [-f &lt; raw json folder&gt; ]</span>
+<span class="s2">combine_json.py [-h] [-o &lt;output file&gt;] [-f &lt; raw json folder&gt; ]</span>
 <span class="s2">        [-g &lt; group size &gt; ] [&lt;json files&gt;]</span>
 
 <span class="s2">Options</span>
 <span class="s2">~~~~~~~</span>
+
+<span class="s2">-h</span>
+<span class="s2">    print help text.</span>
 
 <span class="s2">-o &lt;output file&gt;</span>
 <span class="s2">    The name without an extension to use for the output files.</span>

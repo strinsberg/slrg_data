@@ -1,0 +1,196 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>slrg_data_collection.select &#8212; SLRG Data 1.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">SLRG Data</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../config.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Api Docs</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for slrg_data_collection.select</h1><div class="highlight"><pre>
+<span></span><span class="c1"># script to make an sql query on the database</span>
+
+<span class="kn">import</span> <span class="nn">getopt</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">config</span>
+    <span class="kn">import</span> <span class="nn">collection</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">config</span>
+    <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">collection</span>
+
+
+<span class="k">def</span> <span class="nf">_get_query</span><span class="p">(</span><span class="n">sql_file</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">sql_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">sql</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Sql SELECT statement: &quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">sql_file</span><span class="p">):</span>
+            <span class="n">sql_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;sql&#39;</span><span class="p">,</span> <span class="n">sql_file</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">sql_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">sql</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="n">sql</span> <span class="o">=</span> <span class="n">sql</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">sql</span>
+
+
+<span class="k">def</span> <span class="nf">_get_file_and_format</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">format_</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">file</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Output file: &quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">format_</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">format_</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Output JSON(j) or CSV(c): &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">format_</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;j&#39;</span><span class="p">]:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Invalid format!!&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">file</span><span class="p">,</span> <span class="n">format_</span>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../scripts.html#slrg_data_collection.select.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argv</span><span class="p">):</span>
+    <span class="c1"># Declare some variables</span>
+    <span class="n">output_file</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">sql_file</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">output_format</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">login</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">passwd</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Parse command line options</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">opts</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">getopt</span><span class="o">.</span><span class="n">getopt</span><span class="p">(</span><span class="n">argv</span><span class="p">,</span> <span class="s2">&quot;o:f:u:p:cjh&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">getopt</span><span class="o">.</span><span class="n">GetoptError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">HELP_TEXT</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">opt</span><span class="p">,</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">opts</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">opt</span> <span class="o">==</span> <span class="s1">&#39;-o&#39;</span><span class="p">:</span>
+            <span class="n">output_file</span> <span class="o">=</span> <span class="n">arg</span>
+        <span class="k">elif</span> <span class="n">opt</span> <span class="o">==</span> <span class="s1">&#39;-f&#39;</span><span class="p">:</span>
+            <span class="n">sql_file</span> <span class="o">=</span> <span class="n">arg</span>
+        <span class="k">elif</span> <span class="n">opt</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;-c&#39;</span><span class="p">,</span> <span class="s1">&#39;-j&#39;</span><span class="p">]:</span>
+            <span class="n">output_format</span> <span class="o">=</span> <span class="n">opt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">opt</span> <span class="o">==</span> <span class="s1">&#39;-u&#39;</span><span class="p">:</span>
+            <span class="n">login</span> <span class="o">=</span> <span class="n">arg</span>
+        <span class="k">elif</span> <span class="n">opt</span> <span class="o">==</span> <span class="s1">&#39;-p&#39;</span><span class="p">:</span>
+            <span class="n">passwd</span> <span class="o">=</span> <span class="n">arg</span>
+        <span class="k">elif</span> <span class="n">opt</span> <span class="o">==</span> <span class="s1">&#39;-h&#39;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">HELP_TEXT</span><span class="p">)</span>
+            <span class="k">return</span>
+
+    <span class="c1"># Set some variables</span>
+    <span class="n">output_file</span><span class="p">,</span> <span class="n">output_format</span> <span class="o">=</span> <span class="n">_get_file_and_format</span><span class="p">(</span>
+        <span class="n">output_file</span><span class="p">,</span> <span class="n">output_format</span><span class="p">)</span>
+    <span class="n">sql</span> <span class="o">=</span> <span class="n">_get_query</span><span class="p">(</span><span class="n">sql_file</span><span class="p">)</span>
+    <span class="c1"># Should validate the query does not contain any unwanted statements</span>
+    <span class="c1"># put a script in query to take a list of allowed and list of</span>
+    <span class="c1"># not allowed operations and return true or false to let it through</span>
+
+    <span class="k">if</span> <span class="n">login</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">login</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">database</span><span class="p">[</span><span class="s1">&#39;login&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">passwd</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">passwd</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">database</span><span class="p">[</span><span class="s1">&#39;passwd&#39;</span><span class="p">]</span>
+
+    <span class="c1"># Run the query and print the result</span>
+    <span class="n">database</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">script</span><span class="o">.</span><span class="n">make_database</span><span class="p">(</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">database</span><span class="p">,</span> <span class="n">login</span><span class="o">=</span><span class="n">login</span><span class="p">,</span> <span class="n">passwd</span><span class="o">=</span><span class="n">passwd</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">collection</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">query_db</span><span class="p">(</span><span class="n">database</span><span class="p">,</span> <span class="n">sql</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="n">output_format</span><span class="p">))</span></div>
+
+
+<span class="n">HELP_TEXT</span> <span class="o">=</span> <span class="s2">&quot;Unfinished&quot;</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2019, Steven Deutekom.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
