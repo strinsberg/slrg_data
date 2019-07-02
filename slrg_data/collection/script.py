@@ -14,7 +14,7 @@ def make_database(db_config, host=None, login=None, passwd=None, name=None):
     the user will be prompted to input a value.
 
     Args:
-        db_config (dict): A dictionary with databse information. See
+        db_config (dict): A dictionary with database information. See
             slrg_data_collection.config.py
         host (str): The database hostname.
         login (str): The database username.

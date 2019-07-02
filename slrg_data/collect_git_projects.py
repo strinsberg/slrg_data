@@ -60,20 +60,24 @@ the config file is None the user will be asked to input values.
     about how they might handle your passwords consult their
     documentation.
 """
-import json
-import getopt
-import sys
 import os
+import sys
+import getopt
+import json
+
 
 if __name__ == '__main__':
+    slrg_dir = os.path.join(os.path.expanduser('~'), '.slrg')
+    sys.path.append(slrg_dir)
     import config
     import collection
 else:
-    from . import config  # Change this to use the home directory
+    sys.path.append(os.path.join(os.path.expanduser('~'), '.slrg'))
+    import config
     from . import collection
 
 
-def main(argv):
+def script(argv):
     """Collect source code from GitHub projects.
 
     See module documentation for details.
@@ -119,6 +123,13 @@ def main(argv):
             print(HELP_TEXT)
             return
 
+    main(lang=lang, file=file, start=start, count=count, db_login=db_login,
+         db_passwd=db_passwd, git_login=git_login, git_passwd=git_passwd)
+
+
+def main(lang=None, file=None, start=None, count=None, db_login=None,
+         db_passwd=None, git_login=None, git_passwd=None):
+
     # Create objects for collection
     script_name = 'git_projects'
 
@@ -130,11 +141,12 @@ def main(argv):
                                                config.git_acct)
     info = collection.script.make_git_info(lang, file, git_data, limits,
                                            script_name, config.config)
-    log = collection.common.Log(os.path.join('logs', script_name), script_name)
+    log = collection.common.Log(os.path.join(
+        slrg_dir, 'logs', script_name), script_name)
 
     # Create and run collector
     collector = collection.github.ProjectsCollector(database, info, log)
-    collector.main()
+    return collector.main()
 
 
 HELP_TEXT = """
@@ -182,4 +194,4 @@ the config file is None the user will be asked to input values.
 """
 
 if __name__ == '__main__':
-    main(sys.argv[1:])
+    script(sys.argv[1:])

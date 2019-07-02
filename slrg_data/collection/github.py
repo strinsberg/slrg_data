@@ -216,9 +216,8 @@ class ProjectsCollector(common.Collector):
             added, projects, (added / projects) * 100))
 
         if self.gender_wait:
-            common.write_json_data("{}/{}_{}".format(
-                "data/git_projects/missing/", "missing_gender",
-                str(time.time())), self.gender_wait)
+            common.write_json_data("{}_{}".format("missing_gender",
+                                                  str(time.time())), self.gender_wait)
 
 
 class GitCollectionInfo(common.CollectionInfo):
