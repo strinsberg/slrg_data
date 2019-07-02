@@ -26,6 +26,8 @@ def make_database(db_config, host=None, login=None, passwd=None, name=None):
     """
     host = null_arg_str(host, db_config['host'], "Database host: ")
     name = null_arg_str(name, db_config['name'], "Database name: ")
+    login = null_arg_str(login, db_config['login'])
+    passwd = null_arg_str(passwd, db_config['passwd'])
 
     return common.Database(host, login, name, passwd)
 
@@ -41,7 +43,7 @@ def make_git_data(login, passwd, default):
     login = default['login'] if login is None else login
     passwd = default['passwd'] if passwd is None else passwd
 
-    return common.LimitData(login, passwd)
+    return github.GithubData(login, passwd)
 
 
 def make_git_info(lang, filename, git_data, limits, script_name, config):
@@ -78,21 +80,27 @@ def make_git_info(lang, filename, git_data, limits, script_name, config):
 
 
 def get_file_path(filename, script_name):
+    # This is where the necessary data to get the data file while running
+    # the script anywhere is going to need to be.
     file = null_arg_str(filename, None, "Data file: ")
     if os.path.isfile(file):
         return file
+    # Wrap this in an if clause and return an error message if there
+    # is no file found
     return os.path.join('data', script_name, file)
 
 
-def null_arg_str(arg, default, prompt):
+def null_arg_str(arg, default, prompt=None):
     """If a given arg is None then ask for a value.
 
     Args:
         arg (str): A value or None.
         prompt (str): The prompt to display if input is required.
+            Default is None.
 
     Returns:
-        str: The arg or the collected user input if arg is None.
+        str: The arg, default, or input with prompt. If arg, default,
+            and prompt are None then None.
     """
     if arg is not None:
         return arg
@@ -100,7 +108,7 @@ def null_arg_str(arg, default, prompt):
     if default is not None:
         return default
 
-    return input(prompt)
+    return input(prompt) if prompt is not None else prompt
 
 
 def null_arg_int(arg, default, prompt):

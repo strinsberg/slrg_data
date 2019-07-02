@@ -132,7 +132,7 @@ class ProjectsCollector(common.Collector):
         This means checking for a username and gender, as well as making
         sure that the repository has no more than 1 contributor.
         """
-        if project_data['fullname'] is None or project_data['gender'] is None:
+        if project_data['user_fullname'] is None or project_data['gender'] is None:
             return False
 
         contribs = project_data['contributors']
@@ -192,8 +192,8 @@ class ProjectsCollector(common.Collector):
         values.extend(file_data)
 
         try:
-            self.database.insert(self.collection_info.columns,
-                                 self.collection_info.table, values)
+            self.database.insert(self.collection_info.table.columns,
+                                 self.collection_info.table.name, values)
         except common.DatabaseError as error:
             self.log.error("In add_file_to_db", error)
             return False

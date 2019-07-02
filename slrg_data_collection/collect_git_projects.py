@@ -69,7 +69,7 @@ if __name__ == '__main__':
     import config
     import collection
 else:
-    from . import config
+    from . import config  # Change this to use the home directory
     from . import collection
 
 
@@ -124,7 +124,8 @@ def main(argv):
 
     database = collection.script.make_database(config.database, login=db_login,
                                                passwd=db_passwd)
-    limits = collection.script.make_limits(start, count, config.limits)
+    limits = collection.script.make_limits(
+        start, count, config.limits['git_projects'])
     git_data = collection.script.make_git_data(git_login, git_passwd,
                                                config.git_acct)
     info = collection.script.make_git_info(lang, file, git_data, limits,

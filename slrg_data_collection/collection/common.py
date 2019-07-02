@@ -30,19 +30,16 @@ class Collector:
         """Runs the extraction."""
         try:
             self.set_up()
-            data = get_json_data(self.collection_info.records.file)
+            data = get_json_data(self.collection_info.records.filename)
             self.process_data(data)
 
         except DatabaseError as error:
             self.log.error("Database Error", error)
-        except Exception as error:
-            # Was not getting a stack trace with finally???
-            # Had to add this to see my errors
-            print(error)
 
         finally:
             self.clean_up()
-            return self.idx + 1
+
+        return self.idx + 1
 
     def set_up(self):
         """Things to run before starting collection."""
