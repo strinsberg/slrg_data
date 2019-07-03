@@ -65,16 +65,19 @@ import sys
 import getopt
 import json
 
-
 if __name__ == '__main__':
-    slrg_dir = os.path.join(os.path.expanduser('~'), '.slrg')
-    sys.path.append(slrg_dir)
-    import config
     import collection
 else:
-    sys.path.append(os.path.join(os.path.expanduser('~'), '.slrg'))
-    import config
     from . import collection
+
+SLRG_DIR = os.path.join(os.path.expanduser('~'), '.slrg')
+sys.path.append(SLRG_DIR)
+import config  # nopep8
+
+
+# Entry point for command line script when installed
+def _script():
+    script(sys.argv[1:])
 
 
 def script(argv):
@@ -142,7 +145,7 @@ def main(lang=None, file=None, start=None, count=None, db_login=None,
     info = collection.script.make_git_info(lang, file, git_data, limits,
                                            script_name, config.config)
     log = collection.common.Log(os.path.join(
-        slrg_dir, 'logs', script_name), script_name)
+        SLRG_DIR, 'logs', script_name), script_name)
 
     # Create and run collector
     collector = collection.github.ProjectsCollector(database, info, log)
@@ -194,4 +197,4 @@ the config file is None the user will be asked to input values.
 """
 
 if __name__ == '__main__':
-    script(sys.argv[1:])
+    _script()

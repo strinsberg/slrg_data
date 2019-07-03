@@ -43,11 +43,13 @@ import json
 import csv
 
 if __name__ == '__main__':
-    import config
     import collection
 else:
-    from . import config
     from . import collection
+
+SLRG_DIR = os.path.join(os.path.expanduser('~'), '.slrg')
+sys.path.append(SLRG_DIR)
+import config  # nopep8
 
 
 def _get_query(sql_file=None):
