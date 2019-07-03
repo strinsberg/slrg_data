@@ -49,8 +49,13 @@ else:
     from . import collection
     from .help_text import SELECT as HELP_TEXT
 
-sys.path.append(collection.common.SLRG_DIR)
-import config  # nopep8
+try:
+    sys.path.append(collection.common.SLRG_DIR)
+    import config  # nopep8
+except ModuleNotFoundError:
+    print('Config Error: Could not find config.py.',
+          'Please make sure you have run slrg-install.')
+    sys.exit()
 
 
 def _get_query(sql_file=None):

@@ -72,8 +72,13 @@ else:
     from . import collection
     from .help_text import COLLECT_GIT_PROJECTS as HELP_TEXT
 
-sys.path.append(collection.common.SLRG_DIR)
-import config  # nopep8
+try:
+    sys.path.append(collection.common.SLRG_DIR)
+    import config  # nopep8
+except ModuleNotFoundError:
+    print('Config Error: Could not find config.py.',
+          'Please make sure you have run slrg-install.')
+    sys.exit()
 
 
 # Entry point for command line script when installed

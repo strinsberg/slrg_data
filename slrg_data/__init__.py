@@ -1,4 +1,4 @@
-import collection
-import collect_git_projects
-import select
-import help_text
+from . import collection
+from . import collect_git_projects
+from . import select
+from . import help_text
