@@ -8,8 +8,8 @@ setup(name='slrg_data',
       scripts=['slrg-install'],
       entry_points={
           'console_scripts': [
-              'slrg-git-projects=slrg_data.collect_git_projects:_script',
-              'slrg-select=slrg_data.select:_script',
+              'slrg-git-projects=slrg_data.collect_git_projects:_entry',
+              'slrg-select=slrg_data.select:_entry',
           ]
       },
       zip_safe=False)

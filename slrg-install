@@ -1,7 +1,9 @@
 #! /usr/bin/python3
 
 import os
+import sys
 import shutil
+import getopt
 
 try:
   # Make paths
@@ -12,6 +14,14 @@ try:
   cf_logs = os.path.join(logs, 'codeforces')
   git_commit_logs = os.path.join(logs, 'git_commits')
   git_project_logs = os.path.join(logs, 'git_projects')
+  
+  # Check command line options
+  opts, _ = getopt.getopt(sys.argv[1:], 'r')
+  
+  for opt, _ in opts:
+    if opt == '-r':
+      print("Restoring defaults...")
+      shutil.rmtree(slrg)
 
   # Make directories
   os.mkdir(slrg)
@@ -30,4 +40,4 @@ try:
 except FileExistsError as err:
   print("Install failed!")
   print("The .slrg directory already exists")
-  print("To restore defualts remove it and run slrg-install again")
+  print("To restore defaults run slrg-install -r")

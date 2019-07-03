@@ -127,6 +127,9 @@ limits = {
     }
 }
 
+# Maximum logs to keep per file
+max_logs_to_keep = 20
+
 # To make it possible to pass the whole config file contents around
 # easily if needed
 config = {

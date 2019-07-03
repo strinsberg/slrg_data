@@ -88,6 +88,18 @@ def get_file_path(filename):
     raise ScriptInputError("Input Error: No such file: " + file)
 
 
+def remove_old_logs(log_dir, max_to_keep):
+    contents = os.listdir(log_dir)
+
+    if len(contents) >= max_to_keep:
+        contents = sorted(contents, reverse=True)
+        for i, file in enumerate(contents):
+            if os.path.isfile and i >= max_to_keep:
+                os.remove(os.path.join(log_dir, file))
+    else:
+        print('less than max logs', max_to_keep, len(contents))
+
+
 def null_arg_str(arg, default, prompt=None):
     """If a given arg is None then ask for a value.
 

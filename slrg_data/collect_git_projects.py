@@ -82,11 +82,11 @@ except ModuleNotFoundError:
 
 
 # Entry point for command line script when installed
-def _script():
-    script(sys.argv[1:])
+def _entry():
+    _script(sys.argv[1:])
 
 
-def script(argv):
+def _script(argv):
     """Collect source code from GitHub projects.
 
     See module documentation for details.
@@ -152,8 +152,10 @@ def main(lang=None, file=None, start=None, count=None, db_login=None,
                                                    config.git_acct)
         info = collection.script.make_git_info(lang, file, git_data, limits,
                                                script_name, config.config)
-        log = collection.common.Log(os.path.join(
-            collection.common.SLRG_DIR, 'logs', script_name), script_name)
+
+        log_dir = os.path.join(collection.common.SLRG_DIR, 'logs', script_name)
+        log = collection.common.Log(log_dir, script_name)
+        collection.script.remove_old_logs(log_dir, config.max_logs_to_keep)
 
         # Create and run collector
         collector = collection.github.ProjectsCollector(database, info, log)
@@ -164,4 +166,4 @@ def main(lang=None, file=None, start=None, count=None, db_login=None,
 
 
 if __name__ == '__main__':
-    _script()
+    _entry()

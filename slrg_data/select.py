@@ -113,11 +113,11 @@ def _get_file_and_format(file, format_):
     return file, format_
 
 
-def _script():
-    script(sys.argv[1:])
+def _entry():
+    _script(sys.argv[1:])
 
 
-def script(argv):
+def _script(argv):
     # Declare some variables
     output_file = None
     sql_file = None
@@ -193,4 +193,4 @@ def main(output_file=None, sql_file=None, output_format=None, db_login=None,
 
 
 if __name__ == '__main__':
-    _script()
+    _entry()
