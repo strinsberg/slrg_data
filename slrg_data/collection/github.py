@@ -13,6 +13,7 @@ import hashlib
 import git
 
 from . import common
+from . import script
 
 
 class ProjectsCollector(common.Collector):
@@ -342,7 +343,8 @@ def api_ok(data, session, padding=120, write=print):
         elif data['message'] == 'Server Error':
             time.sleep(10)
         elif data['message'] == 'Bad credentials':
-            sys.exit()
+            raise script.ScriptInputError(
+                "Input Error: Incorrect github username or password")
         elif data['message'] not in ['Not Found', 'Repository access blocked']:
             write("Git api Error: " + str(data))
             raise GitApiError(str(data))

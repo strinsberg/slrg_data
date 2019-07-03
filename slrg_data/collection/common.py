@@ -12,6 +12,9 @@ import logging
 import requests
 import pymysql
 
+# My modules
+from . import script
+
 # Classes ##############################################################
 
 
@@ -113,8 +116,14 @@ class Database:
         if format_ == 'j':
             cursor = pymysql.cursors.DictCursor
 
-        self.database = pymysql.connect(
-            self.host, self.user, passwd, self.name, cursorclass=cursor)
+        try:
+            self.database = pymysql.connect(
+                self.host, self.user, passwd, self.name, cursorclass=cursor)
+        except pymysql.err.OperationalError as err:
+            code, message = err.args
+            if code == 1045:
+                raise script.ScriptInputError(
+                    'Input Error: Bad database username or password')
 
     def insert(self, columns, table, values):
         """Simple insert funtion for adding a list of values to a

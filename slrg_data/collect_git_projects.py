@@ -133,23 +133,27 @@ def script(argv):
 def main(lang=None, file=None, start=None, count=None, db_login=None,
          db_passwd=None, git_login=None, git_passwd=None):
 
-    # Create objects for collection
-    script_name = 'git_projects'
+    try:
+        # Create objects for collection
+        script_name = 'git_projects'
 
-    database = collection.script.make_database(config.database, login=db_login,
-                                               passwd=db_passwd)
-    limits = collection.script.make_limits(
-        start, count, config.limits['git_projects'])
-    git_data = collection.script.make_git_data(git_login, git_passwd,
-                                               config.git_acct)
-    info = collection.script.make_git_info(lang, file, git_data, limits,
-                                           script_name, config.config)
-    log = collection.common.Log(os.path.join(
-        SLRG_DIR, 'logs', script_name), script_name)
+        database = collection.script.make_database(config.database, login=db_login,
+                                                   passwd=db_passwd)
+        limits = collection.script.make_limits(
+            start, count, config.limits['git_projects'])
+        git_data = collection.script.make_git_data(git_login, git_passwd,
+                                                   config.git_acct)
+        info = collection.script.make_git_info(lang, file, git_data, limits,
+                                               script_name, config.config)
+        log = collection.common.Log(os.path.join(
+            SLRG_DIR, 'logs', script_name), script_name)
 
-    # Create and run collector
-    collector = collection.github.ProjectsCollector(database, info, log)
-    return collector.main()
+        # Create and run collector
+        collector = collection.github.ProjectsCollector(database, info, log)
+        return collector.main()
+
+    except collection.script.ScriptInputError as err:
+        print('\n***', err)
 
 
 HELP_TEXT = """

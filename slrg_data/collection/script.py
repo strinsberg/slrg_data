@@ -65,7 +65,7 @@ def make_git_info(lang, filename, git_data, limits, script_name, config):
     if lang is None:
         lang = input('Language: ').lower()
 
-    file_path = get_file_path(filename, script_name)
+    file_path = get_file_path(filename)
     records = common.RecordsData(file_path, config['fields'][script_name])
 
     table = common.TableData(config['tables'][script_name][lang],
@@ -79,15 +79,13 @@ def make_git_info(lang, filename, git_data, limits, script_name, config):
                                     git_data)
 
 
-def get_file_path(filename, script_name):
+def get_file_path(filename):
     # This is where the necessary data to get the data file while running
     # the script anywhere is going to need to be.
     file = null_arg_str(filename, None, "Data file: ")
     if os.path.isfile(file):
         return file
-    # Wrap this in an if clause and return an error message if there
-    # is no file found
-    return os.path.join('data', script_name, file)
+    raise ScriptInputError("Input Error: No such file: " + file)
 
 
 def null_arg_str(arg, default, prompt=None):
@@ -122,3 +120,7 @@ def null_arg_int(arg, default, prompt):
         int: The arg or an int of the collected user input if arg is None.
     """
     return int(null_arg_str(arg, default, prompt))
+
+
+class ScriptInputError(Exception):
+    """Error for when input to a script is no good."""
