@@ -20,7 +20,7 @@ def query_db(database, sql, out_file, format_):
         return "Successfully wrote to " + out_file
 
     except common.DatabaseError as error:
-        return str(error)
+        raise common.DatabaseError(str(error))
 
     finally:
         database.close()

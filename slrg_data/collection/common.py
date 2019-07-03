@@ -37,7 +37,8 @@ class Collector:
             self.process_data(data)
 
         except DatabaseError as error:
-            self.log.error("Database Error", error)
+            self.log.error(error)
+            raise DatabaseError(error)
 
         finally:
             self.clean_up()
@@ -139,7 +140,7 @@ class Database:
         except pymysql.err.MySQLError as error:
             if self.database.open:
                 self.database.rollback()
-            raise DatabaseError(str(error))
+            raise DatabaseError("Database Error: " + str(error))
 
     def select(self, columns, table, where):
         """Simple select function for querying a table in the database."""
@@ -164,7 +165,7 @@ class Database:
                 return cursor.fetchall()
 
         except pymysql.err.MySQLError as error:
-            raise DatabaseError(str(error))
+            raise DatabaseError("Database Error: " + str(error))
 
     def close(self):
         """Close the database connection."""

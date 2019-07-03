@@ -65,15 +65,20 @@ def _get_query(sql_file=None):
     Returns:
         str: A string of the SQL to be queried.
     """
-    if sql_file is None:
-        sql = input("Sql SELECT statement: ")
-    else:
-        if not os.path.isfile(sql_file):
-            sql_file = os.path.join('sql', sql_file)
-        with open(sql_file) as file:
-            sql = file.read()
-            sql = sql.replace('\n', ' ')
-    return sql
+    try:
+        if sql_file is None:
+            sql = input("Sql SELECT statement: ")
+        else:
+            if not os.path.isfile(sql_file):
+                sql_file = os.path.join('sql', sql_file)
+            with open(sql_file) as file:
+                sql = file.read()
+                sql = sql.replace('\n', ' ')
+        return sql
+
+    except FileNotFoundError as err:
+        raise collection.script.ScriptInputError(
+            "Input Error: No Sql file: " + sql_file)
 
 
 def _get_file_and_format(file, format_):
@@ -96,21 +101,18 @@ def _get_file_and_format(file, format_):
         format_ = input("Output JSON(j) or CSV(c): ").lower()
 
     if format_ not in ['c', 'j']:
-        print("Invalid format!!")
-        sys.exit()
+        raise collection.script.ScriptInputError(
+            "Input error: Not a valid format: " + format_)
 
     return file, format_
 
 
-def main(argv):
-    """Main for script to SELECT records from a database.
+def _script():
+    script(sys.argv[1:])
 
-    See module documentation for more details.
 
-    Args:
-        argv (list of str): List of command line arguments and options.
-    """
-    # Declare some variables
+def script(argv):
+        # Declare some variables
     output_file = None
     sql_file = None
     output_format = None
@@ -140,23 +142,48 @@ def main(argv):
             print(HELP_TEXT)
             return
 
-    # Set some variables
-    output_file, output_format = _get_file_and_format(output_file,
-                                                      output_format)
-    sql = _get_query(sql_file)
-    # Should validate the query does not contain any unwanted statements
-    # put a script in query to take a list of allowed and list of
-    # not allowed operations and return true or false to let it through
+    main(output_file=output_file, sql_file=sql_file,
+         output_format=output_format, db_login=login, db_passwd=passwd)
 
-    if login is None:
-        login = config.database['login']
-    if passwd is None:
-        passwd = config.database['passwd']
 
-    # Run the query and print the result
-    database = collection.script.make_database(config.database,
-                                               login=login, passwd=passwd)
-    print(collection.query.query_db(database, sql, output_file, output_format))
+def main(output_file=None, sql_file=None, output_format=None, db_login=None,
+         db_passwd=None):
+    """Main for script to SELECT records from a database.
+
+    See module documentation for more details.
+
+    Args:
+        argv (list of str): List of command line arguments and options.
+    """
+    try:
+        # Set some variables
+        output_file, output_format = _get_file_and_format(output_file,
+                                                          output_format)
+        sql = _get_query(sql_file)
+        # Should validate the query does not contain any unwanted statements
+        # put a script in query to take a list of allowed and list of
+        # not allowed operations and return true or false to let it through
+
+        if db_login is None:
+            db_login = config.database['login']
+        if db_passwd is None:
+            db_passwd = config.database['passwd']
+
+        # Run the query and print it's message
+        database = collection.script.make_database(config.database,
+                                                   login=db_login,
+                                                   passwd=db_passwd)
+        print(collection.query.query_db(
+            database, sql, output_file, output_format))
+
+    except collection.script.ScriptInputError as err:
+        print("\n***", err)
+
+    except FileNotFoundError as err:
+        print('\n*** Input Error: Bad file path', output_file)
+
+    except collection.common.DatabaseError as err:
+        print("\n***", err)
 
 
 HELP_TEXT = """
@@ -193,4 +220,4 @@ Options
 """
 
 if __name__ == '__main__':
-    main(sys.argv[1:])
+    _script()
