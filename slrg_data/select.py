@@ -44,8 +44,10 @@ import csv
 
 if __name__ == '__main__':
     import collection
+    from help_text import SELECT as HELP_TEXT
 else:
     from . import collection
+    from .help_text import SELECT as HELP_TEXT
 
 sys.path.append(collection.common.SLRG_DIR)
 import config  # nopep8
@@ -184,39 +186,6 @@ def main(output_file=None, sql_file=None, output_format=None, db_login=None,
     except collection.common.DatabaseError as err:
         print("\n***", err)
 
-
-HELP_TEXT = """
-$ python3 select.py [-h] [-o <output file>] [-i <input sql file>]
-    [-u <database username>] [-p <database password>]
-
-Options
-~~~~~~~
-
--h
-    Print help text.
-
--j | -c
-    Output in JSON or CSV format.
-    * If both are given the first will be used.
-
--o <output file>
-    The file to write the results to.
-    * Must be relative to the slrg_data_collection directory.
-
--i <input sql file>
-    A file with the SQL SELECT query. 
-    * Must be relative to the slrg_data_collection directory.
-
--u <database username>
-    The database username.
-    * Defaults to value in config file. If config value is None
-      it will be asked for.
-
--p <database password>
-    The database password.
-    * Defaults to value in config file. If config value is None
-      it will be asked for.
-"""
 
 if __name__ == '__main__':
     _script()
