@@ -47,8 +47,7 @@ if __name__ == '__main__':
 else:
     from . import collection
 
-SLRG_DIR = os.path.join(os.path.expanduser('~'), '.slrg')
-sys.path.append(SLRG_DIR)
+sys.path.append(collection.common.SLRG_DIR)
 import config  # nopep8
 
 
@@ -76,7 +75,7 @@ def _get_query(sql_file=None):
                 sql = sql.replace('\n', ' ')
         return sql
 
-    except FileNotFoundError as err:
+    except FileNotFoundError:
         raise collection.script.ScriptInputError(
             "Input Error: No Sql file: " + sql_file)
 
@@ -112,7 +111,7 @@ def _script():
 
 
 def script(argv):
-        # Declare some variables
+    # Declare some variables
     output_file = None
     sql_file = None
     output_format = None

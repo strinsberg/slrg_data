@@ -7,6 +7,7 @@ import sys
 import getpass
 import json
 import logging
+import os
 
 # 3rd party modules
 import requests
@@ -14,6 +15,10 @@ import pymysql
 
 # My modules
 from . import script
+
+# Constants ############################################################
+
+SLRG_DIR = os.path.join(os.path.expanduser('~'), '.slrg')
 
 # Classes ##############################################################
 
@@ -121,7 +126,7 @@ class Database:
             self.database = pymysql.connect(
                 self.host, self.user, passwd, self.name, cursorclass=cursor)
         except pymysql.err.OperationalError as err:
-            code, message = err.args
+            code, _ = err.args
             if code == 1045:
                 raise script.ScriptInputError(
                     'Input Error: Bad database username or password')

@@ -75,7 +75,7 @@ class ProjectsCollector(common.Collector):
 
     def make_repo(self, project_data):
         """Clone a repository and return a git.Repo object for it."""
-        repos_dir = "data/git_projects/temp_repos"
+        repos_dir = os.path.join(common.SLRG_DIR, 'temp_repos')
         temp_dir = "temp_{}".format(str(random.randint(0, 2000000)))
         repo_path = os.path.join(repos_dir, temp_dir)
 

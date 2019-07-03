@@ -70,8 +70,7 @@ if __name__ == '__main__':
 else:
     from . import collection
 
-SLRG_DIR = os.path.join(os.path.expanduser('~'), '.slrg')
-sys.path.append(SLRG_DIR)
+sys.path.append(collection.common.SLRG_DIR)
 import config  # nopep8
 
 
@@ -137,7 +136,8 @@ def main(lang=None, file=None, start=None, count=None, db_login=None,
         # Create objects for collection
         script_name = 'git_projects'
 
-        database = collection.script.make_database(config.database, login=db_login,
+        database = collection.script.make_database(config.database,
+                                                   login=db_login,
                                                    passwd=db_passwd)
         limits = collection.script.make_limits(
             start, count, config.limits['git_projects'])
@@ -146,7 +146,7 @@ def main(lang=None, file=None, start=None, count=None, db_login=None,
         info = collection.script.make_git_info(lang, file, git_data, limits,
                                                script_name, config.config)
         log = collection.common.Log(os.path.join(
-            SLRG_DIR, 'logs', script_name), script_name)
+            collection.common.SLRG_DIR, 'logs', script_name), script_name)
 
         # Create and run collector
         collector = collection.github.ProjectsCollector(database, info, log)
