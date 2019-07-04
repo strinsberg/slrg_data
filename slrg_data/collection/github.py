@@ -53,6 +53,7 @@ class ProjectsCollector(common.Collector):
     def process_valid_project(self, project_data):
         """Process a valid project by cloning the repo and adding any
         valid files to the databse."""
+        repo_path = None
         try:
             repo, repo_path = self.make_repo(project_data)
             files = get_single_author_files(repo, repo_path,
@@ -70,7 +71,7 @@ class ProjectsCollector(common.Collector):
         finally:
             try:
                 shutil.rmtree(repo_path)
-            except FileNotFoundError:
+            except (FileNotFoundError, TypeError):
                 pass
 
     def make_repo(self, project_data):
