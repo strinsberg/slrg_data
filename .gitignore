@@ -110,3 +110,5 @@ venv.bak/
 *.csv
 *json
 temp*
+docs/sphinx/build
+docs/html
