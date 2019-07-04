@@ -1,0 +1,131 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Pre-processing GitHub Metadata &#8212; SLRG Data 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">SLRG Data</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="config.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Modules</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="pre-processing-github-metadata">
+<span id="git-pre"></span><h1>Pre-processing GitHub Metadata<a class="headerlink" href="#pre-processing-github-metadata" title="Permalink to this headline">¶</a></h1>
+<p>Here we can include any instructions that we might want for pre-processing the github data before collecting source code from it.</p>
+<p>Currently all I have is information on adding name and gender. Which it may actually turn out is best left for when the script runs in some cases. I still have to decide on how to set that up. But in the future we could maybe have a way to filter the records by country or other attributes. If they had been given gender we could even filter by gender or gender probability (one reason to add it all first)</p>
+<div class="section" id="adding-name-and-gender">
+<h2>Adding Name and Gender<a class="headerlink" href="#adding-name-and-gender" title="Permalink to this headline">¶</a></h2>
+<p>You can add name and gender to the github metadata before running the scripts on it. This can be done with the add_git_gender script.</p>
+<p><strong>Example:</strong></p>
+<blockquote>
+<div><p>For git_projects data first navigate to ‘your_project/data/git_projects’ and open an interpreter.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">slrg_data</span> <span class="k">import</span> <span class="n">add_git_gender</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;filename.data&quot;</span>  <span class="c1"># The file to process</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">add_gender_git</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Or from the command line:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ add_git_gender
+</pre></div>
+</div>
+</div></blockquote>
+<p>The script will output 2 files. One ‘filename_good.data’ will contain all the records that were able to have name and gender added. The other ‘filename_missing.data’ will have all the records for which names were found, but the gender api had reached it’s rate limit for the day and the genders database did not have information for the name. (links to information on these)</p>
+<p>This script will take a lot of time to run, as it can only process 5k users per hour, due to the github api limits (link to api info). It will print out some information on it’s progress and create the output files.</p>
+<div class="section" id="notes">
+<h3>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>This does not have to be done before running the scripts. The git_projects script is slow enough that it rarely uses up the github api limit even if it is collecting name and gender info at the same time. So in some cases it may reduce waiting time if name and gender are collected while running this script.</p></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2019, Steven Deutekom.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/git_pre.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

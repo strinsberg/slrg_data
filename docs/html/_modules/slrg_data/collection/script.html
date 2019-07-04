@@ -1,0 +1,257 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>slrg_data.collection.script &#8212; SLRG Data 1.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">SLRG Data</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../config.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Modules</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for slrg_data.collection.script</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Helper functions for running scripts.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">common</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">github</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">codeforces</span>
+
+
+<div class="viewcode-block" id="make_database"><a class="viewcode-back" href="../../../modules.html#slrg_data.collection.script.make_database">[docs]</a><span class="k">def</span> <span class="nf">make_database</span><span class="p">(</span><span class="n">db_config</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">login</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">passwd</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Creates a common.Database object with given information.</span>
+
+<span class="sd">    All arguments (except db_config) default to None. If they are None</span>
+<span class="sd">    then db_config will be checked for a value. If that is None then</span>
+<span class="sd">    the user will be prompted to input a value.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        db_config (dict): A dictionary with database information. See</span>
+<span class="sd">            slrg_data_collection.config.py</span>
+<span class="sd">        host (str): The database hostname.</span>
+<span class="sd">        login (str): The database username.</span>
+<span class="sd">        passwd (str): The database password.</span>
+<span class="sd">        name (str): The database name.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        common.Database: A Database object with the given information.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">host</span> <span class="o">=</span> <span class="n">null_arg_str</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">db_config</span><span class="p">[</span><span class="s1">&#39;host&#39;</span><span class="p">],</span> <span class="s2">&quot;Database host: &quot;</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">null_arg_str</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">db_config</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="s2">&quot;Database name: &quot;</span><span class="p">)</span>
+    <span class="n">login</span> <span class="o">=</span> <span class="n">null_arg_str</span><span class="p">(</span><span class="n">login</span><span class="p">,</span> <span class="n">db_config</span><span class="p">[</span><span class="s1">&#39;login&#39;</span><span class="p">])</span>
+    <span class="n">passwd</span> <span class="o">=</span> <span class="n">null_arg_str</span><span class="p">(</span><span class="n">passwd</span><span class="p">,</span> <span class="n">db_config</span><span class="p">[</span><span class="s1">&#39;passwd&#39;</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">Database</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">login</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">passwd</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="make_limits"><a class="viewcode-back" href="../../../modules.html#slrg_data.collection.script.make_limits">[docs]</a><span class="k">def</span> <span class="nf">make_limits</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">default</span><span class="p">):</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">null_arg_int</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">default</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">],</span> <span class="s2">&quot;Starting index: &quot;</span><span class="p">)</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="n">null_arg_int</span><span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="n">default</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">],</span> <span class="s2">&quot;Entries to process: &quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">LimitData</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="make_cf_limits"><a class="viewcode-back" href="../../../modules.html#slrg_data.collection.script.make_cf_limits">[docs]</a><span class="k">def</span> <span class="nf">make_cf_limits</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">default</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">codeforces</span><span class="o">.</span><span class="n">CfLimitData</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="make_git_data"><a class="viewcode-back" href="../../../modules.html#slrg_data.collection.script.make_git_data">[docs]</a><span class="k">def</span> <span class="nf">make_git_data</span><span class="p">(</span><span class="n">login</span><span class="p">,</span> <span class="n">passwd</span><span class="p">,</span> <span class="n">default</span><span class="p">):</span>
+    <span class="n">login</span> <span class="o">=</span> <span class="n">default</span><span class="p">[</span><span class="s1">&#39;login&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">login</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">login</span>
+    <span class="n">passwd</span> <span class="o">=</span> <span class="n">default</span><span class="p">[</span><span class="s1">&#39;passwd&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">passwd</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">passwd</span>
+
+    <span class="k">return</span> <span class="n">github</span><span class="o">.</span><span class="n">GithubData</span><span class="p">(</span><span class="n">login</span><span class="p">,</span> <span class="n">passwd</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="make_git_info"><a class="viewcode-back" href="../../../modules.html#slrg_data.collection.script.make_git_info">[docs]</a><span class="k">def</span> <span class="nf">make_git_info</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">git_data</span><span class="p">,</span> <span class="n">limits</span><span class="p">,</span> <span class="n">script_name</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Makes a github.CollectionInfo object for the script to use.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        lang (str): The programming language to collect source in.</span>
+<span class="sd">        filename (str): The file the project data is stored in.</span>
+<span class="sd">        git_data (github.GitData): Github account data.</span>
+<span class="sd">        limits (common.LimitData): Limits for the collection.</span>
+<span class="sd">        script_name (str): The name of the script calling it.</span>
+<span class="sd">        config (dict): The contents of the config file in a dict. See</span>
+<span class="sd">            :ref:`Configuration &lt;config_lab&gt;` for more details.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        collection.github.CollectionInfo: A CollectionInfo object with</span>
+<span class="sd">        the necessary information for source collection.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">lang</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">lang</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s1">&#39;Language: &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="n">file_path</span> <span class="o">=</span> <span class="n">get_file_path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="n">records</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">RecordsData</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;fields&#39;</span><span class="p">][</span><span class="n">script_name</span><span class="p">])</span>
+
+    <span class="n">table</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">TableData</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;tables&#39;</span><span class="p">][</span><span class="n">script_name</span><span class="p">][</span><span class="n">lang</span><span class="p">],</span>
+                             <span class="n">config</span><span class="p">[</span><span class="s1">&#39;tables&#39;</span><span class="p">][</span><span class="n">script_name</span><span class="p">][</span><span class="s1">&#39;columns&#39;</span><span class="p">])</span>
+
+    <span class="n">validation</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">ValidationData</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;extensions&#39;</span><span class="p">][</span><span class="n">lang</span><span class="p">],</span>
+                                       <span class="n">config</span><span class="p">[</span><span class="s1">&#39;exclude&#39;</span><span class="p">][</span><span class="s1">&#39;files&#39;</span><span class="p">],</span>
+                                       <span class="n">config</span><span class="p">[</span><span class="s1">&#39;exclude&#39;</span><span class="p">][</span><span class="s1">&#39;dirs&#39;</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">github</span><span class="o">.</span><span class="n">GitCollectionInfo</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">validation</span><span class="p">,</span> <span class="n">limits</span><span class="p">,</span>
+                                    <span class="n">git_data</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="make_cf_info"><a class="viewcode-back" href="../../../modules.html#slrg_data.collection.script.make_cf_info">[docs]</a><span class="k">def</span> <span class="nf">make_cf_info</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">limits</span><span class="p">,</span> <span class="n">script_name</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">lang</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">lang</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s1">&#39;Language: &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="n">file_path</span> <span class="o">=</span> <span class="n">get_file_path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="n">records</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">RecordsData</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;fields&#39;</span><span class="p">][</span><span class="n">script_name</span><span class="p">])</span>
+
+    <span class="n">table</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">TableData</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;tables&#39;</span><span class="p">][</span><span class="n">script_name</span><span class="p">][</span><span class="n">lang</span><span class="p">],</span>
+                             <span class="n">config</span><span class="p">[</span><span class="s1">&#39;tables&#39;</span><span class="p">][</span><span class="n">script_name</span><span class="p">][</span><span class="s1">&#39;columns&#39;</span><span class="p">])</span>
+
+    <span class="n">validation</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">LanguageData</span><span class="p">(</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">langauges</span><span class="p">[</span><span class="s1">&#39;collect&#39;</span><span class="p">],</span> <span class="n">config</span><span class="o">.</span><span class="n">languages</span><span class="p">[</span><span class="s1">&#39;exclude&#39;</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">CollectionInfo</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">validation</span><span class="p">,</span> <span class="n">limits</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_file_path"><a class="viewcode-back" href="../../../modules.html#slrg_data.collection.script.get_file_path">[docs]</a><span class="k">def</span> <span class="nf">get_file_path</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="c1"># This is where the necessary data to get the data file while running</span>
+    <span class="c1"># the script anywhere is going to need to be.</span>
+    <span class="n">file</span> <span class="o">=</span> <span class="n">null_arg_str</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;Data file: &quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">file</span>
+    <span class="k">raise</span> <span class="n">ScriptInputError</span><span class="p">(</span><span class="s2">&quot;Input Error: No such file: &quot;</span> <span class="o">+</span> <span class="n">file</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="remove_old_logs"><a class="viewcode-back" href="../../../modules.html#slrg_data.collection.script.remove_old_logs">[docs]</a><span class="k">def</span> <span class="nf">remove_old_logs</span><span class="p">(</span><span class="n">log_dir</span><span class="p">,</span> <span class="n">max_to_keep</span><span class="p">):</span>
+    <span class="n">contents</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">log_dir</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">max_to_keep</span><span class="p">:</span>
+        <span class="n">contents</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">contents</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">contents</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="n">max_to_keep</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">log_dir</span><span class="p">,</span> <span class="n">file</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="null_arg_str"><a class="viewcode-back" href="../../../modules.html#slrg_data.collection.script.null_arg_str">[docs]</a><span class="k">def</span> <span class="nf">null_arg_str</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">default</span><span class="p">,</span> <span class="n">prompt</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;If a given arg is None then ask for a value.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        arg (str): A value or None.</span>
+<span class="sd">        prompt (str): The prompt to display if input is required.</span>
+<span class="sd">            Default is None.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: The arg, default, or input with prompt. If arg, default,</span>
+<span class="sd">            and prompt are None then None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">arg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">arg</span>
+
+    <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">default</span>
+
+    <span class="k">return</span> <span class="nb">input</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span> <span class="k">if</span> <span class="n">prompt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">prompt</span></div>
+
+
+<div class="viewcode-block" id="null_arg_int"><a class="viewcode-back" href="../../../modules.html#slrg_data.collection.script.null_arg_int">[docs]</a><span class="k">def</span> <span class="nf">null_arg_int</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">default</span><span class="p">,</span> <span class="n">prompt</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;If a given arg is None then ask for a value.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        arg (str): A value or None.</span>
+<span class="sd">        prompt (str): The prompt to display if input is required.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        int: The arg or an int of the collected user input if arg is None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">null_arg_str</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">default</span><span class="p">,</span> <span class="n">prompt</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="ScriptInputError"><a class="viewcode-back" href="../../../modules.html#slrg_data.collection.script.ScriptInputError">[docs]</a><span class="k">class</span> <span class="nc">ScriptInputError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Error for when input to a script is no good.&quot;&quot;&quot;</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2019, Steven Deutekom.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
