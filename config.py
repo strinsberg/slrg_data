@@ -84,7 +84,8 @@ exclude = {
     'files': [
         '__init__.py',
         'setup.py',
-        'version.py'
+        'version.py',
+        'test.py
     ],
     'dirs': [
         'lib',

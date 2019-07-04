@@ -94,7 +94,7 @@ class ProjectsCollector(common.Collector):
         fullname, gender, gender_probability = self.get_fullname_and_gender(
             project_data)
 
-        if gender not in ['nil', None]:
+        if fullname not in [None, ''] and gender not in ['nil', None]:
             project_data['user_fullname'] = fullname
             project_data['gender'] = gender
             project_data['gender_probability'] = gender_probability
@@ -115,6 +115,8 @@ class ProjectsCollector(common.Collector):
                 name, self.database, 'genders')
         else:
             self.log.info("No User Name: " + project_data['login'])
+            gender = None
+            gender_probability = None
 
         return fullname, gender, gender_probability
 
