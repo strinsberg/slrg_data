@@ -75,3 +75,8 @@ Options
     * Defaults to value in config file. If config value is None
       it will be asked for.
 """
+
+
+COLLECT_CODEFORCES = """
+Some help text
+"""

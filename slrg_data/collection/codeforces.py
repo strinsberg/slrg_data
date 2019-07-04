@@ -168,12 +168,12 @@ class CfSubmissionsCollector(common.Collector):
         """Check to see if a submission's programming language is valid."""
         language = sub_data["programmingLanguage"]
         new_lang = None
-        for lang in self.collection_info.languages.collect:
+        for lang in self.collection_info.validation.collect:
             if language.find(lang) > -1:
                 new_lang = lang
 
         if new_lang is not None:
-            for lang in self.collection_info.languages.exclude:
+            for lang in self.collection_info.validation.exclude:
                 if language.find(lang) > -1:
                     self.log.info("Matched bad language: " + language)
                     return False
@@ -215,6 +215,10 @@ class CfSubmissionsCollector(common.Collector):
         ]
 
     def tranform_entry_value(self, value, entry_field):
+        """if a value needs to be transformed it is done in here.
+
+        For example timestamps are transformed into readable strings.
+        """
         v = value
         if v is not None and entry_field == "registrationTimeSeconds":
             v = common.get_time_string(v)
@@ -279,34 +283,9 @@ class CfSeleniumCollector(CfSubmissionsCollector):
     def get_source(self, sub_data):
         """Gets a submissions source using selenium."""
         try:
-            elem = self.driver.find_element_by_link_text(str(sub_data['id']))
-            self.driver.execute_script("arguments[0].scrollIntoView();", elem)
-            elem.send_keys(Keys.RETURN)
-
-            time.sleep(3)
-
-            soup = BeautifulSoup(self.driver.page_source, 'html.parser')
-            tag = 'source prettyprint lang-' + self.get_lang(sub_data)
-            src_html = soup.find('pre', {'class': tag})
-
-            if src_html:
-                source = src_html.text
-                try:
-                    close = self.driver.find_element_by_class_name('close')
-                    self.driver.execute_script(
-                        "arguments[0].scrollIntoView();", close)
-                    close.send_keys(Keys.RETURN)
-                    time.sleep(2)
-                except ElementNotInteractableException as error:
-                    print(error)
-                    while True:
-                        try:
-                            self.driver.refresh()
-                            break
-                        except selenium.common.exceptions.TimeoutException:
-                            print("Timeout: Trying to refresh again")
-            else:
-                source = CfSubmissionsCollector.get_source(self, sub_data)
+            self.open_popup(str(sub_data['id']))
+            source = self.get_source_text(sub_data)
+            self.close_popup()
 
             if source is None:
                 time.sleep(30)
@@ -316,6 +295,39 @@ class CfSeleniumCollector(CfSubmissionsCollector):
             print("Sub not clickable")
 
         return None
+
+    def get_source_text(self, sub_data):
+        time.sleep(3)
+        soup = BeautifulSoup(self.driver.page_source, 'html.parser')
+        tag = 'source prettyprint lang-' + self.get_lang(sub_data)
+        src_html = soup.find('pre', {'class': tag})
+
+        if src_html:
+            source = src_html.text
+        else:
+            source = super(CfSeleniumCollector, self).get_source(sub_data)
+        return source
+
+    def open_popup(self, sub_id):
+        elem = self.driver.find_element_by_link_text(sub_id)
+        self.driver.execute_script("arguments[0].scrollIntoView();", elem)
+        elem.send_keys(Keys.RETURN)
+
+    def close_popup(self):
+        try:
+            close = self.driver.find_element_by_class_name('close')
+            self.driver.execute_script(
+                "arguments[0].scrollIntoView();", close)
+            close.send_keys(Keys.RETURN)
+            time.sleep(2)
+        except ElementNotInteractableException as error:
+            print(error)
+            while True:
+                try:
+                    self.driver.refresh()
+                    break
+                except selenium.common.exceptions.TimeoutException:
+                    print("Timeout: Trying to refresh again")
 
     def get_lang(self, sub_data):
         """Returns the file extension for the submissions programming
@@ -338,7 +350,17 @@ class CfSeleniumCollector(CfSubmissionsCollector):
 
 
 class CfCollectionInfo(common.CollectionInfo):
-    def __init__(self, records, table, validation, limits, languages):
+    def __init__(self, records, table, limits, languages):
         super(CfCollectionInfo, self).__init__(
-            records, table, validation, limits)
+            records, table, None, limits)
         self.languages = languages
+
+
+class CfLimitData(common.LimitData):
+    def __init__(self, start, count, sub_start, sub_count, max_subs,
+                 max_no_source):
+        super(CfLimitData, self).__init__(start, count)
+        self.sub_start = sub_start
+        self.sub_count = sub_count
+        self.max_subs = max_subs
+        self.max_no_source = max_no_source

@@ -39,6 +39,10 @@ def make_limits(start, count, default):
     return common.LimitData(start, count)
 
 
+def make_cf_limits(start, count, default):
+    return codeforces.CfLimitData(1, 2, 3, 4, 5, 6)
+
+
 def make_git_data(login, passwd, default):
     login = default['login'] if login is None else login
     passwd = default['passwd'] if passwd is None else passwd
@@ -77,6 +81,22 @@ def make_git_info(lang, filename, git_data, limits, script_name, config):
 
     return github.GitCollectionInfo(records, table, validation, limits,
                                     git_data)
+
+
+def make_cf_info(lang, filename, limits, script_name, config):
+    if lang is None:
+        lang = input('Language: ').lower()
+
+    file_path = get_file_path(filename)
+    records = common.RecordsData(file_path, config['fields'][script_name])
+
+    table = common.TableData(config['tables'][script_name][lang],
+                             config['tables'][script_name]['columns'])
+
+    validation = common.LanguageData(
+        config.langauges['collect'], config.languages['exclude'])
+
+    return common.CollectionInfo(records, table, validation, limits)
 
 
 def get_file_path(filename):

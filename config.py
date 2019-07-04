@@ -92,7 +92,7 @@ exclude = {
         '__init__.py',
         'setup.py',
         'version.py',
-        'test.py
+        'test.py'
     ],
     'dirs': [
         'lib',
@@ -109,6 +109,15 @@ exclude = {
         'samples',
         '.git'
     ]
+}
+
+# Languages to collect and exclude with codeforces collection
+# The exclusion is because the languages are matched with string.find so
+# In some cases (like with Java and Javascript) it is
+# possible to match more than one language.
+codeforces_languages = {
+    'collect': ['C++', 'Python', 'Java'],
+    'exclude': ['Javascript']
 }
 
 # The github account to use when needed
