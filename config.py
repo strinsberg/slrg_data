@@ -49,7 +49,14 @@ tables = {
         'columns': []
     },
     'codeforces': {
-        'columns': []
+        'columns': [
+            "submission_id", "source_code", "programming_language",
+            "problem_name", "difficulty", "participant_type", "time", "year",
+            "month", "day", "handle", "first_name", "last_name", "gender",
+            "gender_probability", "country", "city", "organization",
+            "contribution", "user_rank", "rating", "max_rank", "max_rating",
+            "registered"
+        ]
     }
 }
 
@@ -124,7 +131,11 @@ limits = {
     },
     'codeforces': {
         'start': 0,
-        'count': 100
+        'count': 100,
+        'sub_start': 0,
+        'sub_count': 50,
+        'max_subs': 50,
+        'max_no_source': 50,
     }
 }
 

@@ -241,6 +241,12 @@ class LimitData:
         return self.start + self.count
 
 
+class LanguageData:
+    def __init__(self, collect, exclude):
+        self.collect = collect
+        self.exclude = exclude
+
+
 # Functions ############################################################
 
 
@@ -277,7 +283,7 @@ def get_json_data(path):
 
 def write_json_data(path, data):
     """Writes JSON data to a file."""
-    with open(path) as file:
+    with open(path, 'w') as file:
         json.dump(data, file)
 
 
