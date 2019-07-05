@@ -304,7 +304,7 @@ class SingleAuthorFilter:
                     count[commit.author.name] += 1
                 else:
                     count[commit.author.name] = 1
-        except git.exc.GitError:  # pylint: disable=no-member
+        except (git.exc.GitError, KeyError):  # pylint: disable=no-member
             pass
         return count
 

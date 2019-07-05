@@ -42,7 +42,7 @@ class Collector:
             self.process_data(data)
 
         except DatabaseError as error:
-            self.log.error(error)
+            self.log.error("Databse error caught in main", error)
             raise DatabaseError(error)
 
         finally:
