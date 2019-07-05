@@ -58,8 +58,8 @@ class CfSubmissionsCollector(common.Collector):
         """Get data on the first sub_count submissions for a codeforces user."""
         options = {
             "handle": handle,
-            "from": self.collection_info.limits['sub_start'],
-            "count": self.collection_info.limits['sub_count']
+            "from": self.collection_info.limits.sub_start,
+            "count": self.collection_info.limits.sub_count
         }
         req = requests.get("http://codeforces.com/api/user.status",
                            params=options)
@@ -90,22 +90,20 @@ class CfSubmissionsCollector(common.Collector):
 
     def check_limits(self):
         """Checks to see if limits for max submissions have been reached."""
-        if self.totals['user_subs'] >= self.collection_info.limits['max_subs']:
+        if self.totals['user_subs'] >= self.collection_info.limits.max_subs:
             self.log.info("-- Reached {} valid submissions added".format(
-                self.collection_info.limits['max_subs']))
+                self.collection_info.limits.max_subs))
             return False
 
-        if self.totals['user_nosrc'] >= self.collection_info.limits['max_no_source']:
+        if self.totals['user_nosrc'] >= self.collection_info.limits.max_no_source:
             self.log.info("-- Reached {} submissions with no source".format(
-                self.collection_info.limits['max_subs']))
+                self.collection_info.limits.max_subs))
             return False
 
         return True
 
     def process_sub(self, sub_data, entry, problems):
         """Processes a submission and adds it to the database."""
-        print("Processing submission:", sub_data['id'])
-
         source = self.get_source(sub_data)
         if source is None:
             self.totals['user_nosrc'] += 1
@@ -266,7 +264,7 @@ class CfSeleniumCollector(CfSubmissionsCollector):
         their submission totals.
         """
         columns = ['count(handle)']
-        where = ['handle=' + entry['handle']]
+        where = ['handle=' + "'" + entry['handle'] + "'"]
 
         try:
             results = self.database.select(columns,
@@ -299,11 +297,17 @@ class CfSeleniumCollector(CfSubmissionsCollector):
     def get_source_text(self, sub_data):
         time.sleep(3)
         soup = BeautifulSoup(self.driver.page_source, 'html.parser')
-        tag = 'source prettyprint lang-' + self.get_lang(sub_data)
-        src_html = soup.find('pre', {'class': tag})
+        tag = 'source-popup-source prettyprint linenums lang-' + \
+            self.get_lang(sub_data) + " prettyprinted"
+        code = soup.find('code', {'class': tag})
+
+        src_html = []
+        for tag in code.find_all('li'):
+            src_html.append(tag.text)
 
         if src_html:
-            source = src_html.text
+            source = "\n".join(src_html)
+            print(source)
         else:
             source = super(CfSeleniumCollector, self).get_source(sub_data)
         return source
