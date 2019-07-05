@@ -26,19 +26,19 @@ Options
     The name without an extension to use for the output files.
     If more than one file is created a number will be added to all files
     after the first. eg) file.data, file1.data, file2.data, etc.
-    Default is 'combined'
+    Default is to ask for a name.
 
 **-f <raw json folder>**
     The name of a folder to store the uncombined json files in.
-    * Default is to delete all uncombined json files.
+    Default is to delete all uncombined json files.
 
 **-g <group size>**
     The number of json files to combine for each data file created.
-    * Default is to combine them into one file (up to 10,000).
+    Default is to combine them into one file (up to 10,000).
 
 **<json files>**
     The names of all the json files to combine.
-    * Default is to collect all json files in current folder as
+    Default is to collect all json files in current folder as
     wildcards are not supported.
 
 """
@@ -48,6 +48,11 @@ import shutil
 import sys
 import getopt
 
+if __name__ == '__main__':
+    from help_text import COMBINE_JSON as HELP_TEXT
+else:
+    from .help_text import COMBINE_JSON as HELP_TEXT
+
 
 def _get_all_json_files():
     """Collects the names of all JSON files in the current directory."""
@@ -55,7 +60,6 @@ def _get_all_json_files():
     for file in os.listdir():
         if file.endswith(".json"):
             json_filenames.append(file)
-
     return json_filenames
 
 
@@ -111,7 +115,7 @@ def _write_results(out_file, combined):
 
         with open(name, 'w') as f:
             json.dump(contents, f)
-        print("Created", name)
+        print("** Created", name)
 
 
 def _move_files(filenames, folder):
@@ -165,6 +169,9 @@ def _script(argv):
             print(HELP_TEXT)
             return
 
+    if not filenames:
+        filenames = None
+
     main(files=filenames, out_file=out_file,
          raw_folder=raw_folder, group_size=group_size)
 
@@ -191,36 +198,6 @@ def main(files=None, out_file=None,
     _write_results(out_file, combined)
     _move_files(files, raw_folder)
 
-
-HELP_TEXT = """
-combine_json.py [-h] [-o <output file>] [-f < raw json folder> ]
-        [-g < group size > ] [<json files>]
-
-Options
-~~~~~~~
-
--h
-    print help text.
-
--o <output file>
-    The name without an extension to use for the output files.
-    If more than one file is created a number will be added to all
-    files after the first. eg) file.data, file1.data, etc.
-    * Default is 'combined'
-
--f <raw json folder>
-    The name of a folder to store the uncombined json files in.
-    * Default is to DELETE all uncombined json files.
-
--g <group size>
-    The number of json files to combine for each data file created.
-    * Default is to combine them into one file (up to 10,000).
-
-<json files>
-    The names of all the json files to combine.
-    * Default is to collect all json files in current folder.
-    ** wildcards and other regex are not supported.
-"""
 
 if __name__ == '__main__':
     main(sys.argv[1:])

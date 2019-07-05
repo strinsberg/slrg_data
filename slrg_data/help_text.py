@@ -80,3 +80,33 @@ Options
 COLLECT_CODEFORCES = """
 Some help text
 """
+
+COMBINE_JSON = """
+combine_json.py [-h] [-o <output file>] [-f < raw json folder> ]
+        [-g < group size > ] [<json files>]
+
+Options
+~~~~~~~
+
+-h
+    print help text.
+
+-o <output file>
+    The name without an extension to use for the output files.
+    If more than one file is created a number will be added to all
+    files after the first. eg) file.data, file1.data, etc.
+    * Default is to ask for a name.
+
+-f <raw json folder>
+    The name of a folder to store the uncombined json files in.
+    * Default is to DELETE all uncombined json files.
+
+-g <group size>
+    The number of json files to combine for each data file created.
+    * Default is to combine them into one file (up to 10,000).
+
+<json files>
+    The names of all the json files to combine.
+    * Default is to collect all json files in current folder.
+    ** wildcards and other regex are not supported.
+"""

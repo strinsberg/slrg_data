@@ -9,7 +9,9 @@ setup(name='slrg_data',
       entry_points={
           'console_scripts': [
               'slrg-git-projects=slrg_data.collect_git_projects:_entry',
+              'slrg-codeforces=slrg_data.collect_codeforces:_entry',
               'slrg-select=slrg_data.select:_entry',
+              'slrg-combine-json=slrg_data.combine_json:_entry',
           ]
       },
       zip_safe=False)

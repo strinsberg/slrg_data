@@ -49,6 +49,7 @@ tables = {
         'columns': []
     },
     'codeforces': {
+        'name': 'cf_refine',
         'columns': [
             "submission_id", "source_code", "programming_language",
             "problem_name", "difficulty", "participant_type", "time", "year",
@@ -74,7 +75,11 @@ fields = {
         'projects_created_at'
     ],
     'git_commits': [],
-    'codeforces': []
+    'codeforces': [
+        "handle", "firstName", "lastName", "gender", "gender_probability",
+        "country", "city", "organization", "contribution", "rank", "rating",
+        "maxRank", "maxRating", "registrationTimeSeconds"
+    ]
 }
 
 # File extensions of files to include for each language
@@ -115,7 +120,7 @@ exclude = {
 # The exclusion is because the languages are matched with string.find so
 # In some cases (like with Java and Javascript) it is
 # possible to match more than one language.
-codeforces_languages = {
+cf_languages = {
     'collect': ['C++', 'Python', 'Java'],
     'exclude': ['Javascript']
 }
@@ -160,5 +165,6 @@ config = {
     'extensions': extensions,
     'exclude': exclude,
     'git_acct': git_acct,
-    'limits': limits
+    'limits': limits,
+    'cf_languages': cf_languages,
 }

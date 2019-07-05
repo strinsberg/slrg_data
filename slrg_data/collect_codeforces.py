@@ -11,7 +11,7 @@ else:
 
 try:
     sys.path.append(collection.common.SLRG_DIR)
-    import config  # nopep8
+    import test_config as config  # nopep8, pylint: disable=import-error
 except ModuleNotFoundError:
     print('Config Error: Could not find config.py.',
           'Please make sure you have run slrg-install.')
@@ -24,7 +24,6 @@ def _entry():
 
 def _script(argv):
     # Declare variables
-    lang = None
     file = None
     start = None
     count = None
@@ -33,15 +32,13 @@ def _script(argv):
 
     # Parse command line arguments
     try:
-        opts, _ = getopt.getopt(argv, "l:i:s:c:u:p:h")
+        opts, _ = getopt.getopt(argv, "i:s:c:u:p:h")
     except getopt.GetoptError:
         print(HELP_TEXT)
         sys.exit()
 
     for opt, arg in opts:
-        if opt == '-l':
-            lang = arg
-        elif opt == '-i':
+        if opt == '-i':
             file = arg
         elif opt == '-s':
             start = arg
@@ -55,12 +52,11 @@ def _script(argv):
             print(HELP_TEXT)
             return
 
-    main(lang=lang, file=file, start=start, count=count, db_login=db_login,
+    main(file=file, start=start, count=count, db_login=db_login,
          db_passwd=db_passwd)
 
 
-def main(lang=None, file=None, start=None, count=None, db_login=None,
-         db_passwd=None):
+def main(file=None, start=None, count=None, db_login=None, db_passwd=None):
 
     script_name = 'codeforces'
 
@@ -71,7 +67,7 @@ def main(lang=None, file=None, start=None, count=None, db_login=None,
     limits = collection.script.make_cf_limits(
         start, count, config.limits[script_name])
     info = collection.script.make_cf_info(
-        lang, file, limits, script_name, config.config)
+        file, limits, script_name, config.config)
 
     log_dir = os.path.join(collection.common.SLRG_DIR, 'logs', script_name)
     log = collection.common.Log(log_dir, script_name)

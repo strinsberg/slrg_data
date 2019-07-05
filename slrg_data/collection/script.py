@@ -83,18 +83,15 @@ def make_git_info(lang, filename, git_data, limits, script_name, config):
                                     git_data)
 
 
-def make_cf_info(lang, filename, limits, script_name, config):
-    if lang is None:
-        lang = input('Language: ').lower()
-
+def make_cf_info(filename, limits, script_name, config):
     file_path = get_file_path(filename)
     records = common.RecordsData(file_path, config['fields'][script_name])
 
-    table = common.TableData(config['tables'][script_name][lang],
+    table = common.TableData(config['tables'][script_name]['name'],
                              config['tables'][script_name]['columns'])
 
     validation = common.LanguageData(
-        config.langauges['collect'], config.languages['exclude'])
+        config['cf_languages']['collect'], config['cf_languages']['exclude'])
 
     return common.CollectionInfo(records, table, validation, limits)
 
