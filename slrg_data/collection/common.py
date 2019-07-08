@@ -145,7 +145,7 @@ class Database:
         except pymysql.err.MySQLError as error:
             if self.database.open:
                 self.database.rollback()
-            raise DatabaseError(str(error) + " -- SQL: " + sql)
+            raise DatabaseError(str(error))
 
     def select(self, columns, table, where):
         """Simple select function for querying a table in the database."""
@@ -160,7 +160,7 @@ class Database:
             return results
 
         except pymysql.err.MySQLError as error:
-            raise DatabaseError(str(error) + " -- SQL: " + sql)
+            raise DatabaseError(str(error))
 
     def query(self, sql):
         """Run a Query on the database."""

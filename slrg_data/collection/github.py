@@ -74,7 +74,7 @@ class CommitsCollector(common.Collector):
                 return False
 
             return has_extensions(file_data["filename"],
-                                  self.collection_info.extensions)
+                                  self.collection_info.validation.extensions)
 
         except KeyError as error:
             self.log.error("In is_valid", error)
@@ -459,10 +459,11 @@ def api_ok(data, session, padding=120, write=print):
         elif data['message'] == 'Bad credentials':
             raise script.ScriptInputError(
                 "Input Error: Incorrect github username or password")
-        elif data['message'] not in ['Not Found', 'Repository access blocked']:
-            write("Git api Error: " + str(data))
-            raise GitApiError(str(data))
-        return False
+        elif (data['message'].find('No commit found for SHA') > -1 or data['message'] in ['Not Found', 'Repository access blocked']):
+            return False
+
+        write("Git api Error: " + str(data))
+        raise GitApiError(str(data))
 
     return True
 

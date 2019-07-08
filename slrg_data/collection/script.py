@@ -72,7 +72,8 @@ def make_git_info(lang, filename, git_data, limits, script_name, config):
         the necessary information for source collection.
     """
     if lang is None:
-        lang = input('Language: ').lower()
+        lang = input('Language: ')
+    lang = lang.lower()
 
     file_path = get_file_path(filename)
     records = common.RecordsData(file_path, config['fields'][script_name])

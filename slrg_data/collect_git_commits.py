@@ -78,13 +78,13 @@ def main(lang=None, file=None, start=None, count=None, db_login=None,
 
     try:
         # Create objects for collection
-        script_name = 'git_projects'
+        script_name = 'git_commits'
 
         database = collection.script.make_database(config.database,
                                                    login=db_login,
                                                    passwd=db_passwd)
         limits = collection.script.make_limits(
-            start, count, config.limits['git_projects'])
+            start, count, config.limits[script_name])
         git_data = collection.script.make_git_data(git_login, git_passwd,
                                                    config.git_acct)
         info = collection.script.make_git_info(lang, file, git_data, limits,

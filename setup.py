@@ -12,6 +12,7 @@ setup(name='slrg_data',
               'slrg-codeforces=slrg_data.collect_codeforces:_entry',
               'slrg-select=slrg_data.select:_entry',
               'slrg-combine-json=slrg_data.combine_json:_entry',
+              'slrg-git-commits=slrg_data.collect_git_commits:_entry'
           ]
       },
       zip_safe=False)
