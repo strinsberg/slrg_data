@@ -40,7 +40,12 @@ def make_limits(start, count, default):
 
 
 def make_cf_limits(start, count, default):
-    return codeforces.CfLimitData(1, 2, 3, 4, 5, 6)
+    start = null_arg_int(start, default['start'], "Starting index: ")
+    count = null_arg_int(count, default['count'], "Entries to process: ")
+
+    return codeforces.CfLimitData(start, count,
+                                  default['sub_start'], default['sub_count'],
+                                  default['max_subs'], default['max_no_source'])
 
 
 def make_git_data(login, passwd, default):

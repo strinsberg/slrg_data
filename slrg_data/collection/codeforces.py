@@ -68,12 +68,16 @@ class CfSubmissionsCollector(common.Collector):
         if data["status"] == "OK":
             return data["result"]
 
+        print('API status:', data['status'], 'Comment:', data['comment'])
         return None
 
     def process_submissions(self, submissions, entry):
         """Processes submissions add valid ones to the database."""
-        self.totals["user_subs"] = self.previously_collected(entry)
-        problems = set()
+        collected_problems = self.previously_collected(entry)
+        self.totals['user_subs'] = len(collected_problems)
+        print('-- Already had subs:', self.totals['user_subs'])
+
+        problems = set(collected_problems)
 
         for sub_data in submissions:
             if not self.check_limits():
@@ -81,12 +85,13 @@ class CfSubmissionsCollector(common.Collector):
 
             self.totals['subs'] += 1
             if self.is_valid(sub_data, problems):
-                print("Processing submission:", sub_data['id'])
+                print("Processing submission:",
+                      sub_data['id'], sub_data['problem']['name'])
                 self.process_sub(sub_data, entry, problems)
 
     def previously_collected(self, entry):
-        """Sets starting submission totals for a user."""
-        return 0
+        """Returns the problem names of all problems already collected."""
+        return []
 
     def check_limits(self):
         """Checks to see if limits for max submissions have been reached."""
@@ -260,19 +265,20 @@ class CfSeleniumCollector(CfSubmissionsCollector):
         CfSubmissionsCollector.process_submissions(self, submissions, entry)
 
     def previously_collected(self, entry):
-        """Finds out if the user has submissions in the database and updates
-        their submission totals.
+        """Returns a list of previously collected problem names for the user.
         """
-        columns = ['count(handle)']
+        columns = ['problem_name']
         where = ['handle=' + "'" + entry['handle'] + "'"]
 
         try:
             results = self.database.select(columns,
                                            self.collection_info.table.name,
                                            where)
-            if results is not None and results:
-                print("-- Already had subs:", self.totals['user_subs'])
-                return results[0][0]
+            names = []
+            for tup in results:
+                names.append(tup[0])
+
+            return names
 
         except common.DatabaseError as error:
             self.log.error("In previously collected", error)
@@ -307,7 +313,6 @@ class CfSeleniumCollector(CfSubmissionsCollector):
 
         if src_html:
             source = "\n".join(src_html)
-            print(source)
         else:
             source = super(CfSeleniumCollector, self).get_source(sub_data)
         return source
