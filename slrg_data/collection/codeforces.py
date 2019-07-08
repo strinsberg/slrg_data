@@ -90,8 +90,24 @@ class CfSubmissionsCollector(common.Collector):
                 self.process_sub(sub_data, entry, problems)
 
     def previously_collected(self, entry):
-        """Returns the problem names of all problems already collected."""
-        return []
+        """Returns a list of previously collected problem names for the user.
+        """
+        columns = ['problem_name']
+        where = ['handle=' + "'" + entry['handle'] + "'"]
+
+        try:
+            results = self.database.select(columns,
+                                           self.collection_info.table.name,
+                                           where)
+            names = []
+            for tup in results:
+                names.append(tup[0])
+
+            return names
+
+        except common.DatabaseError as error:
+            self.log.error("In previously collected", error)
+            return 0
 
     def check_limits(self):
         """Checks to see if limits for max submissions have been reached."""
@@ -263,26 +279,6 @@ class CfSeleniumCollector(CfSubmissionsCollector):
         except selenium.common.exceptions.TimeoutException:
             print("Timeout: refreshing")
         CfSubmissionsCollector.process_submissions(self, submissions, entry)
-
-    def previously_collected(self, entry):
-        """Returns a list of previously collected problem names for the user.
-        """
-        columns = ['problem_name']
-        where = ['handle=' + "'" + entry['handle'] + "'"]
-
-        try:
-            results = self.database.select(columns,
-                                           self.collection_info.table.name,
-                                           where)
-            names = []
-            for tup in results:
-                names.append(tup[0])
-
-            return names
-
-        except common.DatabaseError as error:
-            self.log.error("In previously collected", error)
-            return 0
 
     def get_source(self, sub_data):
         """Gets a submissions source using selenium."""

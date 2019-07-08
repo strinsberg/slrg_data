@@ -11,7 +11,7 @@ else:
 
 try:
     sys.path.append(collection.common.SLRG_DIR)
-    import test_config as config  # nopep8, pylint: disable=import-error
+    import config  # nopep8, pylint: disable=import-error
 except ModuleNotFoundError:
     print('Config Error: Could not find config.py.',
           'Please make sure you have run slrg-install.')

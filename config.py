@@ -74,7 +74,14 @@ fields = {
         'projects_id', 'url', 'name', 'language',
         'projects_created_at'
     ],
-    'git_commits': [],
+    'git_commits': [
+        "user_id", "user_login", "user_company", "user_created",
+        "user_type", "user_country_code", "user_state", "user_city",
+        "user_location", "project_id", "project_url", "project_name",
+        "project_language", "project_created", "commit_id", "commit_sha",
+        "commit_created", "file_sha", "file_name", "file_contents",
+        "file_changes"
+    ],
     'codeforces': [
         "handle", "firstName", "lastName", "gender", "gender_probability",
         "country", "city", "organization", "contribution", "rank", "rating",
@@ -146,7 +153,7 @@ limits = {
     'codeforces': {
         'start': 0,
         'count': 100,
-        'sub_start': 0,
+        'sub_start': 1,  # Starts at 1 not 0
         'sub_count': 50,
         'max_subs': 50,
         'max_no_source': 50,

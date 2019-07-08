@@ -16,6 +16,117 @@ from . import common
 from . import script
 
 
+class CommitsCollector(common.Collector):
+    """Extracts added files from git commits."""
+
+    def __init__(self, database, collection_info, log):
+        super(CommitsCollector, self).__init__(database, collection_info, log)
+        self.totals.update({'commits': 0, 'files': 0, 'added': 0})
+
+    def set_up(self):
+        """Adds a request session with authentication."""
+        common.Collector.set_up(self)
+
+        login = self.collection_info.git_data.login
+        passwd = self.collection_info.git_data.passwd
+
+        self.session = authenticated_session(login, passwd)
+        self.times['session'] = time.time()
+
+    def process(self, entry):
+        """Processes commit data and collects source from files to add to db"""
+        try:
+            print("#", self.totals['entry'], "###", end=" ")
+
+            commit_data = self.get_commit_data(entry['url'], entry['sha'])
+
+            if api_ok(commit_data, self.times["session"], write=self.log.info):
+                self.process_commit(commit_data, entry)
+
+        except KeyError as error:
+            self.log.error("In process:", error)
+
+    def get_commit_data(self, project_url, commit_sha):
+        url = project_url + "/commits/" + commit_sha
+        return self.session.get(url).json()
+
+    def process_commit(self, commit_data, entry):
+        """Processes commit data and adds valid files to the database."""
+        self.totals['commits'] += 1
+        print("Processing Commit:", commit_data['sha'], "###")
+
+        for file_data in commit_data['files']:
+            self.totals['files'] += 1
+
+            if not self.is_valid(file_data):
+                continue
+
+            print("Processing File:", file_data['filename'], "....")
+            if self.add_file_to_db(file_data, entry):
+                self.totals['added'] += 1
+                print("-- Added")
+
+    def is_valid(self, file_data):
+        """Checks to see if a file should be added to the database."""
+        try:
+            changes = int(file_data['changes'])
+            if changes < 10 or file_data['status'] != 'added':
+                return False
+
+            return has_extensions(file_data["filename"],
+                                  self.collection_info.extensions)
+
+        except KeyError as error:
+            self.log.error("In is_valid", error)
+            return False
+
+    def add_file_to_db(self, file_data, entry):
+        """Adds a file and associated information to the database."""
+        values = self.get_entry_values(entry)
+        values.extend(self.get_file_values(file_data))
+
+        try:
+            self.database.insert(self.collection_info.table.columns,
+                                 self.collection_info.table.name, values)
+        except common.DatabaseError as error:
+            self.log.error("In add_file_to_db", error)
+            return False
+
+        return True
+
+    def transform_entry_value(self, value, entry_field):
+        v = value
+        if v is not None and entry_field.find('created') > -1:
+            v = common.get_time_string(float(v))
+        return v
+
+    def get_file_values(self, file_data):
+        """Gets info from file data to add to database."""
+        source = self.clean_source(file_data['patch'])
+        return (file_data['sha'], file_data['filename'], source,
+                file_data['changes'])
+
+    def clean_source(self, source):
+        """Remove extra commit information from the source code."""
+        rm_plus = source.replace("\n+", "\n")
+        start = source.find("\n")
+        return rm_plus[start + 1:]
+
+    def clean_up(self):
+        """See Extract"""
+        common.Collector.clean_up(self)
+
+        commits = self.totals['commits'] + 0.1
+        self.log.info("Commits successfully processed: {:.0f}".format(commits))
+
+        added = self.totals['added']
+        files = self.totals['files'] + 0.1
+        self.log.info("Files added/checked: {}/{:.0f} {:.0f}%".format(
+            added, files, (added / files) * 100))
+        self.log.info("Files added/commit: {}/{:.0f} {:.0f}%".format(
+            added, commits, (added / commits) * 100))
+
+
 class ProjectsCollector(common.Collector):
     """Extracts source code from single contributor github projects."""
 
