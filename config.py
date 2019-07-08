@@ -18,9 +18,9 @@ Attributes:
 # Values can be None
 # login and passwd can be given as command line options
 database = {
-    'host': 'localhost',
-    'login': 'root',
-    'name': 'slrg_data',
+    'host': 'mysql-8-p.uleth.ca',
+    'login': None,
+    'name': 'sfa-slrg_data',
     'passwd': None
 }
 
@@ -46,7 +46,14 @@ tables = {
         'c++': 'git_commits_cpp',
         'python': 'git_commits_py',
         'java': 'git_commits_java',
-        'columns': []
+        'columns': [
+            "user_id", "user_login", "user_company", "user_created",
+            "user_type", "user_country_code", "user_state", "user_city",
+            "user_location", "project_id", "project_url", "project_name",
+            "project_language", "project_created", "commit_id", "commit_sha",
+            "commit_created", "file_sha", "file_name", "file_contents",
+            "file_changes"
+        ]
     },
     'codeforces': {
         'name': 'cf_refine',
@@ -75,12 +82,9 @@ fields = {
         'projects_created_at'
     ],
     'git_commits': [
-        "user_id", "user_login", "user_company", "user_created",
-        "user_type", "user_country_code", "user_state", "user_city",
-        "user_location", "project_id", "project_url", "project_name",
-        "project_language", "project_created", "commit_id", "commit_sha",
-        "commit_created", "file_sha", "file_name", "file_contents",
-        "file_changes"
+        'users_id', 'login', 'company', 'users_created', 'type',
+        'country_code', 'state', 'city', 'location', 'projects_id', 'url',
+        'name', 'language', 'projects_created', 'id', 'sha', 'created_at'
     ],
     'codeforces': [
         "handle", "firstName", "lastName", "gender", "gender_probability",

@@ -145,7 +145,7 @@ class Database:
         except pymysql.err.MySQLError as error:
             if self.database.open:
                 self.database.rollback()
-            raise DatabaseError("Database Error: " + str(error))
+            raise DatabaseError(str(error) + " -- SQL: " + sql)
 
     def select(self, columns, table, where):
         """Simple select function for querying a table in the database."""
@@ -160,7 +160,7 @@ class Database:
             return results
 
         except pymysql.err.MySQLError as error:
-            raise DatabaseError(str(error))
+            raise DatabaseError(str(error) + " -- SQL: " + sql)
 
     def query(self, sql):
         """Run a Query on the database."""
@@ -293,6 +293,7 @@ def get_gender(name, database, table, write=lambda x: None):
     assert name not in [None, ''], "No name given to get_gender"
 
     name = name.lower()
+    # Need to add a little validation for names containing quotes
 
     gender_info = get_gender_from_database(name, database, table)
     if gender_info is not None:
