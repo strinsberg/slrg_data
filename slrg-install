@@ -5,39 +5,40 @@ import sys
 import shutil
 import getopt
 
+from slrg_data.collection.common import SLRG_DIR
+
 try:
-  # Make paths
-  home = os.path.expanduser('~')
-  slrg = os.path.join(home, '.slrg')
-  conf = os.path.join(slrg, 'config.py')
-  logs = os.path.join(slrg, 'logs')
-  cf_logs = os.path.join(logs, 'codeforces')
-  git_commit_logs = os.path.join(logs, 'git_commits')
-  git_project_logs = os.path.join(logs, 'git_projects')
-  
-  # Check command line options
-  opts, _ = getopt.getopt(sys.argv[1:], 'r')
-  
-  for opt, _ in opts:
-    if opt == '-r':
-      print("Restoring defaults...")
-      shutil.rmtree(slrg)
+    # Make paths
+    slrg = SLRG_DIR
+    conf = os.path.join(slrg, 'config.py')
+    logs = os.path.join(slrg, 'logs')
+    cf_logs = os.path.join(logs, 'codeforces')
+    git_commit_logs = os.path.join(logs, 'git_commits')
+    git_project_logs = os.path.join(logs, 'git_projects')
 
-  # Make directories
-  os.mkdir(slrg)
-  os.mkdir(logs)
-  os.mkdir(cf_logs)
-  os.mkdir(git_commit_logs)
-  os.mkdir(git_project_logs)
+    # Check command line options
+    opts, _ = getopt.getopt(sys.argv[1:], 'r')
 
-  # Copy over config file
-  shutil.copy('config.py', slrg)
+    for opt, _ in opts:
+        if opt == '-r':
+            print("Restoring defaults...")
+            shutil.rmtree(slrg)
 
-  # At some point you could ask some questions for config
-  print("Install Successfull!")
-  print("Config file and log directories located in:", slrg)
+    # Make directories
+    os.mkdir(slrg)
+    os.mkdir(logs)
+    os.mkdir(cf_logs)
+    os.mkdir(git_commit_logs)
+    os.mkdir(git_project_logs)
+
+    # Copy over config file
+    shutil.copy('config.py', slrg)
+
+    # At some point you could ask some questions for config
+    print("Install Successfull!")
+    print("Config file and log directories located in:", slrg)
 
 except FileExistsError as err:
-  print("Install failed!")
-  print("The .slrg directory already exists")
-  print("To restore defaults run slrg-install -r")
+    print("Install failed!")
+    print("The .slrg directory already exists")
+    print("To restore defaults run slrg-install -r")

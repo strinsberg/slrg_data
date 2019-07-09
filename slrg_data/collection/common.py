@@ -18,7 +18,7 @@ from . import script
 
 # Constants ############################################################
 
-SLRG_DIR = os.path.join(os.path.expanduser('~'), '.slrg')
+SLRG_DIR = os.path.join(os.path.expanduser('~'), 'slrg')
 
 # Classes ##############################################################
 
