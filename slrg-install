@@ -5,11 +5,10 @@ import sys
 import shutil
 import getopt
 
-from slrg_data.collection.common import SLRG_DIR
 
 try:
     # Make paths
-    slrg = SLRG_DIR
+    slrg = os.path.join(os.path.expanduser('~'), 'slrg')
     conf = os.path.join(slrg, 'config.py')
     logs = os.path.join(slrg, 'logs')
     cf_logs = os.path.join(logs, 'codeforces')
