@@ -43,6 +43,9 @@ class CommitsCollector(common.Collector):
             if api_ok(commit_data, self.times["session"], write=self.log.info):
                 self.process_commit(commit_data, entry)
 
+        except RateLimitExceeded:
+            wait_for_api(self.times['session'], 120, self.log.info)
+            self.times['session']
         except KeyError as error:
             self.log.error("In process:", error)
 
@@ -218,8 +221,12 @@ class ProjectsCollector(common.Collector):
 
     def get_fullname_and_gender(self, project_data):
         """Collect a github users fullname and gender data if available."""
-        fullname = get_fullname(
-            project_data['login'], self.session, self.times['session'])
+        try:
+            fullname = get_fullname(
+                project_data['login'], self.session, self.times['session'])
+        except RateLimitExceeded:
+            wait_for_api(self.times['session'], 120, self.log.info)
+            self.times['session'] = 0
 
         if fullname not in [None, '']:
             name = fullname.split()[0]
@@ -238,8 +245,13 @@ class ProjectsCollector(common.Collector):
         contrib_url = "{}/stats/contributors".format(project_data['url'])
         contribs = self.session.get(contrib_url).json()
 
-        if api_ok(contribs, self.times["session"], write=self.log.info):
-            project_data['contributors'] = contribs
+        try:
+            if api_ok(contribs, self.times["session"], write=self.log.info):
+                project_data['contributors'] = contribs
+
+        except RateLimitExceeded:
+            wait_for_api(self.times['session'], 120, self.log.info)
+            self.times['session'] = 0
 
     def is_valid_project(self, project_data):
         """Checks to make sure project is valid.
@@ -453,7 +465,7 @@ def api_ok(data, session, padding=120, write=print):
         write("Api issue: {}".format(data['message']))
 
         if data['message'].find('rate limit exceeded') > -1:
-            raise (RateLimitExceeded("Github RateLimit Exceeded"))
+            raise RateLimitExceeded("Github RateLimit Exceeded")
         elif data['message'] == 'Server Error':
             time.sleep(10)
         elif data['message'] == 'Bad credentials':

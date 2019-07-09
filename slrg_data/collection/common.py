@@ -162,8 +162,8 @@ class Database:
         except pymysql.err.MySQLError as error:
             raise DatabaseError(str(error))
 
-    def query(self, sql):
-        """Run a Query on the database."""
+    def query(self, sql):  # should rename and even use with select
+        """Run a Select Query on the database."""
         try:
             with self.database.cursor() as cursor:
                 cursor.execute(sql)
