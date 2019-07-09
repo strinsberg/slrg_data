@@ -275,6 +275,13 @@ def requests_session(username=None, passwd=None, prompt="Password: "):
     return session
 
 
+def session_get_json(session, url):
+    try:
+        return session.get(url).json()
+    except json.decoder.JSONDecodeError:
+        return None
+
+
 def get_json_data(path):
     """Loads JSON data from a file and returns it."""
     with open(path) as file:
@@ -323,7 +330,10 @@ def get_gender_from_api(name):
     """Retreive the gender of a name from the genderize.io api."""
     url = "https://api.genderize.io/?name=" + name
     r = requests.get(url)
-    data = r.json()
+    try:
+        data = r.json()
+    except json.decoder.JSONDecodeError:
+        data = {'error': True}
 
     if 'error' in data:
         return (None, None)
@@ -340,6 +350,7 @@ def update_gender_table(name, gender_info, database, table):
     values = [name]
     values.extend(gender_info)
     database.insert(columns, table, values)
+
 
 # Exceptions ###########################################################
 

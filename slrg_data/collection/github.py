@@ -51,7 +51,7 @@ class CommitsCollector(common.Collector):
 
     def get_commit_data(self, project_url, commit_sha):
         url = project_url + "/commits/" + commit_sha
-        return self.session.get(url).json()
+        return common.session_get_json(self.session, url)
 
     def process_commit(self, commit_data, entry):
         """Processes commit data and adds valid files to the database."""
@@ -243,10 +243,11 @@ class ProjectsCollector(common.Collector):
         """Add a list of contributors to project data."""
         project_data['contributors'] = None
         contrib_url = "{}/stats/contributors".format(project_data['url'])
-        contribs = self.session.get(contrib_url).json()
+        contribs = common.session_get_json(self.session, contrib_url)
 
         try:
-            if api_ok(contribs, self.times["session"], write=self.log.info):
+            if (api_ok(contribs, self.times["session"], write=self.log.info)
+                    and contribs is not None):
                 project_data['contributors'] = contribs
 
         except RateLimitExceeded:
@@ -491,10 +492,10 @@ def has_extensions(filename, extensions):
 def get_fullname(login, request_session, session_time):
     """Get a fullname for a github user login."""
     url = "https://api.github.com/users/" + login
-    data = request_session.get(url).json()
+    data = common.session_get_json(request_session, url)
 
     try:
-        if api_ok(data, session_time) and 'name' in data:
+        if data is not None and 'name' in data and api_ok(data, session_time):
             return data['name']
     except RateLimitExceeded as limit:
         raise limit
@@ -518,10 +519,8 @@ def get_single_author_files(repo, repo_path, validation, name, login):
 
 # Exceptions ###########################################################
 
-
 class GitApiError(Exception):
     """Error for fatal GitHub Api errors."""
-    pass
 
 
 class RateLimitExceeded(GitApiError):
