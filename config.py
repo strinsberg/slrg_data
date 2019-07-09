@@ -65,7 +65,8 @@ tables = {
             "contribution", "user_rank", "rating", "max_rank", "max_rating",
             "registered"
         ]
-    }
+    },
+    'gender': 'genders'
 }
 
 # Fields that are present in the JSON records for each collection script

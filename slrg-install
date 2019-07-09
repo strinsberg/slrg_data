@@ -40,5 +40,5 @@ try:
 
 except FileExistsError as err:
     print("Install failed!")
-    print("The .slrg directory already exists")
+    print("The", SLRG_DIR, "directory already exists")
     print("To restore defaults run slrg-install -r")

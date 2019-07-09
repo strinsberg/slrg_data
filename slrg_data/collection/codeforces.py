@@ -354,6 +354,15 @@ class CfSeleniumCollector(CfSubmissionsCollector):
             self.driver.close()
 
 
+def add_gender(user_data, database, gender_table):
+    gender, prob = None, None
+    if 'first_name' in user_data:
+        gender, prob = common.get_gender(
+            user_data['first_name'], database, gender_table)
+    user_data['gender'] = gender
+    user_data['gender_probability'] = prob
+
+
 class CfCollectionInfo(common.CollectionInfo):
     def __init__(self, records, table, limits, languages):
         super(CfCollectionInfo, self).__init__(

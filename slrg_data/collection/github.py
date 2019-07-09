@@ -45,7 +45,7 @@ class CommitsCollector(common.Collector):
 
         except RateLimitExceeded:
             wait_for_api(self.times['session'], 120, self.log.info)
-            self.times['session']
+            self.times['session'] = time.time()
         except KeyError as error:
             self.log.error("In process:", error)
 
@@ -246,13 +246,14 @@ class ProjectsCollector(common.Collector):
         contribs = common.session_get_json(self.session, contrib_url)
 
         try:
-            if (api_ok(contribs, self.times["session"], write=self.log.info)
-                    and contribs is not None):
+            if (contribs is not None
+                    and api_ok(
+                        contribs, self.times["session"], write=self.log.info)):
                 project_data['contributors'] = contribs
 
         except RateLimitExceeded:
             wait_for_api(self.times['session'], 120, self.log.info)
-            self.times['session'] = 0
+            self.times['session'] = time.time()
 
     def is_valid_project(self, project_data):
         """Checks to make sure project is valid.
@@ -447,6 +448,8 @@ def wait_for_api(session_time, padding, write=print):
     """Sleeps a program until the git api rate limit resets."""
     now = time.time()
     elapsed = now - session_time
+    if elapsed > 3600:
+        elapsed = elapsed % 3600
     sleep_seconds = 3600 - elapsed + padding
 
     sleep_time = common.find_time(sleep_seconds)
