@@ -319,7 +319,11 @@ def get_gender(name, database, table, write=lambda x: None):
 def get_gender_from_database(name, database, table):
     """Retrive gender  for a name from the given database and table."""
     columns = ['gender', 'probability']
-    where = ['name=\"{}\"'.format(name)]
+
+    if name.find('"') > -1:
+        return None
+
+    where = ['name="{}"'.format(name)]
     result = database.select(columns, table, where)
     if result is not None and result:
         return result[0]
