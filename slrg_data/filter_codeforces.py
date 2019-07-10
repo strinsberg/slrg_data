@@ -1,14 +1,40 @@
-"""This will be a script to filter out a certain group of users from
-a codeforces users list. Preferably one that has been gendered fully.
-It might also be worth processing that list first to find out what all
-the first names are that are available and possibly trying a different
-method for obtaining gender labels to see what we can get. The
-processing may end up being a script and it may end up just being something
-I do, and just keep the user data.
+"""Filter out records for codforces users that satisfy any given
+conditions and write them to a new file.
+
+If no conditions are given then all the users will be taken.
+
+Usage
+=====
+As a command line script.
+
+Run::
+
+    $ python3 select.py [-h] [-o <output file>]
+        [-i <codeforces users file>] [--country=<country(s)>]
+        [--gender=<gender(s)>] [--gen_prob=<min gender probability>]
+        [--handle=<handles(s)>] [--org=<organization(s)>] [rank=<rank(s)]
+        [--rating=<min rating>]
+
+Options
+~~~~~~~
+
+**-h**
+    Print help text.
+
+**-o <output file>**
+    The file to write the results to.
+
+**-i <codeforces user file>**
+    The file containing a list of codeforces user records. If left blank
+    it will be prompted for.
+
+etc.
 """
+# Standard python modules
 import sys
 import getopt
 
+# Local imports
 if __name__ == '__main__':
     import collection
     from help_text import GENDER_CODEFORCES as HELP_TEXT
@@ -16,6 +42,7 @@ else:
     from . import collection
     from .help_text import GENDER_CODEFORCES as HELP_TEXT
 
+# Add the directory with the configuration file to the path
 try:
     sys.path.append(collection.common.SLRG_DIR)
     import config  # nopep8, pylint: disable=import-error
@@ -25,11 +52,23 @@ except ModuleNotFoundError:
     sys.exit()
 
 
+# Script and Main Functions ############################################
+
 def _entry():
+    """Entry point for the Script."""
     _script(sys.argv[1:])
 
 
 def _script(argv):
+    """Processes command line arguments and calls main with their values.
+
+    See module details for more info on command line options.
+
+    Args:
+        argv (list of str): The list of command line options and args
+            not containing the script name.
+    """
+    # Declare some variables
     out_file = None
     users_file = None
     country = []
@@ -40,6 +79,7 @@ def _script(argv):
     rank = []
     rating = 1000
 
+    # Parse command line arguments
     try:
         opts, file = getopt.getopt(argv, "o:h",
                                    ['country=', 'gender=', 'gen_prob=', 'handle=', 'org=', 'rank=', 'rating='])
@@ -79,9 +119,27 @@ def _script(argv):
          rating=rating, orgs=org)
 
 
-def main(users_file=None, out_file=None, countries=[], genders=[], gen_prob=0.5, handles=[],
-         ranks=[], orgs=[], rating=1000):
+def main(users_file=None, out_file=None, countries=[], genders=[],
+         gen_prob=0.5, handles=[], ranks=[], orgs=[], rating=1000):
+    """Filters out a list of users that satisfy the given conditions and
+    writes the results to a new file.
 
+    If values are not given then then that category will not be filtered.
+
+    Args:
+        users_file (str): The name of the Codeforces user file. If it is
+            None then the user will be prompted for it.
+        out_file (str): The name of the file to write the results to. If
+            None defaults to 'filtered.data'
+        countries (list of str): A list of countries to accept.
+        genders (list of str): A list of genders to accept.
+        gen_prob (float): The lowest gender probability to accept. The
+            Default is 0.5.
+        handles (list of str): A list of handles to accept.
+        ranks (list of str): A list of ranks to accept.
+        orgs (list of str): A list of organizations to accept.
+        rating (int): The lowest rating to accept.
+    """
     if users_file is None:
         users_file = input("Users file to filter: ")
     users_list = collection.common.get_json_data(users_file)
@@ -108,15 +166,46 @@ def main(users_file=None, out_file=None, countries=[], genders=[], gen_prob=0.5,
         collection.common.write_json_data(out_file, users)
 
 
+# Helpers ##############################################################
+
 def _split_and_lower(args):
+    """Splits up a list of arguments and lowers them all.
+
+    In addition to splitting on spaces. Any multiword arguments must be
+    connected by a ~ so they can be seen as one argument, but then split
+    on the ~ to become the proper string.
+
+    Ie) if 'canada united states' are passed as args they will be split
+    as ['canada' ,'united', 'states'], but if they are passed as
+    'canada united~states' then they will be properly split as
+    ['canada', 'united states']
+
+    Args:
+        args (str): A string of arguments to a command line option.
+
+    Returns:
+        list of str: A list of the arguments. All multiword arguments
+            will have the ~ replaced with a space.
+    """
     t = [x.lower() for x in args.strip().split()]
     for i, arg in enumerate(t):
-        arg = ' '.join(arg.split('-'))
+        arg = ' '.join(arg.split('~'))
         t[i] = arg
     return t
 
 
 def _has_field(field, user, valid):
+    """Checks to see if the value of a field in a user record is valid.
+
+    Args:
+        field (str): The field to check.
+        user (str): The user record.
+        valid (list of str): A list of all the acceptable values for
+            user[field].
+
+    Returns:
+        bool: True if the fields value is in valid, otherwise false.
+    """
     if not valid or valid is None:
         return True
 
@@ -126,13 +215,23 @@ def _has_field(field, user, valid):
 
 
 def _field_greater(field, user, value):
+    """Checks to see if the value of a field in a user record is >= the
+    given value.
+
+    Args:
+        field (str): The field to check.
+        user (str): The user record.
+        value (float): The lowest acceptable value.
+
+    Returns:
+        bool: True if the fields value >= value, otherwise false.
+    """
     if field in user and float(user[field]) >= value:
         return True
     return False
 
 
-HELP_TEXT = 'some help text'
-
+# Run ##################################################################
 
 if __name__ == "__main__":
     _entry()
