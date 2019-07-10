@@ -16,6 +16,70 @@ from . import common
 from . import script
 
 
+class GitCollector(common.Collector):
+    def __init__(self, database, collection_info, log):
+        super(GitCollector, self).__init__(database, collection_info, log)
+        self.totals.update({'files': 0, 'added': 0})
+        self.gender_wait = []
+        self.gender_file = 'missing_gender'
+
+    def set_up(self):
+        """Adds a request session with authentication."""
+        common.Collector.set_up(self)
+
+        login = self.collection_info.git_data.login
+        passwd = self.collection_info.git_data.passwd
+
+        self.session = authenticated_session(login, passwd)
+        self.times['session'] = time.time()
+
+    def add_name_and_gender(self, entry_data):
+        """Add fullname and gender data to project data."""
+        entry_data['user_fullname'] = None
+        entry_data['gender'] = None
+        entry_data['gender_probability'] = None
+
+        fullname, gender, gender_probability = self.get_fullname_and_gender(
+            entry_data)
+
+        if fullname not in [None, ''] and gender not in ['nil', None]:
+            entry_data['user_fullname'] = fullname
+            entry_data['gender'] = gender
+            entry_data['gender_probability'] = gender_probability
+        elif gender is None:
+            self.gender_wait.append(entry_data)
+        else:
+            self.log.info("Gender " + gender + ": " +
+                          entry_data['login'])
+
+    def get_fullname_and_gender(self, entry_data):
+        """Collect a github users fullname and gender data if available."""
+        try:
+            fullname = get_fullname(
+                entry_data['login'], self.session, self.times['session'])
+        except RateLimitExceeded:
+            wait_for_api(self.times['session'], 120, self.log.info)
+            self.times['session'] = 0
+
+        if fullname not in [None, '']:
+            name = fullname.split()[0]
+            gender, gender_probability = common.get_gender(
+                name, self.database, 'genders')
+        else:
+            self.log.info("No User Name: " + entry_data['login'])
+            gender = None
+            gender_probability = None
+
+        return fullname, gender, gender_probability
+
+    def clean_up(self):
+        super(GitCollector, self).clean_up()
+
+        if self.gender_wait:
+            common.write_json_data("{}_{}".format(self.gender_file,
+                                                  str(time.time())), self.gender_wait)
+
+
 class CommitsCollector(common.Collector):
     """Extracts added files from git commits."""
 
