@@ -42,20 +42,120 @@ Options
     wildcards are not supported.
 
 """
+# Standar python modules
 import os
 import json
 import shutil
 import sys
 import getopt
 
+# Local imports
 if __name__ == '__main__':
+    import collection
     from help_text import COMBINE_JSON as HELP_TEXT
 else:
+    from . import collection
     from .help_text import COMBINE_JSON as HELP_TEXT
 
+# Add the directory with the configuration file to the path
+try:
+    sys.path.append(collection.common.SLRG_DIR)
+    import config  # nopep8
+except ModuleNotFoundError:
+    print('Config Error: Could not find config.py.',
+          'Please make sure you have run slrg-install.')
+    sys.exit()
+
+
+# Script and Main Functions ############################################
+
+def _entry():
+    """Entry point for the script."""
+    _script(sys.argv[1:])
+
+
+def _script(argv):
+    """Processes command line arguments and calls main with their values.
+
+    See module details for more info on command line options.
+
+    Args:
+        argv (list of str): The list of command line options and args
+            not containing the script name.
+    """
+    # Declare some variables
+    out_file = None
+    raw_folder = None
+    group_size = None
+
+    # Parse command line arguments
+    try:
+        opts, filenames = getopt.getopt(argv, "o:f:g:h")
+    except getopt.GetoptError:
+        print(HELP_TEXT)
+        sys.exit()
+
+    for opt, arg in opts:
+        if opt == '-o':
+            out_file = arg
+        elif opt == '-f':
+            raw_folder = arg
+        elif opt == '-g':
+            group_size = int(arg)
+        elif opt == '-h':
+            print(HELP_TEXT)
+            return
+
+    if not filenames:
+        filenames = None
+
+    main(files=filenames, out_file=out_file,
+         raw_folder=raw_folder, group_size=group_size)
+
+
+def main(files=None, out_file=None, raw_folder=None, group_size=None):
+    """Main for script to combine json files into .data files.
+
+    See module documentation for more details.
+
+    Args:
+        files (list of str): Names of the json files to combine. If None
+            all .json files in the current folder will be used.
+        out_file (str): The filename to use for the output file(s). If
+            more than one file is created numbers will be appended. Will
+            also have .data appended to all files created. If None will
+            default to 'combined'.
+        raw_folder (str): A name of a folder to store the uncombined
+            json files after they are combined. If None they will be
+            deleted.
+        group_size (int): The number of files to use for each combined
+            file. If None it defaults to 10000 which in most cases
+            should result in all .json files being combined into one
+            output file.
+    """
+    if out_file is None:
+        out_file = input('Name for output file(s): ')
+
+    if files is None:
+        files = _get_all_json_files()
+
+    if group_size is None:
+        group_size = 10000
+
+    combined = _combine_json(files, group_size)
+    _write_results(out_file, combined)
+    _move_files(files, raw_folder)
+
+
+# Helpers ##############################################################
 
 def _get_all_json_files():
-    """Collects the names of all JSON files in the current directory."""
+    """Collects the names of all JSON files in the current directory.
+
+    Returns:
+        list of str: A list of the names of all .json files in the
+            current directory.
+    """
     json_filenames = []
     for file in os.listdir():
         if file.endswith(".json"):
@@ -66,6 +166,10 @@ def _get_all_json_files():
 def _combine_json(json_filenames, group_size):
     """Combine the records of a JSON file into a list.
 
+    Intended to be used on JSON files in which each line is a new JSON
+    record. Will not work on JSON files where records are already in a
+    list or are contained inside of another dict.
+
     The returned list will contain multiple lists of records if group_size
     is small enough that more than one group is created.
 
@@ -74,7 +178,7 @@ def _combine_json(json_filenames, group_size):
         group_size (int): The number of files to combine for each group.
 
     Returns:
-        list of lists of JSON dicts: A list containing lists of JSON dicts.
+        A list containing lists of JSON dicts.
     """
     combined = []
 
@@ -143,61 +247,7 @@ def _move_files(filenames, folder):
             os.remove(file)
 
 
-def _entry():
-    _script(sys.argv[1:])
-
-
-def _script(argv):
-    out_file = None
-    raw_folder = None
-    group_size = None
-
-    try:
-        opts, filenames = getopt.getopt(argv, "o:f:g:h")
-    except getopt.GetoptError:
-        print(HELP_TEXT)
-        sys.exit()
-
-    for opt, arg in opts:
-        if opt == '-o':
-            out_file = arg
-        elif opt == '-f':
-            raw_folder = arg
-        elif opt == '-g':
-            group_size = int(arg)
-        elif opt == '-h':
-            print(HELP_TEXT)
-            return
-
-    if not filenames:
-        filenames = None
-
-    main(files=filenames, out_file=out_file,
-         raw_folder=raw_folder, group_size=group_size)
-
-
-def main(files=None, out_file=None,
-         raw_folder=None, group_size=None):
-    """Main for script to combine json files into .data files.
-
-    See module documentation for more details.
-
-    Args:
-        argv (list of str): List of command line arguments and options.
-    """
-    if out_file is None:
-        out_file = input('Name for output file(s): ')
-
-    if files is None:
-        files = _get_all_json_files()
-
-    if group_size is None:
-        group_size = 10000
-
-    combined = _combine_json(files, group_size)
-    _write_results(out_file, combined)
-    _move_files(files, raw_folder)
-
+# Run ##################################################################
 
 if __name__ == '__main__':
     main(sys.argv[1:])
