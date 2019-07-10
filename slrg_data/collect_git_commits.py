@@ -1,8 +1,62 @@
+"""Collects source code from github commits.
+
+Useable with the records collected with the git_projects.sql(link) from Google
+BigQuery and Ghtorrent.
+
+Usage
+-----
+
+Run::
+
+    $ slrg-git-commits [-h] [-l <programming language>]
+        [-i <input data file>] [-s <start index>]
+        [-c <records to process>] [-u <database username>]
+        [-p <database password>] [--git=<github username>]
+        [--gitpass=<github password>]
+
+Options
+~~~~~~~
+Unless otherwise stated all options default to config file and if
+the config file is None the user will be asked to input values.
+
+**-h**
+    Print out help text.
+
+**-l <programming language>**
+    The programming language that source is being collected from.
+    Determines the table to use and the file extensions. See config.py
+    for more info. Default is to ask for it.
+
+**-i <input data file>**
+    The data file to process. Can be a filepath relative to the current
+    directory or a file name in the data/git_projects directory. 
+    Default is to ask for it.
+
+**-s <start index>**
+    The entry to start processing first.
+
+**-c <records to process>**
+    The count for number of records to process in total.
+
+**-u <database username>**
+    Database username.
+
+**-p <database password>**
+    The database password.
+
+**--git=<github username>**
+    The username of the github account to use with API calls.
+
+**--gitpass=<github password>**
+    The password for the github account.
+"""
+# Standard python modules
 import os
 import sys
 import getopt
 import json
 
+# Local imports
 if __name__ == '__main__':
     import collection
     from help_text import COLLECT_GIT_PROJECTS as HELP_TEXT
@@ -10,6 +64,7 @@ else:
     from . import collection
     from .help_text import COLLECT_GIT_PROJECTS as HELP_TEXT
 
+# Add the directory with the configuration file to the path
 try:
     sys.path.append(collection.common.SLRG_DIR)
     import test_config as config  # nopep8, pylint: disable=import-error
@@ -19,17 +74,21 @@ except ModuleNotFoundError:
     sys.exit()
 
 
+# Script and Main Functions ############################################
+
 def _entry():
+    """Entry point for the script."""
     _script(sys.argv[1:])
 
 
 def _script(argv):
-    """Collect source code from GitHub commits.
+    """Processes command line arguments and calls main with their values.
 
-    See module documentation for details.
+    See module details for more info on command line options.
 
     Args:
-        argv (list of str): List of command line arguments an options.
+        argv (list of str): The list of command line options and args
+            not containing the script name.
     """
     # Declare variables
     lang = None
@@ -75,7 +134,14 @@ def _script(argv):
 
 def main(lang=None, file=None, start=None, count=None, db_login=None,
          db_passwd=None, git_login=None, git_passwd=None):
+    """Collect source code from github commits.
 
+    Args:
+        etc.
+
+    Returns:
+        int: The value to set start to when running again.
+    """
     try:
         # Create objects for collection
         script_name = 'git_commits'
@@ -101,6 +167,8 @@ def main(lang=None, file=None, start=None, count=None, db_login=None,
     except collection.script.ScriptInputError as err:
         print('\n***', err)
 
+
+# Run ##################################################################
 
 if __name__ == "__main__":
     _entry()
