@@ -9,7 +9,7 @@ As a command line script.
 
 Run::
 
-    $ python3 select.py [-h] [-o <output file>]
+    $ slrg-select [-h] [-o <output file>]
         [-i <codeforces users file>] [--country=<country(s)>]
         [--gender=<gender(s)>] [--gen_prob=<min gender probability>]
         [--handle=<handles(s)>] [--org=<organization(s)>] [rank=<rank(s)]

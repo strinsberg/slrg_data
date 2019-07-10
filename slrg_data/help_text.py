@@ -1,5 +1,5 @@
 COLLECT_GIT_PROJECTS = """
-$ python3 collect_git_projects.py [-h] [-l < programming language > ]
+$ slrg-git-projects [-h] [-l < programming language > ]
     [-i < input data file > ] [-s < start index > ] [-c < records to process > ]
     [-u < database username >] [-p < database password > ]
     [--git = <github username >] [--gitpass = <github password > ]
@@ -42,9 +42,12 @@ the config file is None the user will be asked to input values.
     The password for the github account.
 """
 
+COLLECT_GIT_COMMITS = """
+slrg-git-commits [options]
+"""
 
 SELECT = """
-$ python3 select.py [-h] [-j | -c] [-n] [-o <output file>]
+$ slrg-select [-h] [-j | -c] [-n] [-o <output file>]
     [-i <input sql file>] [-u <database username>]
     [-p <database password>]
 
@@ -83,15 +86,15 @@ Options
 
 
 COLLECT_CODEFORCES = """
-Some help text
+slrg-codeforces [options]
 """
 
 GENDER_CODEFORCES = """
-Some help text
+slrg-gender-codeforces [options]
 """
 
 FILTER_CODEFORCES = """
-$ python3 select.py [-h] [-o <output file>]
+$ slrg-filter-codeforces [-h] [-o <output file>]
     [-i <codeforces users file>] [--country=<country(s)>]
     [--gender=<gender(s)>] [--gen_prob=<min gender probability>]
     [--handle=<handles(s)>] [--org=<organization(s)>] [rank=<rank(s)]
@@ -99,7 +102,7 @@ $ python3 select.py [-h] [-o <output file>]
 """
 
 COMBINE_JSON = """
-combine_json.py [-h] [-o <output file>] [-f < raw json folder> ]
+slrg-combine-json [-h] [-o <output file>] [-f < raw json folder> ]
         [-g < group size > ] [<json files>]
 
 Options

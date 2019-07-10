@@ -1,3 +1,22 @@
+"""Filters a list of codeforces user records and adds gender to all
+records it can.
+
+The records that have a gender are written to a new file. The records
+that are not able to be labeled, if the api is down, are written to
+another file to be processed later.
+
+Usage
+=====
+
+Run::
+
+    $ slrg-gender-codeforces [options]
+
+Options
+~~~~~~~
+
+
+"""
 import sys
 import getopt
 

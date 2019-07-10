@@ -10,7 +10,7 @@ As a command line script.
 
 Run::
 
-    $ python3 select.py [-h] [-j | -c] [-n] [-o <output file>]
+    $ slrg-select [-h] [-j | -c] [-n] [-o <output file>]
         [-i <input sql file>] [-u <database username>]
         [-p <database password>]
 

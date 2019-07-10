@@ -13,7 +13,7 @@ you want combined.
 
 ::
 
-    $ python3 combine_json.py [-h] [-o <output file>] [-f < raw json folder> ]
+    $ slrg-combine-json [-h] [-o <output file>] [-f < raw json folder> ]
         [-g < group size > ] [<json files>]
 
 Options
