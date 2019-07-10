@@ -1,14 +1,18 @@
 """Script to run a SELECT query on a database and get the results as
 a CSV or JSON file.
 
+Can be run as a command line script or imported as a module and run with
+select.main().
+
 Usage
 =====
-Run as a command line script in the slrg_data_collection folder
+As a command line script.
 
-::
+Run::
 
-    $ python3 select.py [-h] [-j | -c] [-o <output file>] [-i <input sql file>]
-        [-u <database username>] [-p <database password>]
+    $ python3 select.py [-h] [-j | -c] [-n] [-o <output file>]
+        [-i <input sql file>] [-u <database username>]
+        [-p <database password>]
 
 Options
 ~~~~~~~
@@ -26,27 +30,28 @@ Options
     output.
 
 **-o <output file>**
-    The file to write the results to. If a path is given it must be
-    relative to the slrg_data_collection directory.
+    The file to write the results to.
 
 **-i <input sql file>**
-    A file with the SQL SELECT query. If a path is given it must be
-    relative to the slrg_data_collection directory.
+    A file with the SQL SELECT query. If not given an SQL
+    Select statement will be asked for.
 
 **-u <database username>**
-    The database username. Defaults to value in config file, if it is
-    None value will be asked for.
+    The database username. Defaults to value in config file, if config
+    value is None it will be asked for.
 
 **-p <database password>**
     The database password. Defaults to value in config file. If config
     value is None it will be asked for.
 """
+# Standar modules
 import getopt
 import sys
 import os
 import json
 import csv
 
+# Importing when file is called as a script must be different
 if __name__ == '__main__':
     import collection
     from help_text import SELECT as HELP_TEXT
@@ -54,6 +59,7 @@ else:
     from . import collection
     from .help_text import SELECT as HELP_TEXT
 
+# Add the directory with the configuration file to the path
 try:
     sys.path.append(collection.common.SLRG_DIR)
     import config  # nopep8
@@ -63,101 +69,22 @@ except ModuleNotFoundError:
     sys.exit()
 
 
-def _get_query(sql_file=None):
-    """Get the SQL query from the given file or ask for it.
-
-    If the sql_file is None the user will be asked for an SQL SELECT
-    statement.
-
-    Args:
-        sql_file (str): A path to a file containing an SQL SELECT
-            statement. Default is None.
-
-    Returns:
-        str: A string of the SQL to be queried.
-    """
-    try:
-        if sql_file is None:
-            sql = input("Sql SELECT statement: ")
-        else:
-            if not os.path.isfile(sql_file):
-                sql_file = os.path.join('sql', sql_file)
-            with open(sql_file) as file:
-                sql = file.read()
-                sql = sql.replace('\n', ' ')
-        return sql
-
-    except FileNotFoundError:
-        raise collection.script.ScriptInputError(
-            "Input Error: No Sql file: " + sql_file)
-
-
-def _get_file_and_format(file, format_):
-    """Get the file path and format type for the results.
-
-    If args are None then the user will be asked for values.
-
-    Args:
-        file (str): a file path.
-        format_ (str): a 'j' or 'c' representing the desired output
-            format in JSON or CSV.
-
-    Returns:
-        str, str: The filepath and the letter for the output format.
-    """
-    if file is None:
-        file = input("Output file: ")
-
-    if format_ is None:
-        format_ = input("Output JSON(j) or CSV(c): ").lower()
-
-    if format_ not in ['c', 'j']:
-        raise collection.script.ScriptInputError(
-            "Input error: Not a valid format: " + format_)
-
-    return file, format_
-
-
-def _query_and_output(database, sql, out_file, format_, names=False):
-    try:
-        database.connect(format_='j')
-        results = database.query(sql)
-
-        if format_ == 'j':
-            with open(out_file, 'w') as file:
-                json.dump(results, file)
-
-        elif format_ == 'c':
-            header = []
-            if results:
-                header = [x for x in results[0]]
-
-            new_results = []
-            for result in results:
-                row = [result[h] for h in header]
-                new_results.append(row)
-            results = new_results
-
-            with open(out_file, 'w', newline='') as csvfile:
-                wr = csv.writer(csvfile, delimiter=',')
-                if names:
-                    wr.writerow(header)
-                wr.writerows(results)
-
-        return "Successfully wrote to " + out_file
-
-    except collection.common.DatabaseError as error:
-        raise collection.common.DatabaseError(str(error))
-
-    finally:
-        database.close()
-
+# Script and Main Functions ############################################
 
 def _entry():
+    """Entry point for the script."""
     _script(sys.argv[1:])
 
 
 def _script(argv):
+    """Processes command line arguments and calls main with their values.
+
+    See module details for more info on command line options.
+
+    Args:
+        argv (list of str): The list of command line options and args
+            not containing the script name.
+    """
     # Declare some variables
     output_file = None
     sql_file = None
@@ -197,12 +124,22 @@ def _script(argv):
 
 def main(output_file=None, sql_file=None, output_format=None, db_login=None,
          db_passwd=None, names=False):
-    """Main for script to SELECT records from a database.
+    """Collects results of an sql SELECT query and writes the results to
+    a JSON or CSV file.
 
-    See module documentation for more details.
+    All args defualt to None. If they are left as None the configuration
+    file will be consulted and if a value cannot be found then the user
+    will be prompted for one.
 
     Args:
-        argv (list of str): List of command line arguments and options.
+        output_file (str): Name of the file to write the results to.
+        sql_file (str): Name of sql to run. If left as none the user
+            will be asked for an SQL query.
+        output_format (str): j for JSON or c for CSV.
+        db_login (str): The username for logging onto the database.
+        db_password (str): The database users password.
+        names (bool): Wether to add a row with column names at the top
+            of a CSV file.
     """
     try:
         # Set some variables
@@ -233,6 +170,121 @@ def main(output_file=None, sql_file=None, output_format=None, db_login=None,
     except collection.common.DatabaseError as err:
         print("\n***", err)
 
+
+# Helper Functions #####################################################
+
+def _get_file_and_format(file, format_):
+    """Get the file path and format type for the results.
+
+    If args are None then the user will be asked for values.
+
+    Args:
+        file (str): a file path.
+        format_ (str): a 'j' or 'c' representing the desired output
+            format in JSON or CSV.
+
+    Returns:
+        str, str: The filepath and the letter for the output format.
+
+    Raises:
+        collection.script.ScriptInputError
+    """
+    if file is None:
+        file = input("Output file: ")
+
+    if format_ is None:
+        format_ = input("Output JSON(j) or CSV(c): ").lower()
+
+    if format_ not in ['c', 'j']:
+        raise collection.script.ScriptInputError(
+            "Input error: Not a valid format: " + format_)
+
+    return file, format_
+
+
+def _get_query(sql_file=None):
+    """Get the SQL query from the given file or ask for it.
+
+    If the sql_file is None the user will be asked for an SQL SELECT
+    statement.
+
+    Args:
+        sql_file (str): A path to a file containing an SQL SELECT
+            statement. Default is None.
+
+    Returns:
+        str: A string of the SQL to be queried.
+
+    Raises:
+        collection.script.ScriptInputError
+    """
+    try:
+        if sql_file is None:
+            sql = input("Sql SELECT statement: ")
+        else:
+            if not os.path.isfile(sql_file):
+                sql_file = os.path.join('sql', sql_file)
+            with open(sql_file) as file:
+                sql = file.read()
+                sql = sql.replace('\n', ' ')
+        return sql
+
+    except FileNotFoundError:
+        raise collection.script.ScriptInputError(
+            "Input Error: No Sql file: " + sql_file)
+
+
+def _query_and_output(database, sql, out_file, format_, names=False):
+    """Queries the database and writes the results to a file.
+
+    Writes results to the file in the given format_.
+
+    Args:
+        database (common.Database): A database object
+        sql (str): The query to run. Should be a SELECT query only.
+        format_ (str): j for JSON output or c for CSV output.
+        names (bool): Weather or not to place column names in the first
+            row of a CSV
+
+    Returns
+        str: A message about the success or failure of the query and
+            file output.
+    """
+    try:
+        database.connect(format_='j')
+        results = database.query(sql)
+
+        if format_ == 'j':
+            with open(out_file, 'w') as file:
+                json.dump(results, file)
+
+        elif format_ == 'c':
+            header = []
+            if results:
+                header = [x for x in results[0]]
+
+            new_results = []
+            for result in results:
+                row = [result[h] for h in header]
+                new_results.append(row)
+            results = new_results
+
+            with open(out_file, 'w', newline='') as csvfile:
+                wr = csv.writer(csvfile, delimiter=',')
+                if names:
+                    wr.writerow(header)
+                wr.writerows(results)
+
+        return "Successfully wrote to " + out_file
+
+    except collection.common.DatabaseError as error:
+        raise collection.common.DatabaseError(str(error))
+
+    finally:
+        database.close()
+
+
+# Run ##################################################################
 
 if __name__ == '__main__':
     _entry()

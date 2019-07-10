@@ -44,8 +44,9 @@ the config file is None the user will be asked to input values.
 
 
 SELECT = """
-$ python3 select.py [-h] [-o <output file>] [-i <input sql file>]
-    [-u <database username>] [-p <database password>]
+$ python3 select.py [-h] [-j | -c] [-n] [-o <output file>]
+    [-i <input sql file>] [-u <database username>]
+    [-p <database password>]
 
 Options
 ~~~~~~~
@@ -55,19 +56,23 @@ Options
 
 -j | -c
     Output in JSON or CSV format.
-    * If both are given the first will be used.
+    *If both are given the first will be used.
+
+-n
+    if Selected a header row will be printed at the top of the csv with
+    column names used in select statement. 
+    * Only applicable to CSV output.
 
 -o <output file>
     The file to write the results to.
-    * Must be relative to the slrg_data_collection directory.
 
 -i <input sql file>
-    A file with the SQL SELECT query. 
-    * Must be relative to the slrg_data_collection directory.
+    A file with the SQL SELECT query.
+    * Default is to ask for a SELECT statement.
 
 -u <database username>
     The database username.
-    * Defaults to value in config file. If config value is None
+    * Defaults to value in config file, if config value is None
       it will be asked for.
 
 -p <database password>
