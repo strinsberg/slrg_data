@@ -90,6 +90,14 @@ GENDER_CODEFORCES = """
 Some help text
 """
 
+FILTER_CODEFORCES = """
+$ python3 select.py [-h] [-o <output file>]
+    [-i <codeforces users file>] [--country=<country(s)>]
+    [--gender=<gender(s)>] [--gen_prob=<min gender probability>]
+    [--handle=<handles(s)>] [--org=<organization(s)>] [rank=<rank(s)]
+    [--rating=<min rating>]
+"""
+
 COMBINE_JSON = """
 combine_json.py [-h] [-o <output file>] [-f < raw json folder> ]
         [-g < group size > ] [<json files>]

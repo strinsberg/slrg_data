@@ -37,10 +37,10 @@ import getopt
 # Local imports
 if __name__ == '__main__':
     import collection
-    from help_text import GENDER_CODEFORCES as HELP_TEXT
+    from help_text import FILTER_CODEFORCES as HELP_TEXT
 else:
     from . import collection
-    from .help_text import GENDER_CODEFORCES as HELP_TEXT
+    from .help_text import FILTER_CODEFORCES as HELP_TEXT
 
 # Add the directory with the configuration file to the path
 try:
