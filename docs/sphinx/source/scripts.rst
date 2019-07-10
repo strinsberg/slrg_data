@@ -28,8 +28,8 @@ Codeforces Collection
    :show-inheritance:
 
 
-Gender Codeforces
------------------------
+Gender Codeforces User List
+---------------------------
 
 .. automodule:: slrg_data.gender_codeforces
    :members:
@@ -37,8 +37,8 @@ Gender Codeforces
    :show-inheritance:
 
 
-Gender Codeforces
------------------------
+Filter Codeforces User List
+---------------------------
 
 .. automodule:: slrg_data.filter_codeforces
    :members:
@@ -46,8 +46,8 @@ Gender Codeforces
    :show-inheritance:
 
 
-Select
-------
+Select From Database
+--------------------
 
 .. automodule:: slrg_data.select
    :members:

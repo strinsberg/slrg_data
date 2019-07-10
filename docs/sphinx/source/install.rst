@@ -13,7 +13,7 @@ On this page there can be technical information on getting setup to use the code
 Installation
 ------------
 
-Download the slrg_data folder. Could involve downloading or cloning it from the schools gitlab or wherever we store it.
+Download the slrg_data folder from <wherever we store it>.
 
 CD into the downloaded folder and run::
 
@@ -21,54 +21,29 @@ CD into the downloaded folder and run::
 
 **Note:** You will need to have python3-pip installed.
 
-This will install the slrg_data module so that it can be imported
-as a python module as below
+This will install all the scripts to be callable from the command line.
+
+This will also install the slrg_data module so that it can be imported
+as a python3 module as below
 
     >>> import slrg_data
 
+More information on how to use the scripts from the command line or in the python3 interpreter is available in the (link) Scripts section.
 
 Setup
 -----
 
-Most of the collection functions/scripts assume a specific directory structure. Create a new folder for your data collection to take place in. Cd into it and run::
+To create a directory for the configuration file and other required folders
+Run::
 
-    $ slgr_quickstart
+    $ slgr-install
 
-This will ask some questions about your database and github credentials. (Will probably be able to set some defualts if our current database and github accounts are still active).
+This will create an slrg directory in your home folder. This directories main purpose is to hold a configuration file and to store log files and other temporary files and folders. It is required to run the scripts.
 
-    >>> # Should I put an example of the setup script here?
+More information can be found in the Configuration (link) section.
 
-Once complete you will have a directory structure created. Most examples assume that you will be in one of these directories to run code. This will enable scripts to find the configuration and data files, and store log information in the correct places. (link to a configuration section that explains the directory structure and the configuration options).
+Using The module
+----------------
 
-You are now set up to use the module.
+Now that the module is setup the scripts can be run. It is recommended that you create a follder to store your data files and any script results.
 
-Running The Scripts
--------------------
-
-Some explanation of how to run the scripts can be given here.  There will be more detailed explanation for each script in the section that it is described and in the Api docs.
-
-All scripts will be able to be run in 2 different fashions.
-
-1. At the command line
-
-    ::
-
-        $ script_name
-
-    Any information not stored in the configuration files, such as passwords and filenames, will be asked for before running the script. If you make a mistake entering something you will get an error message and have to start the script again.
-
-2. As a function in the python interpreter
-
-    >>> from slrg_data import script_name
-    >>> script_name.main(*args)
-
-    The main difference here is that you can set variables to pass to the functions arguments. This way if you make a mistake or the script exits early you can start it again without having to retype all the information.
-
-    Some of the scripts that process large files will return the entry that they left of with. So you can save it to a variable and call teh function again to start where you left off.
-
-    >>> start = 0
-    >>> start = script_name.main(start, *args)
-    >>> start = script_name.main(start, *args)
-    # .... Until you are done
-
-**Note:** Once again remember that all of these scripts should be run from somewhere inside the directory you have set up.

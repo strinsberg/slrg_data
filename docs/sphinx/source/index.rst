@@ -24,6 +24,7 @@ Contents
 .. toctree::
    :maxdepth: 2
 
+   install
    config
    scripts
    modules
@@ -34,4 +35,4 @@ Contents
 
 .. |collection-report| raw:: html
 
-    <a href="./_static/full_draft.pdf" target="_blank">here</a>
+    <a href="./_static/second_draft.pdf" target="_blank">here</a>
