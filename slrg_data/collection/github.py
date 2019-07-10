@@ -81,22 +81,14 @@ class GitCollector(common.Collector):
                                                   str(time.time())), self.gender_wait)
 
 
-class CommitsCollector(common.Collector):
+class CommitsCollector(GitCollector):
     """Extracts added files from git commits."""
 
-    def __init__(self, database, collection_info, log):
-        super(CommitsCollector, self).__init__(database, collection_info, log)
-        self.totals.update({'commits': 0, 'files': 0, 'added': 0})
-
-    def set_up(self):
-        """Adds a request session with authentication."""
-        common.Collector.set_up(self)
-
-        login = self.collection_info.git_data.login
-        passwd = self.collection_info.git_data.passwd
-
-        self.session = authenticated_session(login, passwd)
-        self.times['session'] = time.time()
+    def __init__(self, database, collection_info, log, collect_gender=True):
+        super(CommitsCollector, self).__init__(
+            database, collection_info, log, collect_gender)
+        self.totals.update({'commits': 0})
+        self.gender_file = 'commits_missing_gender'
 
     def process(self, entry):
         """Processes commit data and collects source from files to add to db"""
@@ -120,6 +112,13 @@ class CommitsCollector(common.Collector):
 
     def process_commit(self, commit_data, entry):
         """Processes commit data and adds valid files to the database."""
+
+        if self.collect_gender:
+            self.add_name_and_gender(entry)
+            if (entry['user_fullname'] is None
+                    or entry['gender'] is None):
+                return
+
         self.totals['commits'] += 1
         print("Processing Commit:", commit_data['sha'], "###")
 
@@ -203,16 +202,6 @@ class ProjectsCollector(GitCollector):
             database, collection_info, log, collect_gender)
         self.totals.update({'projects': 0})
         self.gender_file = 'projects_missing_gender'
-
-    def set_up(self):
-        """Creates session and set its credentials."""
-        common.Collector.set_up(self)
-
-        login = self.collection_info.git_data.login
-        passwd = self.collection_info.git_data.passwd
-
-        self.session = authenticated_session(login, passwd)
-        self.times['session'] = time.time()
 
     def process(self, project_data):
         """Process a github project."""
