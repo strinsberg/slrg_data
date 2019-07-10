@@ -207,10 +207,16 @@ class ProjectsCollector(GitCollector):
         """Process a github project."""
         print("#", self.idx, "###", end=" ")
 
+        # This needs to be cleaned up a bit
         if self.collect_gender:
             self.add_name_and_gender(project_data)
-        self.add_contributors(project_data)
+            if (project_data['user_fullname'] is None
+                    or project_data['gender'] is None):
+                self.log.info("Invalid project: " +
+                              project_data['name'] + " ###")
+                return
 
+        self.add_contributors(project_data)
         if not self.is_valid_project(project_data):
             self.log.info("Invalid project: " + project_data['name'] + " ###")
             return
@@ -223,14 +229,9 @@ class ProjectsCollector(GitCollector):
     def is_valid_project(self, project_data):
         """Checks to make sure project is valid.
 
-        This means checking for a username and gender, as well as making
+        This means making
         sure that the repository has no more than 1 contributor.
         """
-        if self.collect_gender:
-            if (project_data['user_fullname'] is None
-                    or project_data['gender'] is None):
-                return False
-
         contribs = project_data['contributors']
         if contribs is None or len(contribs) > 1:
             return False
