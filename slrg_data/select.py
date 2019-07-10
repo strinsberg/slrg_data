@@ -20,6 +20,11 @@ Options
     Output in JSON or CSV format. If both are given the first
     will be used.
 
+**-n**
+    if Selected a header row will be printed at the top of the csv with
+    column names used in select statement. Only applicable to **CSV**
+    output.
+
 **-o <output file>**
     The file to write the results to. If a path is given it must be
     relative to the slrg_data_collection directory.
@@ -113,6 +118,41 @@ def _get_file_and_format(file, format_):
     return file, format_
 
 
+def _query_and_output(database, sql, out_file, format_, names=False):
+    try:
+        database.connect(format_='j')
+        results = database.query(sql)
+
+        if format_ == 'j':
+            with open(out_file, 'w') as file:
+                json.dump(results, file)
+
+        elif format_ == 'c':
+            header = []
+            if results:
+                header = [x for x in results[0]]
+
+            new_results = []
+            for result in results:
+                row = [result[h] for h in header]
+                new_results.append(row)
+            results = new_results
+
+            with open(out_file, 'w', newline='') as csvfile:
+                wr = csv.writer(csvfile, delimiter=',')
+                if names:
+                    wr.writerow(header)
+                wr.writerows(results)
+
+        return "Successfully wrote to " + out_file
+
+    except collection.common.DatabaseError as error:
+        raise collection.common.DatabaseError(str(error))
+
+    finally:
+        database.close()
+
+
 def _entry():
     _script(sys.argv[1:])
 
@@ -124,10 +164,11 @@ def _script(argv):
     output_format = None
     login = None
     passwd = None
+    names = False
 
     # Parse command line options
     try:
-        opts, _ = getopt.getopt(argv, "o:i:u:p:cjh")
+        opts, _ = getopt.getopt(argv, "o:i:u:p:cjhn")
     except getopt.GetoptError:
         print(HELP_TEXT)
         sys.exit()
@@ -144,16 +185,18 @@ def _script(argv):
             login = arg
         elif opt == '-p':
             passwd = arg
+        elif opt == '-n':
+            names = True
         elif opt == '-h':
             print(HELP_TEXT)
             return
 
     main(output_file=output_file, sql_file=sql_file,
-         output_format=output_format, db_login=login, db_passwd=passwd)
+         output_format=output_format, db_login=login, db_passwd=passwd, names=names)
 
 
 def main(output_file=None, sql_file=None, output_format=None, db_login=None,
-         db_passwd=None):
+         db_passwd=None, names=False):
     """Main for script to SELECT records from a database.
 
     See module documentation for more details.
@@ -179,8 +222,7 @@ def main(output_file=None, sql_file=None, output_format=None, db_login=None,
         database = collection.script.make_database(config.database,
                                                    login=db_login,
                                                    passwd=db_passwd)
-        print(collection.query.query_db(
-            database, sql, output_file, output_format))
+        print(_query_and_output(database, sql, output_file, output_format, names))
 
     except collection.script.ScriptInputError as err:
         print("\n***", err)

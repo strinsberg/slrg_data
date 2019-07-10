@@ -19,6 +19,15 @@ Github
    :show-inheritance:
 
 
+Codeforces
+----------
+
+.. automodule:: slrg_data.collection.codeforces
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 Script
 ------
 
