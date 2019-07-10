@@ -17,8 +17,9 @@ from . import script
 
 
 class GitCollector(common.Collector):
-    def __init__(self, database, collection_info, log):
+    def __init__(self, database, collection_info, log, collect_gender=True):
         super(GitCollector, self).__init__(database, collection_info, log)
+        self.collect_gender = collect_gender
         self.totals.update({'files': 0, 'added': 0})
         self.gender_wait = []
         self.gender_file = 'missing_gender'
@@ -194,13 +195,14 @@ class CommitsCollector(common.Collector):
             added, commits, (added / commits) * 100))
 
 
-class ProjectsCollector(common.Collector):
+class ProjectsCollector(GitCollector):
     """Extracts source code from single contributor github projects."""
 
-    def __init__(self, database, collection_info, log):
-        common.Collector.__init__(self, database, collection_info, log)
-        self.totals.update({'projects': 0, 'files': 0, 'added': 0})
-        self.gender_wait = []
+    def __init__(self, database, collection_info, log, collect_gender=True):
+        super(ProjectsCollector, self).__init__(
+            self, database, collection_info, log, collect_gender)
+        self.totals.update({'projects': 0})
+        self.gender_file = 'projects_missing_gender'
 
     def set_up(self):
         """Creates session and set its credentials."""
@@ -216,7 +218,8 @@ class ProjectsCollector(common.Collector):
         """Process a github project."""
         print("#", self.idx, "###", end=" ")
 
-        self.add_name_and_gender(project_data)
+        if self.collect_gender:
+            self.add_name_and_gender(project_data)
         self.add_contributors(project_data)
 
         if not self.is_valid_project(project_data):
@@ -227,6 +230,27 @@ class ProjectsCollector(common.Collector):
         print("Processing Project:", project_data['name'], "###")
 
         self.process_valid_project(project_data)
+
+    def is_valid_project(self, project_data):
+        """Checks to make sure project is valid.
+
+        This means checking for a username and gender, as well as making
+        sure that the repository has no more than 1 contributor.
+        """
+        if self.collect_gender:
+            if (project_data['user_fullname'] is None
+                    or project_data['gender'] is None):
+                return False
+
+        contribs = project_data['contributors']
+        if contribs is None or len(contribs) > 1:
+            return False
+
+        if (len(contribs) == 1
+                and project_data['login'] != contribs[0]['author']['login']):
+            return False
+
+        return True
 
     def process_valid_project(self, project_data):
         """Process a valid project by cloning the repo and adding any
@@ -264,45 +288,6 @@ class ProjectsCollector(common.Collector):
         repo = git.Repo.clone_from(url, repo_path)
         return repo, repo_path
 
-    def add_name_and_gender(self, project_data):
-        """Add fullname and gender data to project data."""
-        project_data['user_fullname'] = None
-        project_data['gender'] = None
-        project_data['gender_probability'] = None
-
-        fullname, gender, gender_probability = self.get_fullname_and_gender(
-            project_data)
-
-        if fullname not in [None, ''] and gender not in ['nil', None]:
-            project_data['user_fullname'] = fullname
-            project_data['gender'] = gender
-            project_data['gender_probability'] = gender_probability
-        elif gender is None:
-            self.gender_wait.append(project_data)
-        else:
-            self.log.info("Gender " + gender + ": " +
-                          project_data['login'])
-
-    def get_fullname_and_gender(self, project_data):
-        """Collect a github users fullname and gender data if available."""
-        try:
-            fullname = get_fullname(
-                project_data['login'], self.session, self.times['session'])
-        except RateLimitExceeded:
-            wait_for_api(self.times['session'], 120, self.log.info)
-            self.times['session'] = 0
-
-        if fullname not in [None, '']:
-            name = fullname.split()[0]
-            gender, gender_probability = common.get_gender(
-                name, self.database, 'genders')
-        else:
-            self.log.info("No User Name: " + project_data['login'])
-            gender = None
-            gender_probability = None
-
-        return fullname, gender, gender_probability
-
     def add_contributors(self, project_data):
         """Add a list of contributors to project data."""
         project_data['contributors'] = None
@@ -316,25 +301,6 @@ class ProjectsCollector(common.Collector):
         except RateLimitExceeded:
             wait_for_api(self.times['session'], 120, self.log.info)
             self.times['session'] = time.time()
-
-    def is_valid_project(self, project_data):
-        """Checks to make sure project is valid.
-
-        This means checking for a username and gender, as well as making
-        sure that the repository has no more than 1 contributor.
-        """
-        if project_data['user_fullname'] is None or project_data['gender'] is None:
-            return False
-
-        contribs = project_data['contributors']
-        if contribs is None or len(contribs) > 1:
-            return False
-
-        if (len(contribs) == 1
-                and project_data['login'] != contribs[0]['author']['login']):
-            return False
-
-        return True
 
     def process_file(self, path, filename, project_data):
         """Process a file and add it to the database if it is valid."""
@@ -393,7 +359,7 @@ class ProjectsCollector(common.Collector):
 
     def clean_up(self):
         """Prints stats on program run and other final actions."""
-        common.Collector.clean_up(self)
+        super(ProjectsCollector, self).clean_up(self)
 
         projects = self.totals['projects'] + 0.1
         self.log.info(
@@ -405,10 +371,6 @@ class ProjectsCollector(common.Collector):
             added, files, (added / files) * 100))
         self.log.info("Files added/project: {}/{:.0f} {:.0f}%".format(
             added, projects, (added / projects) * 100))
-
-        if self.gender_wait:
-            common.write_json_data("{}_{}".format("missing_gender",
-                                                  str(time.time())), self.gender_wait)
 
 
 class GitCollectionInfo(common.CollectionInfo):
