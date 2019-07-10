@@ -81,6 +81,10 @@ COLLECT_CODEFORCES = """
 Some help text
 """
 
+GENDER_CODEFORCES = """
+Some help text
+"""
+
 COMBINE_JSON = """
 combine_json.py [-h] [-o <output file>] [-f < raw json folder> ]
         [-g < group size > ] [<json files>]

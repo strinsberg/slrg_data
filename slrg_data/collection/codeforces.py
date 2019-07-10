@@ -356,9 +356,9 @@ class CfSeleniumCollector(CfSubmissionsCollector):
 
 def add_gender(user_data, database, gender_table):
     gender, prob = None, None
-    if 'first_name' in user_data:
+    if 'firstName' in user_data:
         gender, prob = common.get_gender(
-            user_data['first_name'], database, gender_table)
+            user_data['firstName'].split()[0], database, gender_table)
     user_data['gender'] = gender
     user_data['gender_probability'] = prob
 

@@ -6,3 +6,4 @@ from . import collect_git_projects
 from . import select
 from . import combine_json
 from . import gender_codeforces
+from . import filter_codeforces

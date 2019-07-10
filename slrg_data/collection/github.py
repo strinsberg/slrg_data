@@ -246,9 +246,7 @@ class ProjectsCollector(common.Collector):
         contribs = common.session_get_json(self.session, contrib_url)
 
         try:
-            if (contribs is not None
-                    and api_ok(
-                        contribs, self.times["session"], write=self.log.info)):
+            if api_ok(contribs, self.times["session"], write=self.log.info):
                 project_data['contributors'] = contribs
 
         except RateLimitExceeded:
@@ -465,6 +463,8 @@ def wait_for_api(session_time, padding, write=print):
 
 def api_ok(data, session, padding=120, write=print):
     """Tests the return value from github api for errors."""
+    if data is None:
+        return False
     if 'message' in data:
         write("Api issue: {}".format(data['message']))
 

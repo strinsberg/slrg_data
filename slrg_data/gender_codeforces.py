@@ -3,10 +3,10 @@ import getopt
 
 if __name__ == '__main__':
     import collection
-    from help_text import COLLECT_CODEFORCES as HELP_TEXT
+    from help_text import GENDER_CODEFORCES as HELP_TEXT
 else:
     from . import collection
-    from .help_text import COLLECT_CODEFORCES as HELP_TEXT
+    from .help_text import GENDER_CODEFORCES as HELP_TEXT
 
 try:
     sys.path.append(collection.common.SLRG_DIR)
@@ -32,7 +32,7 @@ def _script(argv):
 
     # Parse command line arguments
     try:
-        opts, files = getopt.getopt(argv, "t:o:m:u:p")
+        opts, files = getopt.getopt(argv, "t:o:m:u:p:h")
     except getopt.GetoptError:
         print(HELP_TEXT)
         sys.exit()
@@ -40,7 +40,7 @@ def _script(argv):
     for opt, arg in opts:
         if opt == '-t':
             gender_table = arg
-        if opt == '-o':
+        elif opt == '-o':
             gender_file = arg
         elif opt == '-m':
             missing_file = arg
@@ -48,6 +48,8 @@ def _script(argv):
             db_login = arg
         elif opt == '-p':
             db_passwd = arg
+        elif opt == '-h':
+            print(HELP_TEXT)
         else:
             print("Unkown option:", opt)
             print(HELP_TEXT)
@@ -74,34 +76,43 @@ def main(users_file=None, db_login=None, db_passwd=None,
     gender_table = collection.script.null_arg_str(
         gender_table, config.tables['gender'], "Gender Table")
 
-    if gender_file is not None:
+    if gender_file is None:
         gender_file = 'gendered.data'
 
     if missing_file is None:
         missing_file = 'missing_gender.data'
 
-    _add_gender(user_list, database, gender_table, gender_file, missing_file)
+    try:
+        database.connect()
+        _add_gender(user_list, database, gender_table,
+                    gender_file, missing_file)
+    finally:
+        database.close()
 
 
 def _add_gender(user_list, database, gender_table, gender_file, miss_file):
     gender = []
     missing = []
 
-    def f(x):
-        return collection.codeforces.add_gender(x, database, gender_table)
+    try:
+        for i, user in enumerate(user_list):
+            if _has_first_name(user):
+                collection.codeforces.add_gender(user, database, gender_table)
+                print("#", i, " -- First name:",
+                      user['firstName'].split()[0],
+                      "**", user['gender'], "**")
+                if _has_gender(user):
+                    gender.append(user)
+                elif _missing_gender(user):
+                    missing.append(user)
 
-    for user in map(f, filter(_has_first_name, user_list)):
-        if _has_gender(user):
-            gender.append(user)
-        elif _missing_gender(user):
-            missing.append(user)
-
-    collection.common.write_json_data(gender, gender_file)
-    collection.common.write_json_data(missing, miss_file)
+    finally:
+        collection.common.write_json_data(gender_file, gender)
+        collection.common.write_json_data(miss_file, missing)
 
 
 def _has_first_name(user_data):
-    return 'first_name' in user_data and user_data['first_name'] != ''
+    return 'firstName' in user_data and user_data['firstName'].strip() != ''
 
 
 def _has_gender(user_data):
