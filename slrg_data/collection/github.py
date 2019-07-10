@@ -200,7 +200,7 @@ class ProjectsCollector(GitCollector):
 
     def __init__(self, database, collection_info, log, collect_gender=True):
         super(ProjectsCollector, self).__init__(
-            self, database, collection_info, log, collect_gender)
+            database, collection_info, log, collect_gender)
         self.totals.update({'projects': 0})
         self.gender_file = 'projects_missing_gender'
 
@@ -359,7 +359,7 @@ class ProjectsCollector(GitCollector):
 
     def clean_up(self):
         """Prints stats on program run and other final actions."""
-        super(ProjectsCollector, self).clean_up(self)
+        super(ProjectsCollector, self).clean_up()
 
         projects = self.totals['projects'] + 0.1
         self.log.info(
@@ -498,6 +498,7 @@ def api_ok(data, session, padding=120, write=print):
             raise RateLimitExceeded("Github RateLimit Exceeded")
         elif data['message'] == 'Server Error':
             time.sleep(10)
+            return False
         elif data['message'] == 'Bad credentials':
             raise script.ScriptInputError(
                 "Input Error: Incorrect github username or password")
