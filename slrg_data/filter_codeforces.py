@@ -1,8 +1,6 @@
 """Filter out records for codforces users that satisfy any given
 conditions and write them to a new file.
 
-If no conditions are given then all the users will be taken.
-
 Usage
 =====
 As a command line script.
@@ -18,11 +16,11 @@ Run::
 Options
 ~~~~~~~
 If multiple values are given separate them by a space and surround
-the list with quotes. Ie) 'canada russia'
+    the list with quotes. Ie) 'canada russia'
 Values that are made of multiple word should have a ~ inserted
-between the words. Ie) 'united~states' or 'legendary~grandmaster'
+    between the words. Ie) 'united~states' or 'legendary~grandmaster'
 All category options default to accepting all values unless otherwise
-specified.
+    specified.
 
 **-h**
     Print help text.

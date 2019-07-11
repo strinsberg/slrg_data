@@ -1,7 +1,7 @@
 """Collects source code from github commits.
 
-Useable with the records collected with the git_projects.sql(link) from Google
-BigQuery and Ghtorrent.
+Useable with the records collected with the git_projects.sql(link)
+from Google BigQuery and Ghtorrent.
 
 Usage
 -----
