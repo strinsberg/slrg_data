@@ -188,6 +188,7 @@ class Database:
             script.ScriptInputError: If the database credentials are
             invalid.
         """
+        self._format = _format
         if self.user is None:
             self.user = input("Databse username: ")
         if self.passwd is None:
@@ -224,18 +225,25 @@ class Database:
         Raises:
             DatabaseError: If there is a problem with the INSERT.
         """
-        try:
-            sql = "INSERT INTO {} ({}) VALUES({});".format(
-                table, ", ".join(columns), self._vals(len(columns)))
+        sql = "INSERT INTO {} ({}) VALUES({});".format(
+            table, ", ".join(columns), self._vals(len(columns)))
+        for _ in range(10):
+            try:
+                with self.database.cursor() as cursor:
+                    cursor.execute(sql, values)
+                self.database.commit()
 
-            with self.database.cursor() as cursor:
-                cursor.execute(sql, values)
-            self.database.commit()
-
-        except pymysql.err.MySQLError as error:
-            if self.database.open:
-                self.database.rollback()
-            raise DatabaseError(str(error))
+            except pymysql.err.MySQLError as error:
+                if self.database.open:
+                    self.database.rollback()
+                code, _ = error.args
+                if code == 2013:
+                    print("*** Datbase Error:", str(error))
+                    time.sleep(30)
+                    self.close()
+                    self.connect(self._format)
+                else:
+                    raise DatabaseError(str(error))
 
     def select(self, columns, table, where):
         """Selects values from the given columns from the given table.
@@ -257,18 +265,25 @@ class Database:
         Raises:
             DatabaseError: If there is a problem with the SELECT.
         """
-        try:
-            sep = ", "
-            sql = "SELECT {} FROM {} WHERE {};".format(sep.join(columns),
-                                                       table, sep.join(where))
+        sep = ", "
+        sql = "SELECT {} FROM {} WHERE {};".format(sep.join(columns),
+                                                   table, sep.join(where))
+        for _ in range(10):
+            try:
+                with self.database.cursor() as cursor:
+                    cursor.execute(sql)
+                    results = cursor.fetchall()
+                return results
 
-            with self.database.cursor() as cursor:
-                cursor.execute(sql)
-                results = cursor.fetchall()
-            return results
-
-        except pymysql.err.MySQLError as error:
-            raise DatabaseError(str(error))
+            except pymysql.err.MySQLError as error:
+                code, _ = error.args
+                if code == 2013:
+                    print("*** Datbase Error:", str(error))
+                    time.sleep(30)
+                    self.close()
+                    self.connect(self._format)
+                else:
+                    raise DatabaseError(str(error))
 
     def query(self, sql):
         """Run an SQL query on the database and return the results.
@@ -292,13 +307,22 @@ class Database:
                     "Database Error: Cannot use "
                     + stmt.upper() + " Database.query")
 
-        try:
-            with self.database.cursor() as cursor:
-                cursor.execute(sql)
-                return cursor.fetchall()
+        for _ in range(10):
+            try:
+                with self.database.cursor() as cursor:
+                    cursor.execute(sql)
+                    results = cursor.fetchall()
+                return results
 
-        except pymysql.err.MySQLError as error:
-            raise DatabaseError(str(error))
+            except pymysql.err.MySQLError as error:
+                code, _ = error.args
+                if code == 2013:
+                    print("*** Datbase Error:", str(error))
+                    time.sleep(30)
+                    self.close()
+                    self.connect(self._format)
+                else:
+                    raise DatabaseError(str(error))
 
     def close(self):
         """Closes the database connection."""
