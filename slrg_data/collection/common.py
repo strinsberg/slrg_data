@@ -16,15 +16,33 @@ import pymysql
 # My modules
 from . import script
 
+
 # Constants ############################################################
 
+# Path to the slrg directory in the users home folder
 SLRG_DIR = os.path.join(os.path.expanduser('~'), 'slrg')
+
 
 # Classes ##############################################################
 
-
 class Collector:
-    """Abstract Class for collecting information from the internet."""
+    """Abstract Class for collecting source code.
+
+    process must be overridden.
+
+    Attributes:
+        database (Database): The database to store source code and
+            associated information in.
+        collection_info (CollectionInfo): Information needed to collect
+            source code from a particular source.
+        log (Log): A log to send info and errors to.
+        times (dict): Times related to the running of the script.
+            'start' is the time the script was started.
+        totals (dict): Totals for processed data. 'entry' is the total
+            number of records processed during the running of
+            the script.
+        idx (int): The current index in the list of records.
+    """
 
     def __init__(self, database, collection_info, log):
         self.database = database
@@ -35,7 +53,15 @@ class Collector:
         self.idx = self.collection_info.limits.start
 
     def main(self):
-        """Runs the extraction."""
+        """Starts and runs the source collection.
+
+        Returns:
+            int: The index of the next record to process in the data
+            file.
+
+        Raises:
+            DatabaseError
+        """
         try:
             self.set_up()
             data = get_json_data(self.collection_info.records.filename)
@@ -51,11 +77,17 @@ class Collector:
         return self.idx + 1
 
     def set_up(self):
-        """Things to run before starting collection."""
+        """Does any setup that must happen before the data collection
+        starts."""
         self.database.connect()
 
     def process_data(self, data):
-        """Processes each entry in the data within the desired range."""
+        """Processes each record in the given list of records within the
+        limits in the collectio_info attribute.
+
+        Args:
+            data (list): A list of dict records to process.
+        """
         for idx, entry in enumerate(data):
             # Only process records in the desired range
             if idx < self.collection_info.limits.start:
@@ -71,11 +103,28 @@ class Collector:
 
     # Override
     def process(self, entry):
-        """Process and insert an entry into the database."""
+        """Processes a record and information and source code from it
+        to the database.
+
+        **Must be overridden.**
+        """
         assert False, "Collector.process must be overridden"
 
     def get_entry_values(self, entry):
-        """Gets a files associated info from an entry to add to database."""
+        """Gets values from an entry and returns them in a list.
+
+        Uses the fields in collection info to collect the values in
+        the correct order so they can be added to the database. Also,
+        transforms any values that must be transformed before being
+        added to the database.
+
+        Args:
+            entry (dict): A record being processed.
+
+        Returns:
+            list: A list of the values in the order of the fields
+            list in collection_info.
+        """
         values = []
         for field in self.collection_info.records.fields:
             value = entry[field] if field in entry else None
@@ -84,10 +133,19 @@ class Collector:
         return values
 
     def transform_entry_value(self, value, entry_field):
+        """Transform a value from a field if needed.
+
+        Default is to return the value unchanged. Should be overridden
+        if certain entry fields need to have values transformed.
+        """
         return value
 
     def clean_up(self):
-        """Runs desired cleanup code at the end of main."""
+        """Runs any operations that need to be done after the collection
+        has finished.
+
+        Will be called even if the script exits due to an error.
+        """
         self.database.close()
 
         self.log.info('------------------------------------------------------')

@@ -1,4 +1,4 @@
-"""Helper functions for running scripts."""
+"""Helper functions and factories for running scripts."""
 # Standard python modules
 import json
 import os
@@ -43,6 +43,9 @@ def make_git_info(lang, filename, git_data, limits, script_name, config):
     """Creates a collection.github.GitCollectionInfo object for use with
     github collection.
 
+    If lang or filename are None the user will be asked to input
+    values.
+
     Args:
         lang (str): The programming language to collect source in.
         filename (str): The file the project data is stored in.
@@ -80,6 +83,7 @@ def make_cf_info(filename, limits, script_name, config):
 
     Args:
         filename (str): The file the codeforces user data is stored in.
+            If None the user will be asked to input a value.
         limits (codeforces.CfLimitData): Limits for the collection.
         script_name (str): The name of the script calling the function.
         config (dict): The contents of the config file in a dict. See
