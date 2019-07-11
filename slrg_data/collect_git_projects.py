@@ -5,11 +5,10 @@ BigQuery and Ghtorrent.
 
 Usage
 -----
-Run as a command line script in the slrg_data_collection folder.
 
-::
+Run::
 
-    $ python3 collect_git_projects.py [-h] [-l <programming language>]
+    $ slrg-git-projects [-h] [-l <programming language>]
         [-i <input data file>] [-s <start index>]
         [-c <records to process>] [-u <database username>]
         [-p <database password>] [--git=<github username>]
@@ -18,7 +17,8 @@ Run as a command line script in the slrg_data_collection folder.
 Options
 ~~~~~~~
 Unless otherwise stated all options default to config file and if
-the config file is None the user will be asked to input values.
+the value in the config file is None the user will be asked to
+input values.
 
 **-h**
     Print out help text.
@@ -30,18 +30,17 @@ the config file is None the user will be asked to input values.
     * Default is to ask for it.
 
 **-i <input data file>**
-    The data file to process. Can be a filepath relative to the current
-    directory or a file name in the data/git_projects directory.
+    The file containing a list of codeforces user records.
     * Default is to ask for it.
 
 **-s <start index>**
-    The entry to start processing first.
+    The record to start processing first.
 
 **-c <records to process>**
-    The count for number of records to process in total.
+    The number of records to process in total.
 
 **-u <database username>**
-    Database username.
+    The database username.
 
 **-p <database password>**
     The database password.
@@ -51,20 +50,14 @@ the config file is None the user will be asked to input values.
 
 **--gitpass=<github password>**
     The password for the github account.
-
-**Note**
-    If passwords are given they will be stored during the script's
-    execution in plain text. If not given or stored in the config file
-    the python module getpass is used to pass them directly into the
-    objects which need them: requests and pymysql. If you are concerned
-    about how they might handle your passwords consult their
-    documentation.
 """
+# Standard python modules
 import os
 import sys
 import getopt
 import json
 
+# Local imports
 if __name__ == '__main__':
     import collection
     from help_text import COLLECT_GIT_PROJECTS as HELP_TEXT
@@ -72,17 +65,19 @@ else:
     from . import collection
     from .help_text import COLLECT_GIT_PROJECTS as HELP_TEXT
 
+# # Add the directory with the configuration file to the path
 try:
     sys.path.append(collection.common.SLRG_DIR)
-    import config  # nopep8
+    import config   # nopep8, pylint: disable=import-error
 except ModuleNotFoundError:
     print('Config Error: Could not find config.py.',
           'Please make sure you have run slrg-install.')
     sys.exit()
 
 
-# Entry point for command line script when installed
+# Script and Main Functions ############################################
 def _entry():
+    """Entry point for the script."""
     _script(sys.argv[1:])
 
 
@@ -138,7 +133,23 @@ def _script(argv):
 
 def main(lang=None, file=None, start=None, count=None, db_login=None,
          db_passwd=None, git_login=None, git_passwd=None):
+    """Collects source code from GitHub projects.
 
+    Args:
+        lang (str): The programming language to collect source code for.
+        file (str): The name of the file containing GitHub project
+            records obtained from Ghtorrent.
+        start (int): The index of the first user record to process.
+        count (int): The max number of users to process.
+        db_login (str): The username for the database.
+        db_passwd (str): The password for the database.
+        git_login (str): A GitHub username.
+        git_passwd (str): The password for the GitHub username.
+
+    Returns:
+        int: The index of the next project to process from the file of
+            Ghtorrent project records.
+    """
     try:
         # Create objects for collection
         script_name = 'git_projects'
@@ -164,6 +175,8 @@ def main(lang=None, file=None, start=None, count=None, db_login=None,
     except collection.script.ScriptInputError as err:
         print('\n***', err)
 
+
+# Run ##################################################################
 
 if __name__ == '__main__':
     _entry()

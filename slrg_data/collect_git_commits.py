@@ -17,7 +17,8 @@ Run::
 Options
 ~~~~~~~
 Unless otherwise stated all options default to config file and if
-the config file is None the user will be asked to input values.
+the value in the config file is None the user will be asked to
+input values.
 
 **-h**
     Print out help text.
@@ -25,21 +26,21 @@ the config file is None the user will be asked to input values.
 **-l <programming language>**
     The programming language that source is being collected from.
     Determines the table to use and the file extensions. See config.py
-    for more info. Default is to ask for it.
+    for more info.
+    * Default is to ask for it.
 
 **-i <input data file>**
-    The data file to process. Can be a filepath relative to the current
-    directory or a file name in the data/git_projects directory. 
-    Default is to ask for it.
+    The file containing a list of codeforces user records.
+    * Default is to ask for it.
 
 **-s <start index>**
-    The entry to start processing first.
+    The record to start processing first.
 
 **-c <records to process>**
-    The count for number of records to process in total.
+    The number of records to process in total.
 
 **-u <database username>**
-    Database username.
+    The database username.
 
 **-p <database password>**
     The database password.
@@ -134,13 +135,22 @@ def _script(argv):
 
 def main(lang=None, file=None, start=None, count=None, db_login=None,
          db_passwd=None, git_login=None, git_passwd=None):
-    """Collect source code from github commits.
+    """Collects source code from GitHub commits.
 
     Args:
-        etc.
+        lang (str): The programming language to collect source code for.
+        file (str): The name of the file containing GitHub commit
+            records obtained from Ghtorrent.
+        start (int): The index of the first user record to process.
+        count (int): The max number of users to process.
+        db_login (str): The username for the database.
+        db_passwd (str): The password for the database.
+        git_login (str): A GitHub username.
+        git_passwd (str): The password for the GitHub username.
 
     Returns:
-        int: The value to set start to when running again.
+        int: The index of the next project to process from the file of
+            Ghtorrent commit records.
     """
     try:
         # Create objects for collection

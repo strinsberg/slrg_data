@@ -1,7 +1,46 @@
+"""Collects source code from codeforces submissions.
+
+Usage
+=====
+
+Run::
+
+    $ slrg-codeforces [-h] [-l <programming language>]
+        [-i <input data file>] [-s <start index>]
+        [-c <number of records to process>] [-u <database username>]
+        [-p <database password>]
+
+Options
+~~~~~~~
+Unless otherwise stated all options default to config file and if
+the value in the config file is None the user will be asked to
+input values.
+
+**-h**
+    Print out help text.
+
+**-i <input data file>**
+    The file containing a list of codeforces user records.
+    Default is to ask for it.
+
+**-s <start index>**
+    The record to start processing first.
+
+**-c <records to process>**
+    The number of records to process in total.
+
+**-u <database username>**
+    The database username.
+
+**-p <database password>**
+    The database password.
+"""
+# Standard python modules
 import sys
 import os
 import getopt
 
+# Local imports
 if __name__ == '__main__':
     import collection
     from help_text import COLLECT_CODEFORCES as HELP_TEXT
@@ -9,6 +48,7 @@ else:
     from . import collection
     from .help_text import COLLECT_CODEFORCES as HELP_TEXT
 
+# Add the directory with the configuration file to the path
 try:
     sys.path.append(collection.common.SLRG_DIR)
     import config  # nopep8, pylint: disable=import-error
@@ -18,11 +58,22 @@ except ModuleNotFoundError:
     sys.exit()
 
 
+# Script and Main Functions ############################################
+
 def _entry():
+    """Entry point for the script."""
     _script(sys.argv[1:])
 
 
 def _script(argv):
+    """Processes command line arguments and calls main with their values.
+
+    See module details for more info on command line options.
+
+    Args:
+        argv (list of str): The list of command line options and args
+            not containing the script name.
+    """
     # Declare variables
     file = None
     start = None
@@ -57,7 +108,19 @@ def _script(argv):
 
 
 def main(file=None, start=None, count=None, db_login=None, db_passwd=None):
+    """Collects source code from codeforces submissions.
 
+    Args:
+        file (str): The name of the file containing user records.
+        start (int): The index of the first user record to process.
+        count (int): The max number of users to process.
+        db_login (str): The username for the database.
+        db_passwd (str): The password for the database.
+
+    Returns:
+        int: The index of the next user to process in the file of user
+            records.
+    """
     script_name = 'codeforces'
 
     database = collection.script.make_database(config.database,
@@ -76,6 +139,8 @@ def main(file=None, start=None, count=None, db_login=None, db_passwd=None):
     collector = collection.codeforces.CfSeleniumCollector(database, info, log)
     return collector.main()
 
+
+# Run ##################################################################
 
 if __name__ == '__main__':
     _entry()

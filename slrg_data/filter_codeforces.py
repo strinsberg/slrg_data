@@ -9,7 +9,7 @@ As a command line script.
 
 Run::
 
-    $ slrg-select [-h] [-o <output file>]
+    $ slrg-filter-codeforces [-h] [-o <output file>]
         [-i <codeforces users file>] [--country=<country(s)>]
         [--gender=<gender(s)>] [--gen_prob=<min gender probability>]
         [--handle=<handles(s)>] [--org=<organization(s)>] [rank=<rank(s)]
@@ -17,6 +17,12 @@ Run::
 
 Options
 ~~~~~~~
+If multiple values are given separate them by a space and surround
+the list with quotes. Ie) 'canada russia'
+Values that are made of multiple word should have a ~ inserted
+between the words. Ie) 'united~states' or 'legendary~grandmaster'
+All category options default to accepting all values unless otherwise
+specified.
 
 **-h**
     Print help text.
@@ -28,7 +34,28 @@ Options
     The file containing a list of codeforces user records. If left blank
     it will be prompted for.
 
-etc.
+**--country=<country(s)>**
+    One or more countries to look for.
+
+**--gender=<gender(s)>**
+    The gender(s) to look for.
+
+**--gen_prob=<gender probability>**
+    The minimum gender probability to accept. Range [0.0, 1.0]
+    Defaults to 0.5
+
+**--handle=<handle(s)>**
+    The handles to look for.
+
+**--org=<organization(s)>**
+    The organizations to look for.
+
+**--rank=<rank(s)>**
+    The codeforces ranks to look for.
+
+**--rating=<rating>**
+    The minimum codeforces rating to accept.
+    Default is 1000.
 """
 # Standard python modules
 import sys
@@ -81,8 +108,8 @@ def _script(argv):
 
     # Parse command line arguments
     try:
-        opts, file = getopt.getopt(argv, "o:h",
-                                   ['country=', 'gender=', 'gen_prob=', 'handle=', 'org=', 'rank=', 'rating='])
+        opts, _ = getopt.getopt(argv, "i:o:h",
+                                ['country=', 'gender=', 'gen_prob=', 'handle=', 'org=', 'rank=', 'rating='])
     except getopt.GetoptError:
         print(HELP_TEXT)
         sys.exit()
@@ -102,6 +129,8 @@ def _script(argv):
             rank.extend(_split_and_lower(arg))
         elif opt == '--rating':
             rating = float(arg)
+        elif opt == '-i':
+            users_file = arg
         elif opt == '-o':
             out_file = arg
         elif opt == '-h':
@@ -110,9 +139,6 @@ def _script(argv):
             print("Unknown option:", opt)
             print(HELP_TEXT)
             sys.exit()
-
-    if file:
-        users_file = file[0]
 
     main(users_file=users_file, out_file=out_file, countries=country,
          genders=gender, gen_prob=gen_prob, handles=handle, ranks=rank,

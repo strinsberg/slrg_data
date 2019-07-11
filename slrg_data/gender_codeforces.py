@@ -10,12 +10,44 @@ Usage
 
 Run::
 
-    $ slrg-gender-codeforces [options]
+    $ slrg-gender-codeforces [-h] [-i <codeforces users file>]
+        [-o <output file>] [-m <missing gender file>]
+        [-t <gender table name>] [-u <databse username>]
+        [-p <database password>]
 
 Options
 ~~~~~~~
 
+**-h**
+    Print help text.
 
+**-i <codeforces user file>**
+    The file containing a list of codeforces user records. If left blank
+    it will be prompted for.
+
+**-o <output file>**
+    The file to write the gendered results to.
+    Default is gendered.data
+
+**-m <missing gender file>**
+    The file to write records that cannot be gendered yet because
+    the gender API is unavailable.
+    Default is missing_gender.data
+
+**-t <gender table name>**
+    The name of the gender table in the database.
+    Defaults to value in config file. If the value in config is None
+    it will be asked for.
+
+**-u <database username>**
+    The database username.
+    Defaults to value in config file. If the value in config is None
+    it will be asked for.
+
+**-p <database password>**
+    The database password.
+    Defaults to value in config file. If the value in config is None
+    it will be asked for.
 """
 # Standard python modules
 import sys
@@ -65,7 +97,7 @@ def _script(argv):
 
     # Parse command line arguments
     try:
-        opts, files = getopt.getopt(argv, "t:o:m:u:p:h")
+        opts, _ = getopt.getopt(argv, "t:i:o:m:u:p:h")
     except getopt.GetoptError:
         print(HELP_TEXT)
         sys.exit()
@@ -73,6 +105,8 @@ def _script(argv):
     for opt, arg in opts:
         if opt == '-t':
             gender_table = arg
+        elif opt == '-i':
+            users_file = arg
         elif opt == '-o':
             gender_file = arg
         elif opt == '-m':
@@ -87,9 +121,6 @@ def _script(argv):
             print("Unkown option:", opt)
             print(HELP_TEXT)
             sys.exit()
-
-    if files:
-        users_file = files[0]
 
     main(users_file=users_file, db_login=db_login, db_passwd=db_passwd,
          gender_table=gender_table, gender_file=gender_file,
