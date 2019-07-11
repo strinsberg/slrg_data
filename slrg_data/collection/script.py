@@ -185,8 +185,6 @@ def make_git_data(login, passwd, default):
 def get_file_path(filename=None):
     """Gets a file path from the filename or asks for it.
 
-    Raises an error if the file does not exist.
-
     Args:
         filename (str): The path to a file to open. If None then the
             user will be asked for one.
@@ -195,7 +193,7 @@ def get_file_path(filename=None):
         str: filename or the input filepath.
 
     Raises:
-        ScriptInputError
+        ScriptInputError: If the file does not exist.
     """
     file = null_arg_str(filename, None, "Data file: ")
     if os.path.isfile(file):

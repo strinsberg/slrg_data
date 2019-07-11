@@ -158,7 +158,17 @@ class Collector:
 
 
 class Database:
-    """Warpper for a database used by other classes."""
+    """Wrapper for a database.
+
+    Attributes:
+        host (str): The database host.
+        user (str): The database username.
+        name (str): The name of the database.
+        passwd (str): The password of the database user. Default is
+            None. If None the user will be asked to input it when
+            connecting to the datbase and will not be saved by the
+            Database class.
+    """
 
     def __init__(self, host, user, name, passwd=None):
         self.host = host
@@ -168,7 +178,16 @@ class Database:
         self.database = None
 
     def connect(self, format_=None):
-        """Connect to the database."""
+        """Connect to the database.
+
+        Args:
+            format_ (str): The format of the records to be returned.
+                'j' for dict results, otherwise tuples will be used.
+
+        Raises:
+            script.ScriptInputError: If the database credentials are
+            invalid.
+        """
         if self.user is None:
             self.user = input("Databse username: ")
         if self.passwd is None:
@@ -190,8 +209,21 @@ class Database:
                     'Input Error: Bad database username or password')
 
     def insert(self, columns, table, values):
-        """Simple insert funtion for adding a list of values to a
-        table in the database."""
+        """Inserts given values into the columns of a given table.
+
+        This is a helper for basic SQL INSERT queries. The values will
+        be inserted in order into the columns of the given table.
+
+        Args:
+            columns (list): A list of column names. In the order the
+                values will be inserted.
+            table (str): The name of the table to insert into.
+            values (list): A list of values to insert into the table.
+                Should be in the same order as the columns list.
+
+        Raises:
+            DatabaseError: If there is a problem with the INSERT.
+        """
         try:
             sql = "INSERT INTO {} ({}) VALUES({});".format(
                 table, ", ".join(columns), self._vals(len(columns)))
@@ -206,7 +238,25 @@ class Database:
             raise DatabaseError(str(error))
 
     def select(self, columns, table, where):
-        """Simple select function for querying a table in the database."""
+        """Selects values from the given columns from the given table.
+
+        This is a helper for basic SQL SELECT queries. The values of
+        the given columns will be selected and returned. All where
+        clauses will be connected with AND.
+
+        Args:
+            columns (list): The column names to select.
+            table (str): The table to select from.
+            where (list): A list of WHERE clauses. Ie) handle='steve'
+                or gender is not null
+
+        Returns:
+            list: A list of results in a dict or tuple depending on the
+            format_ passed to Database.connect. Default is tuple.
+
+        Raises:
+            DatabaseError: If there is a problem with the SELECT.
+        """
         try:
             sep = ", "
             sql = "SELECT {} FROM {} WHERE {};".format(sep.join(columns),
@@ -220,18 +270,38 @@ class Database:
         except pymysql.err.MySQLError as error:
             raise DatabaseError(str(error))
 
-    def query(self, sql):  # should rename and even use with select
-        """Run a Select Query on the database."""
+    def query(self, sql):
+        """Run an SQL query on the database and return the results.
+
+        Should only be used with select queries.
+
+        Args:
+            sql (str): A full SQL query for SELECT.
+
+        Returns:
+            list: A list of the query results.
+
+        Raises:
+            DatabaseError: If there is a problem with the query or if
+                certain statements other than select are used.
+        """
+        not_allowed = ['drop', 'alter', 'update', 'delete', 'insert']
+        for stmt in not_allowed:
+            if sql.lower().find(stmt) > -1:
+                raise DatabaseError(
+                    "Database Error: Cannot use "
+                    + stmt.upper() + " Database.query")
+
         try:
             with self.database.cursor() as cursor:
                 cursor.execute(sql)
                 return cursor.fetchall()
 
         except pymysql.err.MySQLError as error:
-            raise DatabaseError("Database Error: " + str(error))
+            raise DatabaseError(str(error))
 
     def close(self):
-        """Close the database connection."""
+        """Closes the database connection."""
         if self.database is not None:
             self.database.close()
 
@@ -243,27 +313,62 @@ class Database:
 
 
 class Log:
-    """Wrapper for logging used by other classes."""
+    """Wrapper for logging."""
 
     def __init__(self, dir_path, file_prefix="log"):
+        """Sets up logging to a file in a given directory.
+
+        Args:
+            dir_path (str): A path to the directory to store the log
+                file in.
+            file_prefix (str): All logs will be given unique names based
+                on time. The prefix is added to identify what the log
+                is for. Default is 'log'.
+        """
         path = '{}/{}_{}.log'.format(dir_path, file_prefix, time.time())
         logging.basicConfig(
             filename=path,
             level=logging.INFO,
             format=' %(asctime)s - %(levelname)s - %(message)s')
 
-    def info(self, message):
-        print(message)
-        logging.info(message)
-
     def error(self, message, error, critical=False):
+        """Logs a message and error.
+
+        Args:
+            message (str): A message to include with the error text.
+            error (Exception): an Exception object.
+            critical (bool): If true then sys.exit is called to end the
+                the program.
+
+        Raises:
+            sys.exit: If critical is True.
+        """
         print('*** Error ***', message + ':', error)
         logging.error('%s: %s', message, str(error))
         if critical:
             sys.exit()
 
+    def info(self, message):
+        """Logs a given message."""
+        print(message)
+        logging.info(message)
+
+
+# Collection Info and Data Classes #####################################
 
 class CollectionInfo:
+    """Collection of different pieces of information needed by
+    Collectors.
+
+    Attributes:
+        records (RecordsData): Information about the records to be
+            processed.
+        table (TableData): Information about the table to store data in.
+        validation (ValidationData): Information for validating records
+            and results during processing.
+        limits (LimitData): Information on processing limits.
+    """
+
     def __init__(self, records, table, validation, limits):
         self.records = records
         self.table = table
@@ -272,18 +377,44 @@ class CollectionInfo:
 
 
 class RecordsData:
+    """Information on the records for processing.
+
+    Attributes:
+        filename (str): The filename of the list of records.
+        fields (list): The fields that are being stored in the database
+            with the source code. Should be in the same order as the
+            table columns.
+    """
+
     def __init__(self, filename, fields):
         self.filename = filename
         self.fields = fields
 
 
 class TableData:
+    """Information on the table for storing source code.
+
+    Attributes:
+        name (str): The name of the table.
+        columns (list): The column names.
+    """
+
     def __init__(self, name, columns):
         self.name = name
         self.columns = columns
 
 
 class ValidationData:
+    """Information for validating records and source code files.
+
+    Attributes:
+        extensions (list): List of extensions that are valid.
+        exclude_files (list): List of filenames that should not be
+            collected.
+        exclude_dirs (list): List of directory names that should not
+            have their contents collected.
+    """
+
     def __init__(self, extensions, exclude_files, exclude_dirs):
         self.extensions = extensions
         self.exclude_files = exclude_files
@@ -291,15 +422,30 @@ class ValidationData:
 
 
 class LimitData:
+    """Information on the processing limits of collection.
+
+    Attributes:
+        start (int): The first record in a list to process.
+        count (int): The max number of records to process.
+    """
+
     def __init__(self, start, count):
         self.start = start
         self.count = count
 
     def end(self):
+        """Returns start + count."""
         return self.start + self.count
 
 
 class LanguageData:
+    """Information on the languages to collect and exclude.
+
+    Attributes:
+        collect (list): A list of languages to collect source in.
+        exclude (list): A list of languages to exclude from collection.
+    """
+
     def __init__(self, collect, exclude):
         self.collect = collect
         self.exclude = exclude
@@ -307,23 +453,43 @@ class LanguageData:
 
 # Functions ############################################################
 
-
 def find_time(sec):
-    """Finds hh:mm:ss time from a given number of seconds."""
+    """Finds the time represented by a given number of seconds.
+
+    Args:
+        sec (int): The number of seconds.
+
+    Returns:
+        str: A string of the time passed. Ie) 10h40m20.00s
+    """
     minutes, seconds = (sec / 60, sec % 60)
     hours, minutes = (minutes / 60, minutes % 60)
     return "{:.0f}h{:.0f}m{:.2f}s".format(hours, minutes, seconds)
 
 
 def get_time_string(timestamp):
-    """Converts a unix timestamp into a string 'dd/mm/yyyy h:m:s'."""
+    """Converts a timestamp into a string 'dd/mm/yyyy h:m:s'."""
     stamp = int(timestamp)
     date = datetime.fromtimestamp(stamp)
     return date.strftime("%d/%m/%Y %H:%M:%S")
 
 
 def requests_session(username=None, passwd=None, prompt="Password: "):
-    """Create a requests session with optional authentication."""
+    """Create a requests session with optional authentication.
+
+    If username is given then the session will be authenticated with the
+    given password or it will ask the user to input one. giving a
+    password without a username will return an un-authenticated session.
+
+    Args:
+        username (str): The username for the session.
+        passwd (str): The passwd for the session.
+        prompt (str): The prompt to use when asking for a password if
+            one was not given.
+
+    Returns:
+        requests.Session: The requests session.
+    """
     session = requests.Session()
     if username is not None:
         if passwd is not None:
@@ -334,6 +500,19 @@ def requests_session(username=None, passwd=None, prompt="Password: "):
 
 
 def session_get_json(session, url):
+    """Wraps requests session get call to the given url.
+
+    Catches json.decoder.JSONDecodeError if the result of the get is not
+    valid JSON.
+
+    Args:
+        session (requests.Session): The request session.
+        url (str): The url to GET from.
+
+    Returns:
+        dict: The JSON returned by the GET call, or None if there is
+            a decoding error.
+    """
     try:
         return session.get(url).json()
     except json.decoder.JSONDecodeError:
@@ -341,20 +520,37 @@ def session_get_json(session, url):
 
 
 def get_json_data(path):
-    """Loads JSON data from a file and returns it."""
+    """Loads JSON data from a given path and returns it."""
     with open(path) as file:
         return json.load(file)
 
 
 def write_json_data(path, data):
-    """Writes JSON data to a file."""
+    """Writes JSON data to a given path."""
     with open(path, 'w') as file:
         json.dump(data, file)
 
 
 def get_gender(name, database, table, write=lambda x: None):
-    """Collect the gender of a name from the given database or the
-    genderize.io api."""
+    """Collects the gender of a name from the given database or the
+    genderize.io API.
+
+    Args:
+        name (str): The name to find gender for.
+        database (Database): A database to search for the name before
+            the API.
+        table (str): The name of the table that gender information is
+            stored in.
+        write (str): A function to send information text to. Defaults
+            to one that does nothing.
+
+    Returns:
+        tuple: A tuple with (gender, gender probability). If the
+        name is not in the database and the API limit is exceeded.
+
+    Raises:
+        AssertionError: If the name is None or the empty string.
+    """
     assert name not in [None, ''], "No name given to get_gender"
 
     name = name.lower()
@@ -375,7 +571,18 @@ def get_gender(name, database, table, write=lambda x: None):
 
 
 def get_gender_from_database(name, database, table):
-    """Retrive gender  for a name from the given database and table."""
+    """Retrive gender for a name from the given database and table.
+
+    Args:
+        name (str): The name to find gender for.
+        database (Database): A database to search.
+        table (str): The name of the table that gender information is
+            stored in.
+
+    Returns:
+        tuple: A tuple with (gender, gender probability) if the name is
+        found, otherwise None.
+    """
     columns = ['gender', 'probability']
 
     if name.find('"') > -1:
@@ -389,7 +596,16 @@ def get_gender_from_database(name, database, table):
 
 
 def get_gender_from_api(name):
-    """Retreive the gender of a name from the genderize.io api."""
+    """Retreive the gender of a name from the genderize.io API.
+
+    Args:
+        name (str): The name to find gender for.
+
+    Returns:
+        tuple: A tuple with (gender, gender probability). if gender is
+        unknown it will return ('nil', 0.0). If API limit is exceeded
+        it will return (None, None).
+    """
     url = "https://api.genderize.io/?name=" + name
     r = requests.get(url)
     try:
@@ -407,7 +623,15 @@ def get_gender_from_api(name):
 
 
 def update_gender_table(name, gender_info, database, table):
-    """Insert a names gender info in a database's gender table."""
+    """Insert a names gender info in a database table.
+
+    Args:
+        name (str): The name to find gender for.
+        gender_info (tuple): The gender info as (gender, probability)
+        database (Database): A database to search.
+        table (str): The name of the table that gender information is
+            stored in.
+    """
     columns = ['name', 'gender', 'probability']
     values = [name]
     values.extend(gender_info)
@@ -416,6 +640,5 @@ def update_gender_table(name, gender_info, database, table):
 
 # Exceptions ###########################################################
 
-
 class DatabaseError(Exception):
-    """Errors with the database."""
+    """Exceptions that occur during database operations."""
