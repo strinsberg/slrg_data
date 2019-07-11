@@ -177,11 +177,11 @@ class Database:
         self.passwd = passwd
         self.database = None
 
-    def connect(self, format_=None):
+    def connect(self, _format=None):
         """Connect to the database.
 
         Args:
-            format_ (str): The format of the records to be returned.
+            format (str): The format of the records to be returned.
                 'j' for dict results, otherwise tuples will be used.
 
         Raises:
@@ -196,7 +196,7 @@ class Database:
             passwd = self.passwd
 
         cursor = pymysql.cursors.Cursor
-        if format_ == 'j':
+        if _format == 'j':
             cursor = pymysql.cursors.DictCursor
 
         try:
@@ -252,7 +252,7 @@ class Database:
 
         Returns:
             list: A list of results in a dict or tuple depending on the
-            format_ passed to Database.connect. Default is tuple.
+            format passed to Database.connect. Default is tuple.
 
         Raises:
             DatabaseError: If there is a problem with the SELECT.

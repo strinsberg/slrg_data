@@ -207,7 +207,7 @@ class ProjectsCollector(GitCollector):
         """Process a github project."""
         print("#", self.idx, "###", end=" ")
 
-        # This needs to be cleaned up a bit
+        # Don't want to continue if the name or gender are not found
         if self.collect_gender:
             self.add_name_and_gender(project_data)
             if (project_data['user_fullname'] is None

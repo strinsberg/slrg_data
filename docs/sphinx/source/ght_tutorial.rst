@@ -1,7 +1,4 @@
-Github Metadata
-===============
-
-This should contain all the required information for getting github metadata from ghtorrent using bigquery.
+.. _ght:
 
 Ghtorrent dataset
 -----------------
@@ -152,4 +149,4 @@ Otherwise move the .data files up one folder to 'data/git_projects'. You can jus
 
 .. |report-ght| raw:: html
 
-        <a href="./_static/full_draft.pdf#page=4" target="_blank">here</a>
+        <a href="./_static/second_draft.pdf#page=4" target="_blank">here</a>

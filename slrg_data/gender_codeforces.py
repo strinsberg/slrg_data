@@ -97,7 +97,7 @@ def _script(argv):
 
     # Parse command line arguments
     try:
-        opts, _ = getopt.getopt(argv, "t:i:o:m:u:p:h")
+        opts, _ = getopt.getopt(argv, "m:i:t:o:u:p:h")
     except getopt.GetoptError:
         print(HELP_TEXT)
         sys.exit()
