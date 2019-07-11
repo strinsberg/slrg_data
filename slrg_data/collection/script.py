@@ -118,7 +118,7 @@ def make_limits(start, count, default):
 
     Returns:
         common.LimitData: A data object containing limits needed for
-            some collection processes.
+        some collection processes.
     """
     start = null_arg_int(start, default['start'], "Starting index: ")
     count = null_arg_int(count, default['count'], "Entries to process: ")
@@ -143,7 +143,7 @@ def make_cf_limits(start, count, default):
 
     Returns
         codeforces.CfLimitData: A data object containing all the
-            required limit values for the codeforces collection.
+        required limit values for the codeforces collection.
     """
     start = null_arg_int(start, default['start'], "Starting index: ")
     count = null_arg_int(count, default['count'], "Entries to process: ")
@@ -168,7 +168,7 @@ def make_git_data(login, passwd, default):
 
     Returns:
         github.GithubData: A data object containing the username and
-            passwd values.
+        passwd values.
     """
     login = default['login'] if login is None else login
     passwd = default['passwd'] if passwd is None else passwd
@@ -181,7 +181,7 @@ def make_git_data(login, passwd, default):
 def get_file_path(filename=None):
     """Gets a file path from the filename or asks for it.
 
-    Also validates that the file exists.
+    Raises an error if the file does not exist.
 
     Args:
         filename (str): The path to a file to open. If None then the
@@ -191,7 +191,7 @@ def get_file_path(filename=None):
         str: filename or the input filepath.
 
     Raises:
-        ScriptInputError if the file does not exist.
+        ScriptInputError
     """
     file = null_arg_str(filename, None, "Data file: ")
     if os.path.isfile(file):
@@ -229,7 +229,7 @@ def null_arg_str(arg, default, prompt=None):
 
     Returns:
         str: The arg, default, or input with prompt. If arg, default,
-            and prompt are None then None.
+        and prompt are None then None.
     """
     if arg is not None:
         return arg
@@ -248,4 +248,4 @@ def null_arg_int(arg, default, prompt):
 # Exceptions ###########################################################
 
 class ScriptInputError(Exception):
-    """Error for when input to a script is no good."""
+    """Exception for all errors relating to incorrect script input."""
