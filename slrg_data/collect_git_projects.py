@@ -1,4 +1,4 @@
-"""Script to collect source code from Ghtorrent records of git projects.
+"""Collects source code from GitHub projects.
 
 Useable with the records collected with the git_projects.sql(link)
 from Google BigQuery and Ghtorrent.

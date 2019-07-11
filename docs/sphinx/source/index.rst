@@ -3,11 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-SLRG Data Documentation (DRAFT)
-===============================
-
-The Project
------------
+SLRG Data Collection Documentation (DRAFT)
+==========================================
 
 Here there can be an introduction the the project. A nice high level overview explaining some of what is in the documentation. For example, what is in the report and what is on the web page itself.
 
@@ -24,11 +21,13 @@ Contents
 .. toctree::
    :maxdepth: 2
 
+   github
+   codeforces
    install
-   config
    scripts
    modules
-
+   database
+   sql
 
 
 .. links ..

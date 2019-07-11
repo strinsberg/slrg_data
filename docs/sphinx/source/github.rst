@@ -1,20 +1,9 @@
-Github
-======
+Github Collection
+=================
 
 All information on running github scripts should be here for now.
-
-
-Metadata
-========
-
-ght.rst
-
-Projects
-========
-
-git_projects.rst
-
-Commits
-=======
-
-git_commits.rst
+Link to the report.
+Run through the process of collection for each method.
+These can include links to scripts and sql.
+Perhpas include some statistics on our dataset or links to a section
+of statistics if one exists.
