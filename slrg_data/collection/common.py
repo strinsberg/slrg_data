@@ -513,7 +513,7 @@ def session_get_json(session, url):
         dict: The JSON returned by the GET call, or None if there is
             a decoding error.
     """
-    for i in range(10):
+    for _ in range(10):
         try:
             return session.get(url).json()
         except json.decoder.JSONDecodeError:
@@ -612,7 +612,7 @@ def get_gender_from_api(name):
     """
     url = "https://api.genderize.io/?name=" + name
     # If the connection has problems sleep and try again. Max 10 tries.
-    for i in range(10):
+    for _ in range(10):
         try:
             r = requests.get(url)
             data = r.json()

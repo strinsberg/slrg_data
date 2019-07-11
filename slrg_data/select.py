@@ -234,15 +234,15 @@ def _get_query(sql_file=None):
             "Input Error: No Sql file: " + sql_file)
 
 
-def _query_and_output(database, sql, out_file, format_, names=False):
+def _query_and_output(database, sql, out_file, _format, names=False):
     """Queries the database and writes the results to a file.
 
-    Writes results to the file in the given format_.
+    Writes results to the file in the given _format.
 
     Args:
         database (common.Database): A database object
         sql (str): The query to run. Should be a SELECT query only.
-        format_ (str): j for JSON output or c for CSV output.
+        _format (str): j for JSON output or c for CSV output.
         names (bool): Weather or not to place column names in the first
             row of a CSV
 
@@ -251,14 +251,14 @@ def _query_and_output(database, sql, out_file, format_, names=False):
             file output.
     """
     try:
-        database.connect(format_='j')
+        database.connect(_format='j')
         results = database.query(sql)
 
-        if format_ == 'j':
+        if _format == 'j':
             with open(out_file, 'w') as file:
                 json.dump(results, file)
 
-        elif format_ == 'c':
+        elif _format == 'c':
             header = []
             if results:
                 header = [x for x in results[0]]
