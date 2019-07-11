@@ -513,10 +513,14 @@ def session_get_json(session, url):
         dict: The JSON returned by the GET call, or None if there is
             a decoding error.
     """
-    try:
-        return session.get(url).json()
-    except json.decoder.JSONDecodeError:
-        return None
+    for i in range(10):
+        try:
+            return session.get(url).json()
+        except json.decoder.JSONDecodeError:
+            return None
+        except requests.exceptions.ConnectionError as err:
+            time.sleep(30)
+            print("Connection Error:", str(err))
 
 
 def get_json_data(path):
@@ -607,19 +611,24 @@ def get_gender_from_api(name):
         it will return (None, None).
     """
     url = "https://api.genderize.io/?name=" + name
-    r = requests.get(url)
-    try:
-        data = r.json()
-    except json.decoder.JSONDecodeError:
-        data = {'error': True}
+    # If the connection has problems sleep and try again. Max 10 tries.
+    for i in range(10):
+        try:
+            r = requests.get(url)
+            data = r.json()
+            break
+        except json.decoder.JSONDecodeError:
+            data = {'error': True}
+            break
+        except requests.exceptions.ConnectionError as err:
+            time.sleep(30)
+            print("Connection Error:", str(err))
 
     if 'error' in data:
         return (None, None)
-
     if data['gender']:
         return [data['gender'], float(data['probability'])]
-    else:
-        return ['nil', 0.0]
+    return ['nil', 0.0]
 
 
 def update_gender_table(name, gender_info, database, table):
