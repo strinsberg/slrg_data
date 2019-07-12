@@ -50,8 +50,8 @@ class GitCollector(common.Collector):
         elif gender is None:
             self.gender_wait.append(entry_data)
         else:
-            self.log.info("Gender " + gender + ": " +
-                          entry_data['login'])
+            print("Gender " + gender + ": " +
+                  entry_data['login'])
 
     def get_fullname_and_gender(self, entry_data):
         """Collect a github users fullname and gender data if available."""
@@ -210,8 +210,7 @@ class ProjectsCollector(GitCollector):
             self.add_name_and_gender(project_data)
             if (project_data['user_fullname'] is None
                     or project_data['gender'] is None):
-                self.log.info("Invalid project: " +
-                              project_data['name'] + " ###")
+                print("Invalid project: " + project_data['name'] + " ###")
                 return
 
         self.add_contributors(project_data)
