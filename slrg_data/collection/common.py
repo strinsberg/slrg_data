@@ -79,6 +79,7 @@ class Collector:
     def set_up(self):
         """Does any setup that must happen before the data collection
         starts."""
+        self.log.info("File: " + self.collection_info.records.filename)
         self.database.connect()
 
     def process_data(self, data):
@@ -149,6 +150,7 @@ class Collector:
         self.database.close()
 
         self.log.info('------------------------------------------------------')
+        self.log.info("File: " + self.collection_info.records.filename)
         self.log.info('Elapsed time: {}'.format(
             find_time(time.time() - self.times['start'])))
         self.log.info('Start={}, Count={}'.format(

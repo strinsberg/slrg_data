@@ -67,7 +67,7 @@ class GitCollector(common.Collector):
             gender, gender_probability = common.get_gender(
                 name, self.database, 'genders')
         else:
-            self.log.info("No User Name: " + entry_data['login'])
+            print("No User Name: " + entry_data['login'])
             gender = None
             gender_probability = None
 
@@ -220,7 +220,7 @@ class ProjectsCollector(GitCollector):
 
         self.add_contributors(project_data)
         if not self.is_valid_project(project_data):
-            self.log.info("Invalid project: " + project_data['name'] + " ###")
+            print("Invalid project: " + project_data['name'] + " ###")
             return
 
         self.totals['projects'] += 1
@@ -289,6 +289,8 @@ class ProjectsCollector(GitCollector):
         try:
             if api_ok(contribs, self.times["session"], write=self.log.info):
                 project_data['contributors'] = contribs
+            else:
+                print("Invalid Number of Contributors:", len(contribs))
 
         except RateLimitExceeded:
             wait_for_api(self.times['session'], 120, self.log.info)
@@ -321,7 +323,7 @@ class ProjectsCollector(GitCollector):
             hash_name = hashlib.md5(filename.encode()).hexdigest()
             return [hash_name, filename, source, line_count]
 
-        self.log.info("Lines out of range: " + str(line_count))
+        print("Lines out of range: " + str(line_count))
         return None
 
     def is_valid_file(self, path, source, line_count):
