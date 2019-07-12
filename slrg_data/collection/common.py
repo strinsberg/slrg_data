@@ -229,7 +229,7 @@ class Database:
         """
         sql = "INSERT INTO {} ({}) VALUES({});".format(
             table, ", ".join(columns), self._vals(len(columns)))
-        for _ in range(10):
+        for i in range(10):
             try:
                 with self.database.cursor() as cursor:
                     cursor.execute(sql, values)
@@ -240,10 +240,14 @@ class Database:
                     self.database.rollback()
                 code, _ = error.args
                 if code == 2013:
-                    print("*** Datbase Error:", str(error))
+                    print(
+                        "*** Database Connection Error: Retrying (" + i + ")", str(error))
                     time.sleep(30)
                     self.close()
                     self.connect(self._format)
+                elif code == 1062:
+                    print("*** Tried to add duplicate entry ***")
+                    break
                 else:
                     raise DatabaseError(str(error))
 
@@ -270,7 +274,7 @@ class Database:
         sep = ", "
         sql = "SELECT {} FROM {} WHERE {};".format(sep.join(columns),
                                                    table, sep.join(where))
-        for _ in range(10):
+        for i in range(10):
             try:
                 with self.database.cursor() as cursor:
                     cursor.execute(sql)
@@ -280,7 +284,8 @@ class Database:
             except pymysql.err.MySQLError as error:
                 code, _ = error.args
                 if code == 2013:
-                    print("*** Datbase Error:", str(error))
+                    print(
+                        "*** Database Connection Error: Retrying (" + i+1 + ")", str(error))
                     time.sleep(30)
                     self.close()
                     self.connect(self._format)
@@ -309,7 +314,7 @@ class Database:
                     "Database Error: Cannot use "
                     + stmt.upper() + " Database.query")
 
-        for _ in range(10):
+        for i in range(10):
             try:
                 with self.database.cursor() as cursor:
                     cursor.execute(sql)
@@ -319,7 +324,8 @@ class Database:
             except pymysql.err.MySQLError as error:
                 code, _ = error.args
                 if code == 2013:
-                    print("*** Datbase Error:", str(error))
+                    print(
+                        "*** Database Connection Error: Retrying (" + i+1 + ")", str(error))
                     time.sleep(30)
                     self.close()
                     self.connect(self._format)

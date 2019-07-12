@@ -131,9 +131,9 @@ class CommitsCollector(GitCollector):
                 continue
 
             print("Processing File:", file_data['filename'], "....")
-            if self.add_file_to_db(file_data, entry):
-                self.totals['added'] += 1
-                print("-- Added")
+            self.add_file_to_db(file_data, entry)
+            self.totals['added'] += 1
+            print("-- Added")
 
     def is_valid(self, file_data):
         """Checks to see if a file should be added to the database."""
@@ -154,14 +154,8 @@ class CommitsCollector(GitCollector):
         values = self.get_entry_values(entry)
         values.extend(self.get_file_values(file_data))
 
-        try:
-            self.database.insert(self.collection_info.table.columns,
-                                 self.collection_info.table.name, values)
-        except common.DatabaseError as error:
-            self.log.error("In add_file_to_db", error)
-            return False
-
-        return True
+        self.database.insert(self.collection_info.table.columns,
+                             self.collection_info.table.name, values)
 
     def transform_entry_value(self, value, entry_field):
         v = value
@@ -304,9 +298,9 @@ class ProjectsCollector(GitCollector):
         if file_data is not None:
             print("Processing File:", "....", filename)
 
-            if self.add_file_to_db(file_data, project_data):
-                print("-- Added")
-                self.totals['added'] += 1
+            self.add_file_to_db(file_data, project_data)
+            print("-- Added")
+            self.totals['added'] += 1
 
     def get_file_data(self, path, filename):
         """Gets source code and some file data from a file."""
@@ -342,14 +336,8 @@ class ProjectsCollector(GitCollector):
         values = self.get_entry_values(project_data)
         values.extend(file_data)
 
-        try:
-            self.database.insert(self.collection_info.table.columns,
-                                 self.collection_info.table.name, values)
-        except common.DatabaseError as error:
-            self.log.error("In add_file_to_db", error)
-            return False
-
-        return True
+        self.database.insert(self.collection_info.table.columns,
+                             self.collection_info.table.name, values)
 
     def clean_up(self):
         """Prints stats on program run and other final actions."""
