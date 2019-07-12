@@ -215,7 +215,7 @@ class Database:
         """Inserts given values into the columns of a given table.
 
         This is a helper for basic SQL INSERT queries. The values will
-        be inserted in order into the columns of the given table.
+        be inserted in order into the columns of the given table. 
 
         Args:
             columns (list): A list of column names. In the order the
@@ -225,7 +225,7 @@ class Database:
                 Should be in the same order as the columns list.
 
         Raises:
-            DatabaseError: If there is a problem with the INSERT.
+            DatabaseError: If there is a problem with the INSERT that cannot be handled.
         """
         sql = "INSERT INTO {} ({}) VALUES({});".format(
             table, ", ".join(columns), self._vals(len(columns)))

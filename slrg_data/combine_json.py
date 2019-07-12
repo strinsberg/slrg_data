@@ -195,18 +195,13 @@ def _combine_json(json_filenames, group_size):
         # Add file contents to results
         with open(file) as f:
             records = f.read().splitlines()
-        print(len(records))
         for record in records:
             contents.append(json.loads(record))
-        print(len(contents))
 
         # If group is done store the combined results
         if (i + 1) % group_size == 0 or i == len(json_filenames) - 1:
-            print(i, len(json_filenames))
             combined.append(contents)
             contents = []
-
-        print(len(combined), '\n\n')
 
     return combined
 
