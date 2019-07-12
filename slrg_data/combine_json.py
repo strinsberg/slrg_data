@@ -87,10 +87,11 @@ def _script(argv):
     out_file = None
     raw_folder = None
     group_size = None
+    delete = False
 
     # Parse command line arguments
     try:
-        opts, filenames = getopt.getopt(argv, "o:f:g:h")
+        opts, filenames = getopt.getopt(argv, "o:f:g:hd")
     except getopt.GetoptError:
         print(HELP_TEXT)
         sys.exit()
@@ -102,12 +103,17 @@ def _script(argv):
             raw_folder = arg
         elif opt == '-g':
             group_size = int(arg)
+        elif opt == '-d':
+            delete = True
         elif opt == '-h':
             print(HELP_TEXT)
             return
 
     if not filenames:
         filenames = None
+
+    if raw_folder is None and not delete:
+        raw_folder = 'json_folder'
 
     main(files=filenames, out_file=out_file,
          raw_folder=raw_folder, group_size=group_size)
@@ -181,20 +187,26 @@ def _combine_json(json_filenames, group_size):
         A list containing lists of JSON dicts.
     """
     combined = []
+    contents = []
 
     for i, file in enumerate(json_filenames):
-        contents = []
         print("Combining", file)
 
         # Add file contents to results
         with open(file) as f:
             records = f.read().splitlines()
-            for record in records:
-                contents.append(json.loads(record))
+        print(len(records))
+        for record in records:
+            contents.append(json.loads(record))
+        print(len(contents))
 
         # If group is done store the combined results
         if (i + 1) % group_size == 0 or i == len(json_filenames) - 1:
+            print(i, len(json_filenames))
             combined.append(contents)
+            contents = []
+
+        print(len(combined), '\n\n')
 
     return combined
 

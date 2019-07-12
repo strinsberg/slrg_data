@@ -74,7 +74,7 @@ def make_git_info(lang, filename, git_data, limits, script_name, config):
                                        config['exclude']['dirs'])
 
     return github.GitCollectionInfo(records, table, validation, limits,
-                                    git_data)
+                                    git_data, lang)
 
 
 def make_cf_info(filename, limits, script_name, config):
