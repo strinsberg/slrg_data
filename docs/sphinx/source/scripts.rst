@@ -1,6 +1,23 @@
 Scripts
 ===============
 
+Script information should go here.
+There are 2 general issues with running some scripts long term.
+* The first is that services can disconnect. The database, the websites,
+or the APIs. These can be difficult to recover from because you don't
+want to abuse the service when it is unavailable by continuously calling
+it.
+* The other is large projects for github. Since we are clonign a project
+before processing it, there can be size issues. We don't want images
+etc. But they will be downloaded. While overall we should not get too
+many big projects as we are restricting projects to small numbers of
+contributors before cloning, sometimes it happens. The default is just
+to chug away and download it, but it might not always be ideal to do
+this. I often stop and restart the program if I notice this. 
+
+
+
+
 Git Projects Collection
 -----------------------
 
