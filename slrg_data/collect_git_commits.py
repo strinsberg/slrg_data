@@ -171,7 +171,8 @@ def main(lang=None, file=None, start=None, count=None, db_login=None,
         collection.script.remove_old_logs(log_dir, config.max_logs_to_keep)
 
         # Create and run collector
-        collector = collection.github.CommitsCollector(database, info, log)
+        collector = collection.github.CommitsCollector(
+            database, info, log, lang)
         return collector.main()
 
     except collection.script.ScriptInputError as err:

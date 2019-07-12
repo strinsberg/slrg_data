@@ -77,8 +77,10 @@ class GitCollector(common.Collector):
         super(GitCollector, self).clean_up()
 
         if self.gender_wait:
-            common.write_json_data("{}_{}".format(self.gender_file,
-                                                  str(time.time())), self.gender_wait)
+            common.write_json_data("{}_{}_{}".format(self.gender_file,
+                                                     self.collection_info.language,
+                                                     str(time.time())),
+                                   self.gender_wait)
 
 
 class CommitsCollector(GitCollector):
@@ -366,10 +368,11 @@ class ProjectsCollector(GitCollector):
 class GitCollectionInfo(common.CollectionInfo):
     """Information required for collecting source from github."""
 
-    def __init__(self, records, table, validation, limits, git_data):
+    def __init__(self, records, table, validation, limits, git_data, lang):
         super(GitCollectionInfo, self).__init__(
             records, table, validation, limits)
         self.git_data = git_data
+        self.language = lang
 
 
 class GithubData:
