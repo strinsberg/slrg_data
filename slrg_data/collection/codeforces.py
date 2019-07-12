@@ -207,14 +207,10 @@ class CfSubmissionsCollector(common.Collector):
         values = self.get_sub_values(sub_data, source)
         values.extend(self.get_entry_values(entry))
 
-        try:
-            self.database.insert(self.collection_info.table.columns,
-                                 self.collection_info.table.name, values)
-        except common.DatabaseError as error:
-            self.log.error("In add_sub_to_db", error)
-            return False
-
-        return True
+        if self.database.insert(self.collection_info.table.columns,
+                                self.collection_info.table.name, values):
+            return True
+        return False
 
     def get_sub_values(self, sub_data, source):
         """Gets the submission values needed to add it to the database."""

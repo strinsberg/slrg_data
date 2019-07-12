@@ -234,6 +234,7 @@ class Database:
                 with self.database.cursor() as cursor:
                     cursor.execute(sql, values)
                 self.database.commit()
+                return True
 
             except pymysql.err.MySQLError as error:
                 if self.database.open:
@@ -247,7 +248,7 @@ class Database:
                     self.connect(self._format)
                 elif code == 1062:
                     print("*** Tried to add duplicate entry ***")
-                    break
+                    return False
                 else:
                     raise DatabaseError(str(error))
 
