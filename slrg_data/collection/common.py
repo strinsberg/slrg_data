@@ -9,7 +9,7 @@ import json
 import logging
 import os
 
-# 3rd party modules
+# 3rd party libraries
 import requests
 import pymysql
 
@@ -28,7 +28,7 @@ SLRG_DIR = os.path.join(os.path.expanduser('~'), 'slrg')
 class Collector:
     """Abstract Class for collecting source code.
 
-    process must be overridden.
+    Collector.process must be overridden.
 
     Attributes:
         database (Database): The database to store source code and

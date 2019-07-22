@@ -6,9 +6,9 @@
 
 
 % Title Page
-\title{Data Collection Documentation (Draft)}
+\title{Data Collection Documentation (Draft 3)}
 \author{Steven Deutekom}
-\date{June 2019}
+\date{July 2019}
 \maketitle
 
 
@@ -32,20 +32,20 @@ The document is broken into three main sections. Each section details one of the
 Each section introduces the sources and collection methods. Then it discusses the pros and cons of the source. Next an overview of the process of collecting data is given, with diagrams to help visualize it. Following this a more in depth technical examination of the collection process takes place. Finally, some reflection on the source is given (if needed?).
 
 
-% Github %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% GitHub %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Collecting Source Code From GitHub}
 
 
 %& Introduction to the sources being used
 \subsection{Data Sources}
-\paragraph{Github}
-GitHub is the largest online code sharing/hosting website on the internet (proof or example?). It has an API that allows access to information on users, repositories, etc. Source code hosted in public repositories is available for anyone to freely access or use in projects. Data is gathered on users and source code is collected from github and added to the database. Two methods are used for this. The first looks at commit data and collects changes to files. The second looks at projects and collects full files of source code. Both support the goal of adding single author source code samples to the database.
+\paragraph{GitHub}
+GitHub is one of the largest online code sharing/hosting website on the internet with over 36 million users and over 100 million repositories \cite{WEBSITE:Git1}. It has an API that allows access to information on users, repositories, commits, and more(?Jackies comment was not clear on etc. but I assume it is no good. Whats better?). Source code hosted in public repositories is available for anyone to freely access or use in projects. Data on users, as well as source code is collected from GitHub and added to the database. Two methods are used for this. The first looks at commit data and collects changes to files. The second looks at projects and collects full files of source code. Both support the goal of adding single author source code samples to the database.
 
-\paragraph{Ghtorrent}
-Ghtorrent is an 'offline mirror of data offered through the GitHub REST API' (cite website). It contains large quantities of data on GitHub users, projects, commits from as far back as 2012. This data is being collected (by whom) to support research on software repositories and is available to the public for other research on Github. This source is used to collect information on github commits and projects. This information is what is primarily used to decide what projects and commits to attempt to collect source code samples from GitHub.
+\paragraph{GhTorrent}
+GhTorrent is an offline database of data obtained from the GitHub API \cite{Gousi13}. It contains large quantities of data on GitHub users, projects, commits from as far back as 2012. This data is being collected to support research on software repositories and is available to the public for other research on GitHub. This source is used to collect information on GitHub commits and projects. We use this information to decide what projects and commits to attempt to collect source code samples from GitHub (clumsy). More information is available at http://ghtorrent.org.
 
-\paragraph{Google Big Query}
-Google Big Query is a part of the Google Cloud Platform. It allows the storage and querying of datasets online. These datasets and query results can be connected to other google cloud services and also downloaded. The Ghtorrent dataset is accessible on Big Query. Queries on the dataset are made and refined to find information on the desired commits and projects.
+\paragraph{Google BigQuery}
+Google BigQuery is a part of the Google Cloud Platform. It allows the storage and querying of datasets online. These datasets and query results can be connected to other google cloud services and also downloaded. The GhTorrent dataset is accessible on BigQuery. Queries on the GhTorrent dataset are made  using and refined using BigQuery in order to find information on the desired commits and projects.
 
 
 %% Pros and Cons of each along with steps taken to try and overcome any issues.
@@ -53,45 +53,55 @@ Google Big Query is a part of the Google Cloud Platform. It allows the storage a
 % don't really have all the pros. If you are going to leave them out of the introduction to the sources then put them in here
 % might also be good to use a bullet list for each under a heading for each source
 (need to include more pros and organize things better. Might even want to put this after the process overview so that it makes more sense if pros and cons of the process are included here.)
-\paragraph{Github}
+\paragraph{GitHub}
 \begin{itemize}
-    \item Github is used for collaboration as well as sharing individuals code. Therefore it can be difficult to know what code is written by a single author. Even when steps are taken (as will be described below?) to ensure that code has been written by a single author there are challenges. Projects may be added to github after they are complete in which case it is not possible to tell who worked on them other than the project owner. It is also possible for people to add code from other sources to their projects that they did not write themselves. Such as external libraries or extensions or other code samples. Git does keep lots of information on repository collaborators and even tracks who has made changes to each line of code in a file. So it is possible to be relatively sure about the author of code in most cases. This is part of the reason for the different methods of code collection.
+    \item The popularity of GitHub means that there is a large amount of source code and data available. This means one can get a reasonable amount of data on even very specific searches.
 
-    \item A Rate limit of 5000 calls per hour is imposed on the GitHub API. By collecting the initial data from Ghtorrent the number of API calls is reduced, but there are still 1-2 calls per record for both scripts. For the projects script if projects are being processed fast enough this can mean the rate limit is reached each hour. For the projects script it is often not an issue because cloning and processing repositories can be time consuming enough to never reach the API limit. However, for the commit based script commits are small and so the 2 API calls easily use up the rate limit every hour. The scripts handle this by calculating time to API reset and sleeping until they can start collecting again.
+    \item It's api is full featured and well documented. It can be used to find any information that is available on the website. Except source code which must be obtained in other ways.
+    
+    \item The nature of the platform makes all public code freely available for anyone to access within the platform. This is outlined in the GitHub terms of service (reference). However, without and open source license source code is still the sole property of the author and cannot be shared or published without their permission.
 
-    \item For the commit process a problem is that the changes made by a commit are either scattered around a file. If a file is newly added to a commit its full contents are included, however this is often not a finished file.
+    \item GitHub is used for collaboration as well as sharing individuals code. Therefore it can be difficult to know what code is written by a single author. Even when steps are taken (as will be described below?) to ensure that code has been written by a single author there are challenges. Projects may be added to GitHub after they are complete in which case it is not possible to tell who worked on them other than the project owner. It is also possible for people to add code from other sources to their projects that they did not write themselves. Such as external libraries or extensions or other code samples. Git does keep lots of information on repository collaborators and even tracks who has made changes to each line of code in a file. So it is possible to be relatively sure about the author of code in most cases. This is part of the reason for the different methods of code collection.
+
+    \item A Rate limit of 5000 calls per hour is imposed on the GitHub API. By collecting the initial data from GhTorrent the number of API calls is reduced, but there are still 1-2 calls per record for both scripts. For the projects script if projects are being processed fast enough this can mean the rate limit is reached each hour. For the projects script it is often not an issue because cloning and processing repositories can be time consuming enough to never reach the API limit. However, for the commit based script commits are small and so the 2 API calls easily use up the rate limit every hour. The scripts handle this by calculating time to API reset and sleeping until they can start collecting again.
+
+    \item When collecting code from commits the changes can be scattered around a file. It is not very useful to have 30 lines of code from an author if those 30 lines are not connected to one another. It is possible to identify changes that are part of a newly added file. This ensures that all the changes represent a single piece of code. One of the issues with this is that newly added files are often not complete.
 \end{itemize}
 
-\paragraph{Ghtorrent}
+\paragraph{GhTorrent}
 \begin{itemize}
-    \item The Ghtorrent database is a massive database of GitHub metadata. However, this data is not all up to data. It is also not necessarily complete for the time frames that they have information for.
+    \item The GhTorrent database is a massive database of GitHub metadata. Accessing GitHub metadata using GhTorrent can make it much easier to know what kind of data is available on GitHub.
+    
+    \item Because the GhTorrent database is so big it would be difficult to store it locally. Queries on a database of this size would be slow without good hardware. So for most people access must be through another source like Google BigQuery. 
 \end{itemize}
 
 \paragraph{Google BigQuery}
 \begin{itemize}
-    \item Google BigQuery is designed to be used with the google cloud platform. It has rate limits as well. It is possible to increase these with payment if one needs to, unlike the GitHub API, and the prices are not that high.
+    \item BigQuery is run with Googles code platform. The hardware used to process queries will run queries on the GhTorrent database much faster than the hardware most people have access to.
 
-    \item Big Query only allows so much information to be downloaded at a time. This can make it a little cumbersome to download the results of large queries and may require some preprocessing of this data to make it useable in projects. It can be downloaded in multiple formats to fit ones data needs.
+    \item Because BigQuery is part of the Google cloud platform it requires a google account to use. There are also limits on the amount of data that can be queried each month and limits on how much data a person can store. It is possible to increase these limits with payment if needed.
+
+    \item BigQuery also has a limit on how many rows of data can be downloaded at once. This can make it more time consuming to download the results of large queries. Details of this process can be found below.
 \end{itemize}
 
 
 %% High level overview of the process w/ diagrams
 \subsection{Process Overview}
 
-%%% Ght and Big Query process
-\paragraph{GhTorrent and Google Big Query}
-This can be done by making SQL queries on the Ghtorrent dataset on BigQuery. Once the results are satisfactory they can be saved or downloaded. Often it is best to save the results of a large query and then sample it with another query. Then the results of that sample can be split and downloaded to be used with the collection methods.
+%%% Ght and BigQuery process
+\paragraph{GhTorrent and Google BigQuery}
+First SQL queries are made on the GhTorrent dataset via BigQuery. These queries are refined until the results are satisfactory. Once desired results are obtained they can be saved or downloaded. It is often best to save the results of a large query and then sample it with another query. These sample results can then be split and downloaded. If the results were split they can be recombined before being processed by one of the collection methods for GitHub.
 
 % Process Diagram
 \begin{figure}[!h]
     \centering
     \includegraphics[height=10cm]{diagrams/ght_process.png}
-    \caption{Getting Data From Ghtorrent}
+    \caption{Getting Data From GhTorrent}
 \end{figure}
 
 %%% Git projects process
 \paragraph{Collecting Git Projects}
-Data from Ghtorrent is loaded and every entry is processed. If an project is valid it is cloned locally. Then every valid file and folder are searched to find single author files. All valid files are then processed by having their source code collected and validated. If the source code is valid it is added along with user and project information to the database.
+The list of GitHub project data collected from GhTorrent is loaded and each entry is processed. If the project referenced by an entry is valid it is cloned locally. Then every valid folder is searched to find valid single author files. All valid files are then processed by having their source code collected and further validated. If the source code is valid it is added, along with user and project information, to the database.
 
 % Process Diagram
 \begin{figure}[!h]
@@ -102,7 +112,7 @@ Data from Ghtorrent is loaded and every entry is processed. If an project is val
 
 %%% Git commits process
 \paragraph{Collecting Git Commits}
-The Ghtorrent data for commits is loaded first. Then each entry is processed by getting commit information from GitHub. Then all the valid file changes are checked. If they are valid the changes are collected and have any extra symbols added by github cleaned from them. Then the user, project, commit and source is all added to the database.
+The list of GitHub commit data collected from GhTorrent data is loaded and each entry is processed. First the entry's commit information is requested from the GitHub API. If this information is available, all the files that have changes are validated. If a set of changes is valid it is collected and has any extra symbols that were added by GitHub removed. Then the source code is added, along with user, project, and commit information, to the database.
 
 % Process Diagram
 \begin{figure}[!h]
@@ -115,11 +125,11 @@ The Ghtorrent data for commits is loaded first. Then each entry is processed by 
 %% Discussion of each subprocess with technical details and the data it gives and technical issues that are not related to the websites themselves (not listed in pros and cons)
 \subsection{Process Details}
 
-%%% Ght and Big Query process
-\subsubsection{GhTorrent and Google Big Query}
+%%% Ght and BigQuery process
+\subsubsection{GhTorrent and Google BigQuery}
 
 \paragraph{Process}
-To access the Ghtorrent database it must be opened from the Ghtorrent website and the link will lead to Google BigQuery. From here SQL queries can be made on the database to join the appropriate tables together for users, projects, and commits. The exact queries will depend on what method is being used. Things like programming language can be specified to only collect information for one language at a time. Any fields, such as country, which are necessary for the scripts to run, can be filtered and not be allowed to be NULL. These queries run quite quickly and should be refined until the desired results are obtained.
+To access the GhTorrent database it must be opened from the GhTorrent website and the link will lead to Google BigQuery. From here SQL queries can be made on the database to join the appropriate tables together for users, projects, and commits. The exact queries will depend on what method is being used. Things like programming language can be specified to only collect information for one language at a time. Any fields, such as country, which are necessary for the scripts to run, can be filtered and not be allowed to be NULL. These queries run quite quickly and should be refined until the desired results are obtained.
 
 Results must be saved to a table in the users personal datasets. A dataset and table can be created to save the results of any query. Though there are only 10GB available in the free tier. Once saved if the results are too big then they can be sampled using RAND and LIMIT. The limit the desired number of samples, which can differ based on the script being run (example?). The sample will also need to be saved to a table.
 
@@ -133,7 +143,7 @@ As described above the data can be downloaded as JSON or CSV. When downloaded as
 The main aim of collecting Source code from projects is to get a large number of samples for an author. The hope is that these samples are working code and that they can be attributed to only the one author. To do this repositories can be checked to make sure they only have one contributor and files checked to make sure only one contributor has written code in them.
 
 \paragraph{Process}
-First the Ghtorrent data is loaded. Then For each one of the entries some data is added to the project. The first is a fullname. This is collected by using the github API to find user information and collect a fullname. If there is a fullname it will be split to find the first name and then passed to a gender checking function. The result of the gender check will also be added to the record. If a name and gender were successfully added to the project data. Then the github api will be queried for the project to find the number of contributors. If the number of contributors is no more than 1 the project will be processed further.
+First the GhTorrent data is loaded. Then For each one of the entries some data is added to the project. The first is a fullname. This is collected by using the GitHub API to find user information and collect a fullname. If there is a fullname it will be split to find the first name and then passed to a gender checking function. The result of the gender check will also be added to the record. If a name and gender were successfully added to the project data. Then the GitHub api will be queried for the project to find the number of contributors. If the number of contributors is no more than 1 the project will be processed further.
 
 Next the script clones the project repository into a temporary directory. Once downloaded the directory tree is searched. Files and folders that should not be processed can be specified in the configuration for the scripts. If examined files are not in the excluded list they are checked to make sure they have an extension that matches the programming language of interest. All valid files are checked with git blame to determine if more than one author worked on them. Since the user information gathered is for the repository owner the file author must also match the repository owner. When all files are checked all valid ones are returned as a list of filenames.
 
@@ -142,7 +152,7 @@ Each file is then opened and it's source code is collected. The number of lines 
 The process continues until all projects in the data file are processed or a given limit for number of projects to process is reached. When finished some details of the process are printed to the console.
 
 \paragraph{Data}
-Information on the user is collected for github login, full name, country code, and gender. These categories must have values in order for a project to be processed. There is also some other user information like state, city, location, time created, type, and company. This data is allowed to be NULL. Information on the project like it's name, it's api url, it's creation time, and it's primary programming language are saved as well. These always guaranteed to be included in records in the Ghtorrent database. The file has it's filename/path, number of lines, and the source code added to the database as well. These are all added to the information saved in the database by the script.
+Information on the user is collected for GitHub login, full name, country code, and gender. These categories must have values in order for a project to be processed. There is also some other user information like state, city, location, time created, type, and company. This data is allowed to be NULL. Information on the project like it's name, it's api url, it's creation time, and it's primary programming language are saved as well. These always guaranteed to be included in records in the GhTorrent database. The file has it's filename/path, number of lines, and the source code added to the database as well. These are all added to the information saved in the database by the script.
 
 \paragraph{Technical Issues}
 Because so many external services are connected to during this process connection issues can interrupt the scripts. These are not always easy to handle gracefully and as a result it may not be possible to automate collection without occasionally having to restart the scripts.
@@ -166,7 +176,7 @@ Once the source is cleaned it is added along with the user, project, and commit 
 The process continues until all commits in the data file are processed or a given limit for number of commits to process is reached. When finished some details of the process are printed to the console.
 
 \paragraph{Data}
-The data contains the same user and project information as the projects data. It adds some information on the commit. The commit SHA is a unique id that is assigned to a commit on github, and the time the commit was created is also added. The file lines are renamed to file changes as they are a little different (are they?).
+The data contains the same user and project information as the projects data. It adds some information on the commit. The commit SHA is a unique id that is assigned to a commit on GitHub, and the time the commit was created is also added. The file lines are renamed to file changes as they are a little different (are they?).
 
 Each file that was changed has a list of lines that were altered by an author along with a + or - to indicate if the line was added to or removed. each file also indicates weather it was added in full with this commit or an existing file that was modified. In order to get changes that are not distributed at random points through a file only files that were newly added with the commit are kept
 
@@ -182,22 +192,26 @@ Codeforces is a website that hosts programming contests. The operators of the si
 %% Pros and cons of collecting from codeforces along with steps taken to try and overcome any issues. %%
 \subsection{Pros And Cons}
 \begin{itemize}
-    \item The website allows access to users submitted solutions. This is not something most other sites of this kind allow. 
+    \item Making the source code of user's solutions available for anyone to view is not common with programming contest websites. This makes Codeforces a valuable resource for this kind of programming.
+    
+    \item Codeforces is very popular among users in Eastern Europe and parts of Asia. There is more regional diversity than sites like GitHub that are more popular in North America.
+    
+    \item Users that participate in ranked contests have a rating that is adjusted based on their performance. This makes it possible to get an idea of a programmer's skill and experience.
+    
+    \item Users that choose to enter one have a first name. This makes it easier to use the first name to find gender of the programmer. This name is included in the list of users that is used to collect submissions. This allows the user list to be preprocessed for gender before it is run through a script to collect submissions.
 
-    \item Solutions are stored in a difficult way to access with automation. The solution code is stored in popups on the users submission page. They do have links to access the submission information in it's own page, but it is not always available this way. So for reliability it must be collected from the popups.
+    \item The way that solutions are stored makes it more difficult to automate their collection. The source code is stored in popups on the users submission page. So in order to access this code the popups must be opened first. Submissions are supposed to have links to individual pages to view the source code as well, but these links can very be unreliable.
 
-    \item Because there is not API to get submission code it must be scraped from the html. This is not terribly difficult, but it means that any changes to the website can alter the html and require rewriting the script that scrapes the submission code.
+    \item Because there is not API to get submission code it must be scraped from the html. This is not too difficult, however, any changes to the website that alter the html can require adjusting the scripts that collect the data.
 
-    \item It's popularity sees it being used by people from all over the world. The proportions of users are much higher from countries in Asia (other?) than sites like GitHub so it allows for a different cultural demographic.
+    \item Contest programming has very different purposes than more general kinds of programming. Its domain specific nature will be reflected in the source code samples form Codeforces. However, this means that the coders are less likely to adhere to any best practices or style guidelines. There may be even more variation in the coding style between authors. It may just require a different kind of feature selection than other kinds of programming.
 
-    \item While there is a great deal of code here to be collected it is a specific kind of programming. Contest programming has very different purposes than more general programming. There is little need for code comments and readability, beyond what a programmer needs to construct a solution.
-
-    \item The ratio of men to women is quite skewed. It is still not easy to find large numbers of female candidates from every country. Like most areas of tech there are much fewer women taking part than men.
+    \item The ratio of men to women is quite skewed. It is not easy to find large numbers of female candidates from every country.
 \end{itemize}
 
 %% High level overview of the process %%
 \subsection{Process Overview}
-The process starts with a list of users. This list is then run through a script to filter out users that have all the necessary fields and can have gender added. Once complete sections of this new users list are run through another script. This script gets submission information for each user and collects code for the submissions that are valid (whats valid?). Submissions that code can be collected for are added to the database.
+First a list of users is filtered and gender information is gathered for all users it is possible. Only users with country and gender information are kept. Once a new user list is obtained sections of it are pulled out for specific countries and genders. Each entry of these smaller list is processed. For each entry submission information is collected for the user. If a submission is valid then an attempt is made to collect its source code. If the source code can be collected it is added, along with user information, to the database.
 
 \begin{figure}[!h]
     \centering
@@ -235,7 +249,7 @@ The main issue not using selenium is link availability. The links seem to stop b
 
 % Gender Labeling %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Adding Gender Labels}
-One of the sociolinguistic features that is important to the project is Gender. Unfortunately, gender is available for authors on Github or Codeforces. Since it cannot be collected along with author information gender must be obtained in other ways. This can be done using an authors first name. There are a number of websites and APIs available that offer gender data for first names. All the gender information for authors in the dataset were gathered in this way.
+One of the sociolinguistic features that is important to the project is Gender. Unfortunately, gender is available for authors on GitHub or Codeforces. Since it cannot be collected along with author information gender must be obtained in other ways. This can be done using an authors first name. There are a number of websites and APIs available that offer gender data for first names. All the gender information for authors in the dataset were gathered in this way.
 
 %% Introduction to the sources being used %%
 \subsection{Sources}
@@ -244,25 +258,23 @@ There are several websites and APIs for adding gender for first names. They incl
 %% Discussion of the pros and cons and difficulties along with steps taken to try and overcome any issues. %%
 \subsection{Pros And Cons}
 \begin{itemize}
-    \item Inferring gender from names is not an easy task (some examples and sources). It is also not always very clear how a service is determining the gender (cite). So this is immediately a problem. The probability given can help to determine the likelihood of results being correct, but it still is only as good as the service. There are some stats given by (info and paper citation) that comment on the accuracy of the above 4 services.
+    \item This is really the only way to add gender labels to programmers without being able to ask them directly. Asking them directly would be a significant undertaking and most would be unlikely to respond.
+    
+    \item With several decent sources available for this kind of labeling it is possible to confirm results. If one has selected a portion of the dataset that meets their needs it would be possible to re-run the authors names through all the services and filter out any users that could not be agreed upon. This could improve the accuracy of the labels. Doing this with a smaller dataset would also reduce the cost of using services that require payment. Also, there are many names that are more common so the number of names needed will always be less than the number of authors in a dataset. This will further reduce the number of names to label and should mean that reasonable accuracy can be obtained for many common names.
+
+    \item Inferring gender from names is not an easy task (some examples and sources). It is also not always very clear how a service is determining the gender \cite{Santamaria2018}. So this is immediately a problem. The probability given can help to determine the likelihood of results being correct, but it still is only as good as the service. There are some stats given by Santamaria \cite{Santamaria2018} that comment on the accuracy of the above 4 services.
 
     \item Aside from the accuracy of these methods being suspect, the major con is that for the most part they are paid services. Some of them do offer free limits, but only genderize is really worth it for any larger needs, and even then only with an offline backup of already labeled names. The good news is that there are many people sharing a small number of names, so a large number of samples can be labeled with a small database.
 
     \item People are not always truthful with their names on these profiles, sometimes they do not even give a name. As a result there are fewer samples to work with if gender is desired. If country is going to be used to add accuracy to the label then it lowers the number of samples available further.
 
-    \item It is possible though with several sources available that when a selection of samples is made they can have their gender labels confirmed by other sources. Because many people share a similar name it is also not as big a deal to use free credits or even pay for a small period to obtain better results for a set of good samples.
+    \item All services are less effective at labeling Asian names \cite{Santamaria2018}. This can present a problem for datasets that are using large numbers of samples from Asian countries.
 
-    \item All services are less effective at labeling Asian names (citation). This can present a problem for datasets that are using large numbers of samples from Asian countries.
+    \item The number of samples can be low for a name so even if the probability is high it may not be accurate.
 
-    \item This is really the only way other than contacting authors directly to find out their gender. Which would be problematic with any reasonably sized database. Not to mention many people would be unlikely to respond to such a question.
-
-    \item It is also worth noting that these methods also are firmly gender binary. They do not take into account any other factors. And the connection between gender of a name and biological sex is by no means guaranteed.
-
-    \item It is not always clear wether a country should be used, though it is suggested that this improves the results (cite).
-
-    \item The number of samples can be low for a name so even if the probability is high it is not really certain if the sample size is large enough.
-
-    \item The names collected show a much less accurate probability for female names. Most male names are classed as 0.9-1.0 and more female names fall into this category, but in some cases at most half of the names are in the 0.9-1.0 category. This suggests that there are some issues with classifying female names properly. Wether it is that more female names are unisex or that there are low samples for them is unknown (to me. Could put in a table).
+    \item The names collected show a much less accurate probability for female names. Most male names are classed as 0.9-1.0 and more female names fall into this category, but in some cases at most half of the names are in the 0.9-1.0 category. This suggests that there are some issues with classifying female names properly. Wether it is that more female names are unisex or that there are low samples for them is unknown (to me. Could use a table?).
+    
+    \item These methods of gender labeling are firmly rooted in the gender binary. The gender labels of names will be more likely to be connected to cultural norms and biological sex and may not accurately represent the individual' gender.
 \end{itemize}
 
 
@@ -285,5 +297,10 @@ The data consists of just the gender and the probability the gender label is cor
 % Future improvements or additions
 Reserved for when I am closer to finished and can discuss the results with everyone else. Perhaps identify some future tasks or current deficiencies.
 
+
+\newpage
+
+\bibliography{technical_report}
+\bibliographystyle{apalike}
 
 \end{document}

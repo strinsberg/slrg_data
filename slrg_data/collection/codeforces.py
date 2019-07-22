@@ -1,15 +1,13 @@
+"""Classes and functions for collecting source code samples from
+Codeforces.
 """
-Base class for extracting source code for codeforces submissions.
-"""
-# Standard library modules
 from datetime import datetime
 import urllib
 import time
 
-# 3rd party modules
+# 3rd party libraries
 import requests
 from bs4 import BeautifulSoup
-import pymysql
 import selenium
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys

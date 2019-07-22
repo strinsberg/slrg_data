@@ -1,5 +1,5 @@
-"""Collectors and other github collection related functions to support
-collecting source code from github.
+"""Classes and functions needed for the collection of source code
+samples from GitHub.
 """
 import time
 import sys
@@ -10,13 +10,35 @@ import random
 import shutil
 import hashlib
 
+# 3rd party libraries
 import git
 
+# Local imports
 from . import common
 from . import script
 
 
+# Git Collectors #######################################################
+
 class GitCollector(common.Collector):
+    """Base Abstract Class for GitHub collection.
+
+    This adds a setup method, and some methods for GitHub related
+    gender collection.
+
+    Also adds 'files' and 'added' keys to the totals dict attribute
+    inherited from :class:`~slrg_data.collection.common.Collector`.
+
+    Attributes:
+        collect_gender (bool): Wether or not to collect gender for
+            entries.
+        gender_wait (list): Any entries that cannot have gender assigned
+            to them at the present time. Likely because the gender API
+            rate limit has been reached.
+        gender_file (str): A prefix for the filename for missing gender
+            data to be written to.
+    """
+
     def __init__(self, database, collection_info, log, collect_gender=True):
         super(GitCollector, self).__init__(database, collection_info, log)
         self.collect_gender = collect_gender
@@ -25,7 +47,8 @@ class GitCollector(common.Collector):
         self.gender_file = 'missing_gender'
 
     def set_up(self):
-        """Adds a request session with authentication."""
+        """Extends :func:`Collector.set_up() <slrg_data.collection.common.Collector.set_up>`
+        to add an authenticated requests session."""
         common.Collector.set_up(self)
 
         login = self.collection_info.git_data.login
@@ -35,7 +58,16 @@ class GitCollector(common.Collector):
         self.times['session'] = time.time()
 
     def add_name_and_gender(self, entry_data):
-        """Add fullname and gender data to project data."""
+        """Add fullname and gender data to an entry.
+
+        Adds 'user_fullname', 'gender' and 'gender_probability' keys
+        to the entry_data dict. If any of the values are not obtainable
+        they are initialized to None.
+
+        Args:
+            entry_data (dict): A row of json data gathered from
+                :ref:`GhTorrent via BigQuery <ght-big-query-lab>`.
+        """
         entry_data['user_fullname'] = None
         entry_data['gender'] = None
         entry_data['gender_probability'] = None
@@ -54,7 +86,17 @@ class GitCollector(common.Collector):
                   entry_data['login'])
 
     def get_fullname_and_gender(self, entry_data):
-        """Collect a github users fullname and gender data if available."""
+        """Collect a github users fullname and gender data if possible.
+
+        Args:
+            entry_data(dict): A row of json data gathered from
+                :ref:`GhTorrent via BigQuery <ght-big-query-lab>`..
+
+        Returns:
+            (str, str, float): The fullname, gender, and
+            gender_probability that can be obtained. If any of the
+            values are not accessible they are returned as None.
+        """
         try:
             fullname = get_fullname(
                 entry_data['login'], self.session, self.times['session'])
@@ -74,6 +116,10 @@ class GitCollector(common.Collector):
         return fullname, gender, gender_probability
 
     def clean_up(self):
+        """Extends :func:`Collector.clean_up() <common.Collector.clean_up>`
+        to write entries that must wait until later to have gender
+        collected to a file.
+        """
         super(GitCollector, self).clean_up()
 
         if self.gender_wait:
@@ -84,7 +130,12 @@ class GitCollector(common.Collector):
 
 
 class CommitsCollector(GitCollector):
-    """Extracts added files from git commits."""
+    """Concrete Collector class for collecting source code samples using
+    GitHub commit data.
+
+    Also adds 'commits' key to the totals dict attribute inherited from
+    :class:`~GitCollector`.
+    """
 
     def __init__(self, database, collection_info, log, collect_gender=True):
         super(CommitsCollector, self).__init__(
@@ -93,7 +144,14 @@ class CommitsCollector(GitCollector):
         self.gender_file = 'commits_missing_gender'
 
     def process(self, entry):
-        """Processes commit data and collects source from files to add to db"""
+        """Processes a row of commit data collected from GhTorrent.
+
+        Adds necessary information and enters valid entries into the
+        collectors database along with collected source code.
+
+        Args:
+            entry (dict): A row of commit data from :ref:`GhTorrent via BigQuery <ght-big-query-lab>`.
+        """
         try:
             print("#", self.totals['entry'], "###", end=" ")
 
@@ -109,11 +167,30 @@ class CommitsCollector(GitCollector):
             self.log.error("In process:", error)
 
     def get_commit_data(self, project_url, commit_sha):
+        """Requests the commit data for a commit from the Github API.
+
+        Args:
+            project_url (str): The api url for the commit's project.
+            commit_sha (str): The unique hash that identifies the
+                desired commit on github.
+
+        Returns:
+            (dict): A dict with the response for the API. See
+                https://developer.github.com/v3/repos/commits/
+                for more info.
+        """
         url = project_url + "/commits/" + commit_sha
         return common.session_get_json(self.session, url)
 
     def process_commit(self, commit_data, entry):
-        """Processes commit data and adds valid files to the database."""
+        """Collects additional data and adds valid commits to the
+        database.
+
+        Args:
+            commit_data (dict): A GitHub API response for commit
+                information.
+            entry (dict): A row of commit data from :ref:`GhTorrent via BigQuery <ght-big-query-lab>`.
+        """
 
         if self.collect_gender:
             self.add_name_and_gender(entry)
@@ -136,7 +213,16 @@ class CommitsCollector(GitCollector):
                 print("-- Added")
 
     def is_valid(self, file_data):
-        """Checks to see if a file should be added to the database."""
+        """Confirms a file meets the requirements to be added to the
+        database.
+
+        Args:
+            file_data (dict): The number of 'changes', 'status', and 'filename'     of the file being processed.
+
+        Returns:
+            bool: True if the file meets the requirements, otherwise
+                False. 
+        """
         try:
             changes = int(file_data['changes'])
             if changes < 10 or file_data['status'] != 'added':
@@ -150,7 +236,19 @@ class CommitsCollector(GitCollector):
             return False
 
     def add_file_to_db(self, file_data, entry):
-        """Adds a file and associated information to the database."""
+        """Attempts to add all necessary information for a source code
+        sample to the database.
+
+        Args:
+            file_data (dict): The number of 'changes', 'status',
+                'filename', and source code 'patch' of the file being
+                processed.
+            entry (dict): A row of commit data from :ref:`GhTorrent via BigQuery <ght-big-query-lab>`.
+
+        Returns:
+            bool: True if the information was successfully added to
+                the database, otherwise False.
+        """
         values = self.get_entry_values(entry)
         values.extend(self.get_file_values(file_data))
 
@@ -160,25 +258,57 @@ class CommitsCollector(GitCollector):
         return False
 
     def transform_entry_value(self, value, entry_field):
+        """Transforms commit creation time into a string.
+
+        Overrides
+        :func:`~slrg_data.collection.common.Collector.transform_entry_value`.
+
+        Args:
+            value (any): The value to transform if needed.
+            entry_field (str): The field that the value came from
+                in the entry. Required to know which values to
+                transform.
+        """
         v = value
         if v is not None and entry_field.find('created') > -1:
             v = common.get_time_string(float(v))
         return v
 
     def get_file_values(self, file_data):
-        """Gets info from file data to add to database."""
+        """Returns file_data values in the proper order to add to the
+        database.
+
+        Args:
+            file_data (dict): The number of 'changes', 'status',
+                'filename', and source code 'patch' of the file being
+                processed.
+
+        Returns:
+            (tuple): Values of file sha, filename, source code, and number of
+                changes made.
+        """
         source = self.clean_source(file_data['patch'])
         return (file_data['sha'], file_data['filename'], source,
                 file_data['changes'])
 
     def clean_source(self, source):
-        """Remove extra commit information from the source code."""
+        """Remove extra commit information from the source code.
+
+        Args:
+            source (str): File data 'patch' contents with extra + chars
+                on every line and a header line indicating the number
+                of changes.
+        """
         rm_plus = source.replace("\n+", "\n")
         start = source.find("\n")
         return rm_plus[start + 1:]
 
     def clean_up(self):
-        """See Extract"""
+        """Prints details of the collection for commits, files check,
+        and files added.
+
+        Extends :func:`GitCollector.clean_up() <GitCollector.clean_up>`.
+        """
         common.Collector.clean_up(self)
 
         commits = self.totals['commits'] + 0.1

@@ -1,5 +1,4 @@
 """Helper functions and factories for running scripts."""
-# Standard python modules
 import json
 import os
 
@@ -12,7 +11,8 @@ from . import codeforces
 # Make Database ########################################################
 
 def make_database(db_config, host=None, login=None, passwd=None, name=None):
-    """Creates a common.Database object with given information.
+    """Creates a :class:`~slrg_data.collection.common.Database` object
+    with given information.
 
     All arguments (except db_config) default to None. If they are None
     then db_config will be checked for a value. If that is None then
@@ -27,7 +27,7 @@ def make_database(db_config, host=None, login=None, passwd=None, name=None):
         name (str): The database name.
 
     Returns:
-        common.Database: A Database object with the given information.
+        Database: A Database object with the given information.
     """
     host = null_arg_str(host, db_config['host'], "Database host: ")
     name = null_arg_str(name, db_config['name'], "Database name: ")
@@ -40,8 +40,8 @@ def make_database(db_config, host=None, login=None, passwd=None, name=None):
 # Make Collection Info #################################################
 
 def make_git_info(lang, filename, git_data, limits, script_name, config):
-    """Creates a collection.github.GitCollectionInfo object for use with
-    github collection.
+    """Creates a :class:`~slrg_data.collection.github.GitCollectionInfo`
+    object for use with github collection.
 
     If lang or filename are None the user will be asked to input
     values.
@@ -56,7 +56,7 @@ def make_git_info(lang, filename, git_data, limits, script_name, config):
             :ref:`Configuration <config_lab>` for more details.
 
     Returns:
-        collection.github.GitCollectionInfo: A CollectionInfo object with
+        GitCollectionInfo: A CollectionInfo object with
         the necessary information for github source collection.
     """
     if lang is None:
@@ -78,19 +78,19 @@ def make_git_info(lang, filename, git_data, limits, script_name, config):
 
 
 def make_cf_info(filename, limits, script_name, config):
-    """Creates a common.CollectionInfo object for use with codforces
-    collection.
+    """Creates a :class:`~slrg_data.collection.common.CollectionInfo`
+    object for use with codforces collection.
 
     Args:
         filename (str): The file the codeforces user data is stored in.
             If None the user will be asked to input a value.
-        limits (codeforces.CfLimitData): Limits for the collection.
+        limits (CfLimitData): Limits for the collection.
         script_name (str): The name of the script calling the function.
         config (dict): The contents of the config file in a dict. See
             :ref:`Configuration <config_lab>` for more details.
 
     Returns:
-        collection.common.CollectionInfo: A CollectionInfo object with
+        CollectionInfo: A CollectionInfo object with
         the necessary information for codeforces source collection.
     """
     file_path = get_file_path(filename)
@@ -108,7 +108,7 @@ def make_cf_info(filename, limits, script_name, config):
 # Make Info Components #################################################
 
 def make_limits(start, count, default):
-    """Creates a common.LimitData object.
+    """Creates a :class:`~slrg_data.collection.common.LimitData` object.
 
     If the start or count are None then the values in the default
     dict will be used. default must contain keys for
@@ -121,7 +121,7 @@ def make_limits(start, count, default):
             and count.
 
     Returns:
-        common.LimitData: A data object containing limits needed for
+        LimitData: A data object containing limits needed for
         some collection processes.
     """
     start = null_arg_int(start, default['start'], "Starting index: ")
@@ -131,13 +131,14 @@ def make_limits(start, count, default):
 
 
 def make_cf_limits(start, count, default):
-    """Creates a codeforces.CfLimitData object.
+    """Creates a CfLimitData object.
 
     If the start or count are None then the values in the default
     dict will be used. Default must contain keys for 'start', 'count',
     'sub_start', 'sub_count', 'max_subs', 'max_no_source'.
 
-    See codeforces.CfLimitData and config for more details.
+    See :class:`~slrg_data.collection.codeforces.CfLimitData` and
+    :ref:`Configuration <config_lab>` for more details.
 
     Args:
         start (int): The index of a starting record.
@@ -145,8 +146,8 @@ def make_cf_limits(start, count, default):
         default (dict): A dict containing values for all the above
             required keys.
 
-    Returns
-        codeforces.CfLimitData: A data object containing all the
+    Returns:
+        CfLimitData: A data object containing all the
         required limit values for the codeforces collection.
     """
     start = null_arg_int(start, default['start'], "Starting index: ")
@@ -158,7 +159,8 @@ def make_cf_limits(start, count, default):
 
 
 def make_git_data(login, passwd, default):
-    """Creates github.GithubData object using given information.
+    """Creates :class:`~slrg_data.collection.github.GithubData` object
+    using given information.
 
     If the login or password are None then the values in the default
     dict will be used. There must be keys for 'login' and 'passwd' in
@@ -171,7 +173,7 @@ def make_git_data(login, passwd, default):
             'login' and 'passwd'
 
     Returns:
-        github.GithubData: A data object containing the username and
+        GithubData: A data object containing the username and
         passwd values.
     """
     login = default['login'] if login is None else login

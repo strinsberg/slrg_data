@@ -6,7 +6,7 @@ sphinx:
 
 .PHONY: reports
 reports:
-	cd docs/reports/; xelatex second_draft.tex; xelatex second_draft.tex
+	cd docs/reports/; xelatex technical_report.tex; bibtex technical_report; xelatex technical_report.tex; xelatex technical_report.tex
 	cp docs/reports/*.pdf docs/sphinx/source/_static/
 	rm -rf texput.log
 

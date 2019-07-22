@@ -1,0 +1,20 @@
+\begin{thebibliography}{}
+
+\bibitem[GitHub, 2019]{WEBSITE:Git1}
+GitHub (2019).
+\newblock Github about.
+\newblock https://GitHub.com/about.
+\newblock Accessed on 2019-22-07.
+
+\bibitem[Gousios, 2013]{Gousi13}
+Gousios, G. (2013).
+\newblock The ghtorrent dataset and tool suite.
+\newblock In {\em Proceedings of the 10th Working Conference on Mining Software
+  Repositories}, MSR '13, pages 233--236, Piscataway, NJ, USA. IEEE Press.
+
+\bibitem[Santamar{\'{i}}a and Mihaljevi{\'{c}}, 2018]{Santamaria2018}
+Santamar{\'{i}}a, L. and Mihaljevi{\'{c}}, H. (2018).
+\newblock {Comparison and benchmark of name-to-gender inference services}.
+\newblock {\em PeerJ Computer Science}, 4:e156.
+
+\end{thebibliography}

@@ -34,4 +34,5 @@ Contents
 
 .. |collection-report| raw:: html
 
-    <a href="./_static/second_draft.pdf" target="_blank">here</a>
+    <a href="./_static/technical_report.pdf" target="_blank">here</a>
+
