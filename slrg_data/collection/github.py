@@ -230,7 +230,10 @@ class ProjectsCollector(GitCollector):
         sure that the repository has no more than 1 contributor.
         """
         contribs = project_data['contributors']
-        if contribs is None or len(contribs) > 1:
+        if contribs is None:
+            return False
+        if len(contribs) > 1:
+            print("Invalid number of contributors:", len(contribs))
             return False
 
         if (len(contribs) == 1
@@ -284,8 +287,6 @@ class ProjectsCollector(GitCollector):
         try:
             if api_ok(contribs, self.times["session"], write=self.log.info):
                 project_data['contributors'] = contribs
-            else:
-                print("Invalid Number of Contributors:", len(contribs))
 
         except RateLimitExceeded:
             wait_for_api(self.times['session'], 120, self.log.info)
