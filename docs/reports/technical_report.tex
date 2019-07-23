@@ -38,22 +38,19 @@ Each section introduces the sources and collection methods. Then it discusses th
 
 %& Introduction to the sources being used
 \subsection{Data Sources}
-\paragraph{GitHub}
+\subsubsection*{GitHub}
 GitHub is one of the largest online code sharing/hosting website on the internet with over 36 million users and over 100 million repositories \cite{WEBSITE:Git1}. It has an API that allows access to information on users, repositories, commits, and more(?Jackies comment was not clear on etc. but I assume it is no good. Whats better?). Source code hosted in public repositories is available for anyone to freely access or use in projects. Data on users, as well as source code is collected from GitHub and added to the database. Two methods are used for this. The first looks at commit data and collects changes to files. The second looks at projects and collects full files of source code. Both support the goal of adding single author source code samples to the database.
 
-\paragraph{GhTorrent}
+\subsubsection*{GhTorrent}
 GhTorrent is an offline database of data obtained from the GitHub API \cite{Gousi13}. It contains large quantities of data on GitHub users, projects, commits from as far back as 2012. This data is being collected to support research on software repositories and is available to the public for other research on GitHub. This source is used to collect information on GitHub commits and projects. We use this information to decide what projects and commits to attempt to collect source code samples from GitHub (clumsy). More information is available at http://ghtorrent.org.
 
-\paragraph{Google BigQuery}
+\subsubsection*{Google BigQuery}
 Google BigQuery is a part of the Google Cloud Platform. It allows the storage and querying of datasets online. These datasets and query results can be connected to other google cloud services and also downloaded. The GhTorrent dataset is accessible on BigQuery. Queries on the GhTorrent dataset are made  using and refined using BigQuery in order to find information on the desired commits and projects.
 
 
 %% Pros and Cons of each along with steps taken to try and overcome any issues.
 \subsection{Pros And Cons}
-% don't really have all the pros. If you are going to leave them out of the introduction to the sources then put them in here
-% might also be good to use a bullet list for each under a heading for each source
-(need to include more pros and organize things better. Might even want to put this after the process overview so that it makes more sense if pros and cons of the process are included here.)
-\paragraph{GitHub}
+\subsubsection*{GitHub}
 \begin{itemize}
     \item The popularity of GitHub means that there is a large amount of source code and data available. This means one can get a reasonable amount of data on even very specific searches.
 
@@ -61,21 +58,21 @@ Google BigQuery is a part of the Google Cloud Platform. It allows the storage an
     
     \item The nature of the platform makes all public code freely available for anyone to access within the platform. This is outlined in the GitHub terms of service (reference). However, without and open source license source code is still the sole property of the author and cannot be shared or published without their permission.
 
-    \item GitHub is used for collaboration as well as sharing individuals code. Therefore it can be difficult to know what code is written by a single author. Even when steps are taken (as will be described below?) to ensure that code has been written by a single author there are challenges. Projects may be added to GitHub after they are complete in which case it is not possible to tell who worked on them other than the project owner. It is also possible for people to add code from other sources to their projects that they did not write themselves. Such as external libraries or extensions or other code samples. Git does keep lots of information on repository collaborators and even tracks who has made changes to each line of code in a file. So it is possible to be relatively sure about the author of code in most cases. This is part of the reason for the different methods of code collection.
+    \item GitHub is often used for collaboration. It is not always easy to tell wether source code has a single author, but there are contributor lists and other tools that can help. However, results from the these tools might not be accurate when used on projects that were added to GitHub long after being stated. It is also possible for code in a repository to be taken from a 3rd party source like libraries, extensions, or freely available code samples.
 
-    \item A Rate limit of 5000 calls per hour is imposed on the GitHub API. By collecting the initial data from GhTorrent the number of API calls is reduced, but there are still 1-2 calls per record for both scripts. For the projects script if projects are being processed fast enough this can mean the rate limit is reached each hour. For the projects script it is often not an issue because cloning and processing repositories can be time consuming enough to never reach the API limit. However, for the commit based script commits are small and so the 2 API calls easily use up the rate limit every hour. The scripts handle this by calculating time to API reset and sleeping until they can start collecting again.
+    \item A Rate limit of 5000 calls per hour is imposed on the GitHub API. By collecting the initial data from GhTorrent the number of API calls is reduced. It is not hard for a process to use up this limit in much less time than 1 hour. If a process will use up the limit it is necessary to have it keep track of time and wait for the API to reset every hour.
 
     \item When collecting code from commits the changes can be scattered around a file. It is not very useful to have 30 lines of code from an author if those 30 lines are not connected to one another. It is possible to identify changes that are part of a newly added file. This ensures that all the changes represent a single piece of code. One of the issues with this is that newly added files are often not complete.
 \end{itemize}
 
-\paragraph{GhTorrent}
+\subsubsection*{GhTorrent}
 \begin{itemize}
     \item The GhTorrent database is a massive database of GitHub metadata. Accessing GitHub metadata using GhTorrent can make it much easier to know what kind of data is available on GitHub.
     
     \item Because the GhTorrent database is so big it would be difficult to store it locally. Queries on a database of this size would be slow without good hardware. So for most people access must be through another source like Google BigQuery. 
 \end{itemize}
 
-\paragraph{Google BigQuery}
+\subsubsection*{Google BigQuery}
 \begin{itemize}
     \item BigQuery is run with Googles code platform. The hardware used to process queries will run queries on the GhTorrent database much faster than the hardware most people have access to.
 
@@ -89,61 +86,62 @@ Google BigQuery is a part of the Google Cloud Platform. It allows the storage an
 \subsection{Process Overview}
 
 %%% Ght and BigQuery process
-\paragraph{GhTorrent and Google BigQuery}
-First SQL queries are made on the GhTorrent dataset via BigQuery. These queries are refined until the results are satisfactory. Once desired results are obtained they can be saved or downloaded. It is often best to save the results of a large query and then sample it with another query. These sample results can then be split and downloaded. If the results were split they can be recombined before being processed by one of the collection methods for GitHub.
+\subsubsection*{GhTorrent and Google BigQuery}
+SQL queries are made on the GhTorrent dataset via BigQuery. These queries are refined until the results are satisfactory. Once desired results are obtained they can be saved or downloaded. It is often best to save the results of a large query and then sample it with another query. These sample results can then be split and downloaded. If the results were split they can be recombined before being processed by one of the collection methods for GitHub. See Figure 1.
 
 % Process Diagram
-\begin{figure}[!h]
+\begin{figure}[t]
     \centering
     \includegraphics[height=10cm]{diagrams/ght_process.png}
     \caption{Getting Data From GhTorrent}
 \end{figure}
 
 %%% Git projects process
-\paragraph{Collecting Git Projects}
-The list of GitHub project data collected from GhTorrent is loaded and each entry is processed. If the project referenced by an entry is valid it is cloned locally. Then every valid folder is searched to find valid single author files. All valid files are then processed by having their source code collected and further validated. If the source code is valid it is added, along with user and project information, to the database.
+\subsubsection*{Collecting Git Projects}
+The list of GitHub project data collected from GhTorrent is loaded and each entry is processed. If the project referenced by an entry is valid its repository is cloned locally. Then every valid folder is searched to find valid single author files. All valid files are then processed by having their source code collected and further validated. If the source code is valid it is added, along with user and project information, to the database. Once a project is finished being processed the cloned repository is removed. See Figure 2.
 
 % Process Diagram
-\begin{figure}[!h]
+\begin{figure}[t]
     \centering
     \includegraphics[height=8cm]{diagrams/projects.png}
     \caption{Getting GitHub Project Source Code}
 \end{figure}
 
 %%% Git commits process
-\paragraph{Collecting Git Commits}
-The list of GitHub commit data collected from GhTorrent data is loaded and each entry is processed. First the entry's commit information is requested from the GitHub API. If this information is available, all the files that have changes are validated. If a set of changes is valid it is collected and has any extra symbols that were added by GitHub removed. Then the source code is added, along with user, project, and commit information, to the database.
+\subsubsection*{Collecting Git Commits}
+The list of GitHub commit data collected from GhTorrent data is loaded and each entry is processed. First the entry's commit information is requested from the GitHub API. If this information is available, all the files that have changes are validated. If a set of changes is valid it is collected and has any extra symbols that were added by GitHub removed. Then the source code is added, along with user, project, and commit information, to the database.  See Figure 3.
 
 % Process Diagram
-\begin{figure}[!h]
+\begin{figure}[t]
     \centering
     \includegraphics[height=7.5cm]{diagrams/commits.png}
     \caption{Getting GitHub Commit Source Code}
 \end{figure}
 
 
-%% Discussion of each subprocess with technical details and the data it gives and technical issues that are not related to the websites themselves (not listed in pros and cons)
+%% Discussion of each subprocess
 \subsection{Process Details}
 
 %%% Ght and BigQuery process
 \subsubsection{GhTorrent and Google BigQuery}
 
-\paragraph{Process}
-To access the GhTorrent database it must be opened from the GhTorrent website and the link will lead to Google BigQuery. From here SQL queries can be made on the database to join the appropriate tables together for users, projects, and commits. The exact queries will depend on what method is being used. Things like programming language can be specified to only collect information for one language at a time. Any fields, such as country, which are necessary for the scripts to run, can be filtered and not be allowed to be NULL. These queries run quite quickly and should be refined until the desired results are obtained.
+\subsubsection*{Process}
+The GhTorrent database is accessed via BigQuery at\linebreak
+https://bigquery.cloud.google.com/dataset/ghtorrent-bq:ght. From here SQL queries are made on the database to find data for users, projects, and commits. The exact queries depend on which collection method is being used. Both collection methods collect only one programming language at a time, so queries filter out all but the desired language. Since research is being done on region records where country code is NULL are filtered out. These queries run quite quickly and are refined until only the desired results are obtained.
 
-Results must be saved to a table in the users personal datasets. A dataset and table can be created to save the results of any query. Though there are only 10GB available in the free tier. Once saved if the results are too big then they can be sampled using RAND and LIMIT. The limit the desired number of samples, which can differ based on the script being run (example?). The sample will also need to be saved to a table.
+Results are saved to a table in the users personal datasets. A dataset and table can be created to save the results of any query. Though there are only 10GB available in the free tier. Once saved if the results are too big then they are randomly sampled to reduce their size. To build our dataset approximately 150,000 records per programming language were collected. This allowed 6-10,000 users who's combined samples had 300 or more lines of code. When a sample is taken it is saved to a table so it can be downloaded within the constraints of BigQuery.
 
-Once a final set of results is obtained they can be downloaded. Results can be downloaded 10k rows at a time maximum. To do this SELECT all from the desired table and use LIMIT 10000 and the OFFSET command to download parts of the table as JSON or CSV. The scripts require JSON format. Once each 10k section of the table has been downloaded the JSON files can be combined into one or more data files. These resulting data files can be loaded by python's json library and the scripts.
+The final table of results is able to be downloaded with a maximum of 10,000 rows at a time. The table is queried with SQL that allows it to be broken up into pieces that are downloaded as json files. Once each section of 10,000 records has been downloaded as json files they are combined with a script into one or more data files. These resulting data files are formatted so they are can be parsed by Python3's json library and loaded by our scripts.
 
-\paragraph{Data}
+\subsubsection*{Data}
 As described above the data can be downloaded as JSON or CSV. When downloaded as JSON each record is a JSON object that has each column name from the query associated with the value. These are contained each on their own line, but are not in a list, which is why they must be pre-processed and combined. Once processed each record will be an entry in a list and can be looped over in a program. It will be possible to access each value in a record by a key corresponding to the column name from the SQL queries made on BigQuery. Some fields may be null.
 
 %%% Git projects process
 \subsubsection{Collecting Git Projects}
 The main aim of collecting Source code from projects is to get a large number of samples for an author. The hope is that these samples are working code and that they can be attributed to only the one author. To do this repositories can be checked to make sure they only have one contributor and files checked to make sure only one contributor has written code in them.
 
-\paragraph{Process}
-First the GhTorrent data is loaded. Then For each one of the entries some data is added to the project. The first is a fullname. This is collected by using the GitHub API to find user information and collect a fullname. If there is a fullname it will be split to find the first name and then passed to a gender checking function. The result of the gender check will also be added to the record. If a name and gender were successfully added to the project data. Then the GitHub api will be queried for the project to find the number of contributors. If the number of contributors is no more than 1 the project will be processed further.
+\subsubsection*{Process}
+First the GhTorrent data is loaded. Then For each one of the entries some data is added to the project. The first is a full name. This is collected by using the GitHub API to find user information and collect a full name. If there is a full name it will be split to find the first name and then passed to a gender checking function. The result of the gender check will also be added to the record. If a name and gender were successfully added to the project data. Then the GitHub api will be queried for the project to find the number of contributors. If the number of contributors is no more than 1 the project will be processed further.
 
 Next the script clones the project repository into a temporary directory. Once downloaded the directory tree is searched. Files and folders that should not be processed can be specified in the configuration for the scripts. If examined files are not in the excluded list they are checked to make sure they have an extension that matches the programming language of interest. All valid files are checked with git blame to determine if more than one author worked on them. Since the user information gathered is for the repository owner the file author must also match the repository owner. When all files are checked all valid ones are returned as a list of filenames.
 
@@ -151,10 +149,10 @@ Each file is then opened and it's source code is collected. The number of lines 
 
 The process continues until all projects in the data file are processed or a given limit for number of projects to process is reached. When finished some details of the process are printed to the console.
 
-\paragraph{Data}
+\subsubsection*{Data}
 Information on the user is collected for GitHub login, full name, country code, and gender. These categories must have values in order for a project to be processed. There is also some other user information like state, city, location, time created, type, and company. This data is allowed to be NULL. Information on the project like it's name, it's api url, it's creation time, and it's primary programming language are saved as well. These always guaranteed to be included in records in the GhTorrent database. The file has it's filename/path, number of lines, and the source code added to the database as well. These are all added to the information saved in the database by the script.
 
-\paragraph{Technical Issues}
+\subsubsection*{Technical Issues}
 Because so many external services are connected to during this process connection issues can interrupt the scripts. These are not always easy to handle gracefully and as a result it may not be possible to automate collection without occasionally having to restart the scripts.
 
 Because projects are being cloned if a project is really large it can take a long time. Often projects of this size are not single contributors, but they occasionally don't show up like this when they are validated. If a project has many assets like photos or videos it can really increase the download times. This may not be an issue with a fast computer and connection, but it can affect collection.
@@ -164,18 +162,18 @@ Because projects are being cloned if a project is really large it can take a lon
 \subsubsection{Collecting Git Commits}
 The second method which is used to collect source code samples involves using GitHub commits. (needs more or should be cut?)
 
-\paragraph{Process}
+\subsubsection*{Process}
 The process starts the same as the GitHub projects process. It loads a data file of commit info and processes each entry. Each commit first has the commit data gathered from the GitHub API. This data contains the changes that were made to each file that was included in the commit.
 
 The information for each set of changes to a file is validated. These changes must represent a file that was newly added with the commit. They must also be at least 10 lines long. Files must also end in an extension for the programming language of interest. The files that meet these criteria have their source code gathered.
 
-Before a file can be added to the database its source code must be cleaned. The commit stores file changes with a header that has information on the number of changes which has to be removed. Changes for newly added files have a + sign at the beggining of each line. These are also removed before continuing.
+Before a file can be added to the database its source code must be cleaned. The commit stores file changes with a header that has information on the number of changes which has to be removed. Changes for newly added files have a + sign at the beginning of each line. These are also removed before continuing.
 
 Once the source is cleaned it is added along with the user, project, and commit info to the database. Then all the remaining files are processed before moving onto another commit.
 
 The process continues until all commits in the data file are processed or a given limit for number of commits to process is reached. When finished some details of the process are printed to the console.
 
-\paragraph{Data}
+\subsubsection*{Data}
 The data contains the same user and project information as the projects data. It adds some information on the commit. The commit SHA is a unique id that is assigned to a commit on GitHub, and the time the commit was created is also added. The file lines are renamed to file changes as they are a little different (are they?).
 
 Each file that was changed has a list of lines that were altered by an author along with a + or - to indicate if the line was added to or removed. each file also indicates weather it was added in full with this commit or an existing file that was modified. In order to get changes that are not distributed at random points through a file only files that were newly added with the commit are kept
@@ -224,7 +222,7 @@ First a list of users is filtered and gender information is gathered for all use
 \subsection{Process Details}
 There are Two ways to collect the code. The most reliable is to use the selenium web driver to open the users submission page and open and close popups to collect the code. The other way is to follow direct links to a page that has the source code on it. As mentioned above the second way is not always available so it is used as a fallback if the no source is available from the selenium method.
 
-\paragraph{Process}
+\subsubsection*{Process}
 First the list of users is loaded by the script. Because the users are preprocessed to filter out valid ones there is no need to validate the users as they are processed. For every user first information on their submissions is collected. When using selenium only the most recent 50 are gathered because the submissions page has 50 submissions per page. Before processing the submission list the database is queried to get the problem names of all submission that the current user has in the database. These are added to a set that keeps track of problems so that code is not collected more than once for a problem. The variations in submissions for the same problem are often quite small, especially if they are both accepted solutions.
 
 Each submission is checked to see if it is valid. It is checked to make sure that it was not a team submission, that it was an accepted submission, and that it is not a problem previously collected for the current user.
@@ -237,12 +235,12 @@ Once the source code is collected it is added along with user and submission inf
 
 The process continues until all users in the data file are processed or a given limit for number of users to process is reached. When finished some details of the process are printed to the console.
 
-\paragraph{Data}
+\subsubsection*{Data}
 The data that is collected contains two different kinds of information. The first is user information. Some information is always present and some is filtered if it is not. Always present information for a user is a unique codeforces handle that identifies a user on the website, a ranking that is a string identifying how well rated a user is, a rating which is a number between 0 and 4000 (actual?) that is adjusted based on solutions and failures to ranked problems in contests (are you sure) it works similar to rating systems in chess, and a registration time. Some information is optional like first and last name, country, and organization. If a user does not have a first name gender cannot be found so users without first name are not used. Also, users without country are not used either as this is an important sociolinguistic feature. If a user has a first name, but gender cannot be collected for that name then that user is also not used.
 
 The second kind of information is for the submission. This includes a submission id, a problem name, a programming language, and submission time. It also includes problem difficulty, but this is not always available and participant type (which I am not sure I really know what that is). If source code is gathered for the submission it is saved as a string of the program text. All of these things are added to the database for each submission that is collected. The data that is collected from the api is in json format and is loaded and parsed to find the appropriate information for querying the api for the user submissions and for validating and collecting submissions. There are more fields in the API return than are saved with a submission and they an be viewed on the Codeforces website API reference.
 
-\paragraph{Technical Issues}
+\subsubsection*{Technical Issues}
 There are some technical issues with using selenium. Since the program physically loads each page and interacts with it the program must pause to wait for the pages to fully load before it continues. This means that there are some sleeps in the code for a couple seconds before scraping a popup and after closing one and clicking the next submission. These sleeps are as short as possible, but they do slow the collection down. However, as the selenium usually gets all code that is available it is preferable to running the links script which often will get nothing for a large period of time as links are unavailable. Also, because the codeforces web page is loaded it requires loading all of the extra information that is required to open the whole webpage. This often means waiting for certain services to be connected to or loaded. Some of them can fail to load for many minutes. To get around this the script will wait for only 30 seconds and then refresh the page. Often this will fix issues with loading all services. It can reduce the wait time when switching to the submission page of a new user to a couple minutes or less. Also, sometimes the popup cannot be found to close by the selenium script and it is necessary to refresh the page. Also, if all methods of collecting source code are unsuccessful the script will wait for 30 seconds to hope that the website services are working again. This helps to ensure that all code for a user is collected that can be from their first 50 submissions. All of these issues are handled by the script so that it can be automated, However, there are still occasionally errors when interacting with systems like websites and databases that cannot be easily recovered from. Because of this it is not always easy to leave the script running unattended without checking in on it from time to time.
 
 The main issue not using selenium is link availability. The links seem to stop being available after a around 20 of them are accessed. It can take some time for them to start being accessible again. This means that many submissions for a user could go uncollected even though there is code available for them. It could be possible to put in some sleeps to wait once code is no longer being found so that fewer submissions are skipped, but the wait here can be 10min or more and be encountered after only a few minutes. However, this method is much more stable in that it will often run for a long time without error. So if the other method were to be having issues running for long enough it might be just as easy to let the link method sleep or even just miss some samples while looking for code because it might run for days unattended. (I am not sure that this claim is still valid after adjusting the code)
@@ -280,12 +278,12 @@ There are several websites and APIs for adding gender for first names. They incl
 
 %% Overview of the process %%
 \subsection{Process Details}
-\subsubsection{Process}
+\subsubsection*{Process}
 The process used for collecting gender for names is relatively simple. Given a name the database is checked to see if it has the name already. If the name is not in the database it is looked up with the genderize.io API. If the API returns a result that result is added with the name to the database. If the API limit has been reached then a appropriate (what?) response is given. The scripts all have options (Do they?) to save results for later processing if gender cannot be determined. If there name is able to be labeled then the label and the probability are returned.
 
 The labels added to the scripts do not use country codes. As stated above it will be desireable to re-label the names on samples that are used by submitting the names and countries again to other APIs to see if results can be confirmed or refined. Because this will be done after it is likely that some authors will have been missed because they had unknown genders and so they were not added to the dataset. This may throw off the statistic of the samples a bit. The most important thing is to have enough good samples with reliable gender labels to use in experiments, so loosing a few users is acceptable. Better to have less data that is high quality than to have more data that is lower quality.
 
-\subsubsection{Data}
+\subsubsection*{Data}
 The data consists of just the gender and the probability the gender label is correct. The gender is a string 'male', 'female', or 'unknown' (Other APIs give different results). The probability is a float between 0.0 and 1.0. The Case of a name is ignored (is it?). There is also a 'count' field that is returned that is described as 'the number of entries examined to calculate the result' (cite). and if country code is given the country code is also part of the response. Also the name is part of the response.
 
 
