@@ -50,7 +50,7 @@ autodoc_member_order = 'bysource'
 #
 #import sphinx_readable_theme
 #html_theme_path = [sphinx_readable_theme.get_html_theme_path()]
-html_theme = 'alabaster'  # 'sphinx_rtd_theme'
+html_theme = 'sphinx_rtd_theme' # 'alabaster'  # 
 html_theme_options = {
     'fixed_sidebar': True,
     'page_width': '1070px',

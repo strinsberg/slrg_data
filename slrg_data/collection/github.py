@@ -118,7 +118,7 @@ class GitCollector(common.Collector):
         return fullname, gender, gender_probability
 
     def clean_up(self):
-        """Extends :func:`Collector.clean_up() <common.Collector.clean_up>`
+        """Extends :func:`Collector.clean_up() <slrg_data.collection.common.Collector.clean_up>`
         to write entries that must wait until later to have gender
         collected to a file.
         """

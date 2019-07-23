@@ -1,3 +1,5 @@
+.. _cf-collection:
+
 Codeforces Collection
 =====================
 
