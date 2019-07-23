@@ -615,3 +615,27 @@ class CfLimitData(common.LimitData):
         self.sub_count = sub_count
         self.max_subs = max_subs
         self.max_no_source = max_no_source
+
+
+# Functions ############################################################
+
+def add_gender(user_data, database, gender_table):
+    """Adds gender data to a Codeforces user record.
+
+    Will attempt to use the gender API if the gender information is
+    not in the database.
+
+    Args:
+        user_data (dict): A row of user data from the Codeforces API
+                with any additional user information needed.  
+        database (Database): The local database where gender information
+            is stored.
+        gender_table (str): The name of the table in the database where
+            the gender information is stored. 
+    """
+    gender, prob = None, None
+    if 'firstName' in user_data:
+        gender, prob = common.get_gender(
+            user_data['firstName'].split()[0], database, gender_table)
+    user_data['gender'] = gender
+    user_data['gender_probability'] = prob
