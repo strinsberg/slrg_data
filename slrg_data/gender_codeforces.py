@@ -136,7 +136,20 @@ def main(users_file=None, db_login=None, db_passwd=None,
     for processing later.
 
     Args:
-        etc.
+        users_file (str): The name of the Codeforces user file. If it is
+            None then the user will be prompted for it.
+        db_login (str): The username for the database. If it is None
+            the user will be prompted for it.
+        db_passwd (str): The password for the database. If it is None
+            the user will be prompted for it.
+        gender_table (str): The name of the table where gender data
+            is stored in the database.
+        gender_file (str): File to write the results that have a gender.
+            If it is None it will be 'gendered.data'.
+        missing_file (str): File to write the results that could not
+            be gendered yet. Most likely because the gender API rate
+            limit was reached. If it is None it will be
+            'missing_gender.data'.
     """
     if users_file is None:
         users_file = input("Codeforces users file: ")
@@ -169,7 +182,16 @@ def _add_gender(user_list, database, gender_table, gender_file, miss_file):
     new lists to files.
 
     Args:
-        etc.
+        user_list (str): A list of codeforces user records.
+        out_file (str): The name of the file to write the results to.
+        db_login (str): The username for the database.
+        db_passwd (str): The password for the database.
+        gender_table (str): The name of the table where gender data
+            is stored in the database.
+        gender_file (str): File to write the results that have a gender.
+        missing_file (str): File to write the results that could not
+            be gendered yet. Most likely because the gender API rate
+            limit was reached.
     """
     gender = []
     missing = []
