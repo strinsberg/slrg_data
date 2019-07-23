@@ -23,11 +23,13 @@ from . import script
 class GitCollector(common.Collector):
     """Base Abstract Class for GitHub collection.
 
-    This adds a setup method, and some methods for GitHub related
-    gender collection.
-
-    Also adds 'files' and 'added' keys to the totals dict attribute
+    Adds 'files' and 'added' keys to the totals dict attribute
     inherited from :class:`~slrg_data.collection.common.Collector`.
+
+    Adds methods for adding name and gender to entries.
+
+    See :ref:`Git Collection <git-collection>` for more information
+    on this part of the process.
 
     Attributes:
         collect_gender (bool): Wether or not to collect gender for
@@ -135,6 +137,9 @@ class CommitsCollector(GitCollector):
 
     Also adds 'commits' key to the totals dict attribute inherited from
     :class:`~GitCollector`.
+
+    See :ref:`Git Commits <git-commits>` for more information on this
+    process.
     """
 
     def __init__(self, database, collection_info, log, collect_gender=True):
@@ -157,7 +162,7 @@ class CommitsCollector(GitCollector):
 
             commit_data = self.get_commit_data(entry['url'], entry['sha'])
 
-            if api_ok(commit_data, self.times["session"], write=self.log.info):
+            if api_ok(commit_data, write=self.log.info):
                 self.process_commit(commit_data, entry)
 
         except RateLimitExceeded:
@@ -191,7 +196,6 @@ class CommitsCollector(GitCollector):
                 information.
             entry (dict): A row of commit data from :ref:`GhTorrent via BigQuery <ght-big-query-lab>`.
         """
-
         if self.collect_gender:
             self.add_name_and_gender(entry)
             if (entry['user_fullname'] is None
@@ -215,6 +219,9 @@ class CommitsCollector(GitCollector):
     def is_valid(self, file_data):
         """Confirms a file meets the requirements to be added to the
         database.
+
+        See :ref:`Git Commits <git-commits>` for more information on
+        what makes a file valid.
 
         Args:
             file_data (dict): The number of 'changes', 'status', and 'filename'     of the file being processed.
@@ -304,7 +311,7 @@ class CommitsCollector(GitCollector):
         return rm_plus[start + 1:]
 
     def clean_up(self):
-        """Prints details of the collection for commits, files check,
+        """Prints details of the collection for commits, files processed,
         and files added.
 
         Extends :func:`GitCollector.clean_up() <GitCollector.clean_up>`.
@@ -323,7 +330,14 @@ class CommitsCollector(GitCollector):
 
 
 class ProjectsCollector(GitCollector):
-    """Extracts source code from single contributor github projects."""
+    """Concrete Collector class for collecting source code samples using
+    GitHub project data.
+
+    Also adds 'projects' key to the totals dict attribute inherited from
+    :class:`~GitCollector`.
+
+    see :ref:`Git Projects <git-projects>` for more information on this process.
+    """
 
     def __init__(self, database, collection_info, log, collect_gender=True):
         super(ProjectsCollector, self).__init__(
@@ -332,7 +346,13 @@ class ProjectsCollector(GitCollector):
         self.gender_file = 'projects_missing_gender'
 
     def process(self, project_data):
-        """Process a github project."""
+        """Collects additional data and adds valid projects to the
+        database.
+
+        Args:
+            project_data (dict): A row of project data from
+                :ref:`GhTorrent via BigQuery <ght-big-query-lab>`.
+        """
         print("#", self.idx, "###", end=" ")
 
         # Don't want to continue if the name or gender are not found
@@ -356,8 +376,15 @@ class ProjectsCollector(GitCollector):
     def is_valid_project(self, project_data):
         """Checks to make sure project is valid.
 
-        This means making
-        sure that the repository has no more than 1 contributor.
+        See :ref:`Git Projects <git-projects>` for more information on what make a
+        project valid.
+
+        Args:
+            project_data (dict): A row of project data from
+                :ref:`GhTorrent via BigQuery <ght-big-query-lab>`.
+
+        Returns:
+            bool: True if the project is valid, False otherwise.
         """
         contribs = project_data['contributors']
         if contribs is None:
@@ -373,11 +400,16 @@ class ProjectsCollector(GitCollector):
         return True
 
     def process_valid_project(self, project_data):
-        """Process a valid project by cloning the repo and adding any
-        valid files to the databse."""
+        """Clones the project repo and adds all valid source code to
+        the database.
+
+        Args:
+            project_data (dict): A row of project data from
+                :ref:`GhTorrent via BigQuery <ght-big-query-lab>`.
+        """
         repo_path = None
         try:
-            repo, repo_path = self.make_repo(project_data)
+            repo, repo_path = self._make_repo(project_data)
             files = get_single_author_files(repo, repo_path,
                                             self.collection_info.validation,
                                             project_data["user_fullname"],
@@ -396,8 +428,8 @@ class ProjectsCollector(GitCollector):
             except (FileNotFoundError, TypeError):
                 pass
 
-    def make_repo(self, project_data):
-        """Clone a repository and return a git.Repo object for it."""
+    def _make_repo(self, project_data):
+        """Clones a repository and return a git.Repo object for it."""
         repos_dir = os.path.join(common.SLRG_DIR, 'temp_repos')
         temp_dir = "temp_{}".format(str(random.randint(0, 2000000)))
         repo_path = os.path.join(repos_dir, temp_dir)
@@ -409,13 +441,18 @@ class ProjectsCollector(GitCollector):
         return repo, repo_path
 
     def add_contributors(self, project_data):
-        """Add a list of contributors to project data."""
+        """Add a list of contributors to project data.
+
+        Args:
+            project_data (dict): A row of project data from
+                :ref:`GhTorrent via BigQuery <ght-big-query-lab>`.
+        """
         project_data['contributors'] = None
         contrib_url = "{}/stats/contributors".format(project_data['url'])
         contribs = common.session_get_json(self.session, contrib_url)
 
         try:
-            if api_ok(contribs, self.times["session"], write=self.log.info):
+            if api_ok(contribs, write=self.log.info):
                 project_data['contributors'] = contribs
 
         except RateLimitExceeded:
@@ -423,7 +460,14 @@ class ProjectsCollector(GitCollector):
             self.times['session'] = time.time()
 
     def process_file(self, path, filename, project_data):
-        """Process a file and add it to the database if it is valid."""
+        """Process a file and add it to the database if it is valid.
+
+        Args:
+            path (str): The full path to the file.
+            filename (str): The files path in the repository.
+            project_data (dict): A row of project data from
+                :ref:`GhTorrent via BigQuery <ght-big-query-lab>`.
+        """
         self.totals['files'] += 1
         file_data = self.get_file_data(path, filename)
 
@@ -435,7 +479,20 @@ class ProjectsCollector(GitCollector):
                 self.totals['added'] += 1
 
     def get_file_data(self, path, filename):
-        """Gets source code and some file data from a file."""
+        """Collects the source and other file info from the file.
+
+        In addition to the source code a count of the number of lines
+        in the file is determined and a hash of the filename is created.
+
+        Args:
+            path (str): The full path to the file.
+            filename (str): The files path in the repository.
+
+        Returns:
+            list: If the file is valid returns a list with the hash of
+                the filename, the filename, the source code, and a
+                line count. If the file is not valid returns None.
+        """
         try:
             with open(path) as file:
                 source = file.read()
@@ -445,26 +502,46 @@ class ProjectsCollector(GitCollector):
             return None
 
         line_count = source.count('\n')
-        if self.is_valid_file(path, source, line_count):
+        if self.is_valid_file(filename, source, line_count):
             hash_name = hashlib.md5(filename.encode()).hexdigest()
             return [hash_name, filename, source, line_count]
 
         print("Lines out of range: " + str(line_count))
         return None
 
-    def is_valid_file(self, path, source, line_count):
+    def is_valid_file(self, filename, source, line_count):
         """Checks to see if a file is valid.
 
-        A large part of the validation for files in this class is done
-        by github.get_single_author_files. So this is where any final
-        validation can be done before adding source code to the database.
+        Additional validation of a file. Currently only checks to make
+        sure the number of lines is the range [10, 1000]
+
+        Args:
+            filename (str): The files path in the repository.
+            source (str): The source code from the file.
+            line_count (int): The number of lines in the source.
+
+        Returns:
+            bool: True if the file is valid, otherwise False.
         """
         if 10 <= line_count <= 1000:
             return True
         return False
 
     def add_file_to_db(self, file_data, project_data):
-        """Adds a file to the database."""
+        """Attempts to add all necessary information for a source code
+        sample to the database.
+
+        Args:
+            file_data (dict): The number of 'changes', 'status',
+                'filename', and source code 'patch' of the file being
+                processed.
+            project_data (dict): A row of project data from
+                :ref:`GhTorrent via BigQuery <ght-big-query-lab>`.
+
+        Returns:
+            bool: True if the information was successfully added to
+                the database, otherwise False.
+        """
         values = self.get_entry_values(project_data)
         values.extend(file_data)
 
@@ -474,7 +551,11 @@ class ProjectsCollector(GitCollector):
         return False
 
     def clean_up(self):
-        """Prints stats on program run and other final actions."""
+        """Prints details of the collection for projects, files processed,
+        and files added.
+
+        Extends :func:`GitCollector.clean_up() <GitCollector.clean_up>`.
+        """
         super(ProjectsCollector, self).clean_up()
 
         projects = self.totals['projects'] + 0.1
@@ -490,7 +571,12 @@ class ProjectsCollector(GitCollector):
 
 
 class GitCollectionInfo(common.CollectionInfo):
-    """Information required for collecting source from github."""
+    """Information required for collecting source from github.
+
+    Attributes:
+        git_data (GithubData): Login and password info for a git account.
+        language (str): The language of the data being collected.
+    """
 
     def __init__(self, records, table, validation, limits, git_data, lang):
         super(GitCollectionInfo, self).__init__(
@@ -500,7 +586,13 @@ class GitCollectionInfo(common.CollectionInfo):
 
 
 class GithubData:
-    """Data for a github account."""
+    """Login information for a git account.
+
+    Attributes:
+        login (str): A git login name.
+        passwd (str): A git password.
+
+    """
 
     def __init__(self, login, passwd):
         self.login = login
@@ -508,8 +600,17 @@ class GithubData:
 
 
 class SingleAuthorFilter:
-    """Helper class to collect paths for all the single author files
-    in a repo."""
+    """Helper class to collect file paths for all the single author files
+    in a repo.
+
+    Attributes:
+        repo (git.Repo): The repository object.
+        repo_path (str): The full path to the locally cloned repo.
+        validation (ValidationData): Information to determine if a file
+            is of the right type and not to be excluded.
+        name (str): The repository author's name.
+        login (str): The repository author's login.
+    """
 
     def __init__(self, repo, repo_path, validation, name, login):
         self.repo = repo
@@ -519,8 +620,20 @@ class SingleAuthorFilter:
         self.login = login
 
     def get_valid_files(self, full_path, relative_path):
-        """Gets all the file paths in a repo that are by one author and
-        are valid."""
+        """Recursively gets all the file paths in a repo that are valid.
+
+        See :ref:`Git Projects <git-projects>` for more info on what
+        makes a file valid.
+
+        Args:
+            full_path (str): The full path of a file or directory on the
+                local machine.
+            relative_path (str): The path of the file or folder in the
+                repository.
+
+        Returns:
+            list: A list of relative file paths that are valid.
+        """
         files = []
         try:
             with os.scandir(full_path) as it:
@@ -549,20 +662,46 @@ class SingleAuthorFilter:
         return files
 
     def is_valid_file(self, filename):
-        """Checks if a filename is not excluded and has the right extension."""
+        """Checks if a filename has the right extension and is not an
+        excluded file.
+
+        Args:
+            filename (str): The file's name (not a full or relative path).
+
+        Returns:
+            bool: True if the filename is valid, otherwise False.
+        """
         if filename in self.validation.exclude_files:
             return False
         return has_extensions(filename, self.validation.extensions)
 
     def is_excluded_dir(self, dirname):
-        """Checks a directory name to se if it is excluded."""
+        """Checks if a directory name is not in the list of excluded
+        directories.
+
+        Args:
+            dirname (str): The directory's name
+                (not a full or relative path).
+
+        Returns:
+            bool: True if the directory is in the excluded list,
+                otherwise False.
+        """
         if dirname in self.validation.exclude_dirs:
             return True
         return False
 
     def get_blame_count(self, path):
         """Returns a dictionary of contributors on a file and the number
-        of contributions they made."""
+        of contributions they made.
+
+        Args:
+            path (str): The relative path of the file in the repository.
+
+        Returns:
+            dict: A dict with names/logins of contributors and a count
+                of the number of contributions they made to the file.
+        """
         count = {}
         try:
             for commit, _ in self.repo.blame(None, path):
@@ -579,14 +718,30 @@ class SingleAuthorFilter:
 
 def authenticated_session(name=None, passwd=None):
     """Create an authenticated requests session for interacting with the
-    github api."""
+    github api.
+
+    If either are None then the user will be asked to input them.
+
+    Args:
+        name (str): A git login name.
+        passwd (str): A git password.
+    """
     name = input("Git username: ") if name is None else name
     prompt = "Github Password: "
     return common.requests_session(name, passwd, prompt)
 
 
 def wait_for_api(session_time, padding, write=print):
-    """Sleeps a program until the git api rate limit resets."""
+    """Sleeps a program until the git api rate limit resets.
+
+    Args:
+        session_time (int): The timestamp of the time the api was last
+            reset, or when the program started.
+        padding (int): Extra time to add to the sleep to make sure it
+            does not start too early.
+        write (func): A function to write the sleep information. Default
+            is print.
+    """
     now = time.time()
     elapsed = now - session_time
     if elapsed > 3600:
@@ -604,32 +759,61 @@ def wait_for_api(session_time, padding, write=print):
     write('Slept for: {}'.format(sleep_time))
 
 
-def api_ok(data, session, padding=120, write=print):
-    """Tests the return value from github api for errors."""
-    if data is None:
-        return False
-    if 'message' in data:
-        write("Api issue: {}".format(data['message']))
+def api_ok(response, write=print):
+    """Tests a GitHub API response for errors.
 
-        if data['message'].find('rate limit exceeded') > -1:
+    Args:
+        response (dict): A json response from the GitHub API.
+        write (func): A function to write any api information.
+            Default is print.
+
+    Returns:
+        bool: True if there is no issue with the response, otherwise
+            False.
+
+    Raises:
+        RateLimitExceeded: If the GitHub API rate limit has been
+            exceeded.
+        ScriptInputError: If the response indicates that login or
+            password information is incorrect.
+        GitApiError: If the response returns any other kind of error
+            that cannot be ignored.
+    """
+    if response is None:
+        return False
+    if 'message' in response:
+        write("Api issue: {}".format(response['message']))
+
+        if response['message'].find('rate limit exceeded') > -1:
             raise RateLimitExceeded("Github RateLimit Exceeded")
-        elif data['message'] == 'Server Error':
+        elif response['message'] == 'Server Error':
             time.sleep(10)
             return False
-        elif data['message'] == 'Bad credentials':
+        elif response['message'] == 'Bad credentials':
             raise script.ScriptInputError(
                 "Input Error: Incorrect github username or password")
-        elif (data['message'].find('No commit found for SHA') > -1 or data['message'] in ['Not Found', 'Repository access blocked']):
+        elif (response['message'].find('No commit found for SHA') > -1
+                or response['message'] in
+                ['Not Found', 'Repository access blocked']):
             return False
 
-        write("Git api Error: " + str(data))
-        raise GitApiError(str(data))
+        write("Git api Error: " + str(response))
+        raise GitApiError(str(response))
 
     return True
 
 
 def has_extensions(filename, extensions):
-    """Checks to see if a filename ends with one of the given extensions."""
+    """Checks to see if a filename ends with one of the given extensions.
+
+    Args:
+        filename (str): A filename or path.
+        extensions (list): A list of extensions to check for.
+
+    Returns:
+        bool: True if the filename ends with one of the extensions,
+            False if it ends with none of them.
+    """
     for ext in extensions:
         if filename.endswith(ext):
             return True
@@ -637,7 +821,22 @@ def has_extensions(filename, extensions):
 
 
 def get_fullname(login, request_session, session_time):
-    """Get a fullname for a github user login."""
+    """Get a fullname for a github user login.
+
+    Args:
+        login (str): The git account login name.
+        request_session: An github authenticated requests session object.
+        session_time (int): A timestamp of the time of the last GitHub
+            API reset or the start of the program.
+
+    Returns:
+        str: The fullname of the GitHub user, or None if it cannot be
+            obtained.
+
+    Raises:
+        RateLimitExceeded: If the GitHub API rate limit has been
+            exceeded.
+    """
     url = "https://api.github.com/users/" + login
     data = common.session_get_json(request_session, url)
 
@@ -653,8 +852,20 @@ def get_fullname(login, request_session, session_time):
 
 
 def get_single_author_files(repo, repo_path, validation, name, login):
-    """Returns the filepaths for all single author files from a github
-    repository."""
+    """Returns a list of relative filepaths for all valid single author
+    files in a git repository.
+
+    Args:
+        repo (git.Repo): The repository object.
+        repo_path (str): The full path to the locally cloned repo.
+        validation (ValidationData): Information to determine if a file
+            is of the right type and not to be excluded.
+        name (str): The repository author's name.
+        login (str): The repository author's login.
+
+    Returns:
+        list: A list of relative file paths that are valid.
+    """
     file_filter = SingleAuthorFilter(repo, repo_path, validation, name, login)
     try:
         return file_filter.get_valid_files(repo_path, "")

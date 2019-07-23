@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 import selenium
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import NoSuchElementException, ElementNotInteractableException
+from selenium.common.exceptions import NoSuchElementException, ElementNotInteractableException, TimeoutException
 
 # My modules
 from . import common
@@ -270,7 +270,7 @@ class CfSeleniumCollector(CfSubmissionsCollector):
             while True:
                 self.driver.get(url)
                 break
-        except selenium.common.exceptions.TimeoutException:
+        except TimeoutException:
             print("Timeout: refreshing")
         CfSubmissionsCollector.process_submissions(self, submissions, entry)
 
@@ -325,7 +325,7 @@ class CfSeleniumCollector(CfSubmissionsCollector):
                 try:
                     self.driver.refresh()
                     break
-                except selenium.common.exceptions.TimeoutException:
+                except TimeoutException:
                     print("Timeout: Trying to refresh again")
 
     def get_lang(self, sub_data):
