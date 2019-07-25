@@ -12,9 +12,31 @@ Gousios, G. (2013).
 \newblock In {\em Proceedings of the 10th Working Conference on Mining Software
   Repositories}, MSR '13, pages 233--236, Piscataway, NJ, USA. IEEE Press.
 
+\bibitem[Matyukhina et~al., 2019]{Matyukhina2019}
+Matyukhina, A., Stakhanova, N., {Dalla Preda}, M., and Perley, C. (2019).
+\newblock {Adversarial Authorship Attribution in Open-Source Projects}.
+\newblock pages 291--302. Association for Computing Machinery (ACM).
+
+\bibitem[Mirzayanov, 2011]{WEBSITE:CF1}
+Mirzayanov, M. (2011).
+\newblock Frequently asked questions.
+\newblock https://codeforces.com/help.
+\newblock Accessed on 2019-25-07.
+
 \bibitem[Santamar{\'{i}}a and Mihaljevi{\'{c}}, 2018]{Santamaria2018}
 Santamar{\'{i}}a, L. and Mihaljevi{\'{c}}, H. (2018).
 \newblock {Comparison and benchmark of name-to-gender inference services}.
 \newblock {\em PeerJ Computer Science}, 4:e156.
+
+\bibitem[Wisse and Veenman, 2015]{Wisse2015}
+Wisse, W. and Veenman, C. (2015).
+\newblock {Scripting DNA: Identifying the JavaScript programmer}.
+\newblock {\em Digital Investigation}, 15:61--71.
+
+\bibitem[Yang et~al., 2017]{Yang2017}
+Yang, X., Xu, G., Li, Q., Guo, Y., and Zhang, M. (2017).
+\newblock {Authorship attribution of source code by using back propagation
+  neural network based on particle swarm optimization}.
+\newblock {\em PLoS ONE}, 12(11).
 
 \end{thebibliography}
