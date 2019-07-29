@@ -39,10 +39,11 @@ Each section introduces the sources and collection methods. Then it discusses th
 %& Introduction to the sources being used
 \subsection{Data Sources}
 \subsubsection*{GitHub}
-GitHub is one of the largest online code sharing/hosting website on the internet with over 36 million users and over 100 million repositories \cite{WEBSITE:Git1}. It has an API that allows access to information on users, repositories, commits, and more(?Jackies comment was not clear on etc. but I assume it is no good. Whats better?). Source code hosted in public repositories is available for anyone to freely access or use in projects. Data on users, as well as source code is collected from GitHub and added to the database. Two methods are used for this. The first looks at commit data and collects changes to files. The second looks at projects and collects full files of source code. Both support the goal of adding single author source code samples to the database.
+GitHub is one of the largest online code sharing/hosting website on the internet with over 36 million users and over 100 million repositories \cite{WEBSITE:Git1}. It has an API that allows access to information on users, repositories, commits, and more. Source code hosted in public repositories is available for anyone to freely access or use in projects. Data on users, as well as source code is collected from GitHub and added to the database. Two methods are used for this. The first looks at commit data and collects changes to files. The second looks at projects and collects full files of source code. Both support the goal of adding single author source code samples to the database.
 
 \subsubsection*{GhTorrent}
-GhTorrent is an offline database of data obtained from the GitHub API \cite{Gousi13}. It contains large quantities of data on GitHub users, projects, commits from as far back as 2012. This data is being collected to support research on software repositories and is available to the public for other research on GitHub. This source is used to collect information on GitHub commits and projects. We use this information to decide what projects and commits to attempt to collect source code samples from GitHub (clumsy). More information is available at http://ghtorrent.org.
+\begin{sloppypar}
+GhTorrent is an offline database of data obtained from the GitHub API \cite{Gousi13}. It contains large quantities of data on GitHub users, projects, commits from as far back as 2012. This data is being collected to support research on software repositories and is available to the public for other research on GitHub. This source is used to collect information on GitHub commits and projects. We use this information to decide what projects and commits to attempt to collect source code samples from GitHub (clumsy). More information is available on the GhTorrent website\footnote{http://ghtorrent.org}.\end{sloppypar}
 
 \subsubsection*{Google BigQuery}
 Google BigQuery is a part of the Google Cloud Platform. It allows the storage and querying of datasets online. These datasets and query results can be connected to other google cloud services and also downloaded. The GhTorrent dataset is accessible on BigQuery. Queries on the GhTorrent dataset are made  using and refined using BigQuery in order to find information on the desired commits and projects.
@@ -93,7 +94,7 @@ SQL queries are made on the GhTorrent dataset via BigQuery. These queries are re
 \begin{figure}[t]
     \centering
     \includegraphics[height=10cm]{diagrams/ght_process.png}
-    \caption{Getting Data From GhTorrent}
+    \caption{Getting Data From GhTorrent via BigQuery}
 \end{figure}
 
 %%% Git projects process
@@ -126,8 +127,7 @@ The list of GitHub commit data collected from GhTorrent data is loaded and each 
 \subsubsection{GhTorrent and Google BigQuery}
 
 \subsubsection*{Process}
-The GhTorrent database is accessed via BigQuery at\linebreak
-https://bigquery.cloud.google.com/dataset/ghtorrent-bq:ght. From here SQL queries are made on the database to find data for users, projects, and commits. The exact queries depend on which collection method is being used. Both collection methods collect only one programming language at a time, so queries filter out all but the desired language. Since research is being done on region records where country code is NULL are filtered out. These queries run quite quickly and are refined until only the desired results are obtained.
+The GhTorrent database is accessed via BigQuery\footnote{https://bigquery.cloud.google.com/dataset/ghtorrent-bq:ght}. From here SQL queries are made on the database to find data for users, projects, and commits. The exact queries depend on which collection method is being used. Both collection methods collect only one programming language at a time, so queries filter out all but the desired language. Since research is being done on region records where country code is NULL are filtered out. These queries run quite quickly and are refined until only the desired results are obtained.
 
 Results are saved to a table in the users personal datasets. A dataset and table can be created to save the results of any query. Though there are only 10GB available in the free tier. Once saved if the results are too big then they are randomly sampled to reduce their size. To build our dataset approximately 150,000 records per programming language were collected. This allowed 6-10,000 users who's combined samples had 300 or more lines of code. When a sample is taken it is saved to a table so it can be downloaded within the constraints of BigQuery.
 
@@ -191,7 +191,9 @@ The file information is also the same as the projects process except that file l
 
 %% Introduction to the source being used %%
 \subsection{Sources}
+\begin{sloppypar}
 Codeforces is a website that hosts programming contests and allows users to submit solutions to a large database of programming contest problems. The operators of the site describe it as a social network for people interested in contest programming and as a platform for hosting programming contests \cite{WEBSITE:CF1}. Submissions submitted by a user available on the user's profile. The website has an API that can be used to collect user and submission information, but not to collect submission source code. However, the source code for user submissions is accessible through their profile. Codeforces is one of the more popular sites available for contest programming and regularly hosts contests. As of May 2019 there were over 180k users that had participated in at least one ranked contest.
+\end{sloppypar}
 
 %% Pros and cons of collecting from codeforces along with steps taken to try and overcome any issues. %%
 \subsection{Pros And Cons}
@@ -261,44 +263,42 @@ The constructed links not always working is an issue. It can be possible to coll
 
 % Gender Labeling %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Adding Gender Labels}
-One of the sociolinguistic features that is important to the project is Gender. Unfortunately, gender is available for authors on GitHub or Codeforces. Since it cannot be collected along with author information gender must be obtained in other ways. This can be done using an authors first name. There are a number of websites and APIs available that offer gender data for first names. All the gender information for authors in the dataset were gathered in this way.
+Gender information is not available for users of GitHub or Codeforces. One of the common ways to add gender labels to user information is with the persons first name. There are a number of websites and APIs that offer gender data for first names. Most of them also allow for increased accuracy with the addition of country codes. There is evidence to suggest that these services can give an acceptable level of accuracy for the gendering of names, though the process is not without issues \cite{Santamaria2018}.
 
 %% Introduction to the sources being used %%
 \subsection{Sources}
-There are several websites and APIs for adding gender for first names. They include gender-api.com, genderize.io, namsor.com, and nameapi.org. This project primarily used genderize.io because it is free and allows 1000 name lookups per day. In addition to this a table was kept in the database to store the names that were already known. The service offers a 'male', 'female', or 'unknown' verdict when given a name. It also gives a probability that a result is correct (from sample?). In addition it is possible to pass a country code to along with the name to obtain results that are more specific? The other APIs all offer similar services, but they all require monthly payment for more than a small number of name guesses.
+The gender labeling service that is used is genderize.io. 'It utilizes big datasets of information, from user profiles across major social networks and exposes this data through its API' \cite{WEBSITE:GENDER1}. The API allows 1000 free name requests per day and is able to increase accuracy with added country data. All responses are stored in a local database to reduce the number of requests needed.
 
 %% Discussion of the pros and cons and difficulties along with steps taken to try and overcome any issues. %%
 \subsection{Pros And Cons}
 \begin{itemize}
-    \item This is really the only way to add gender labels to programmers without being able to ask them directly. Asking them directly would be a significant undertaking and most would be unlikely to respond.
+    \item \begin{sloppypar} This is essentially the only efficient way to add gender labels to programmers. Access to name data through country census data and birth name lists would be difficult to obtain. The results of various gender APIs have been shown to be more reliable than this kind of data \cite{Santamaria2018}. Also, trying to request gender data directly from programmers would not be feasible for any large dataset.\end{sloppypar}
     
-    \item With several decent sources available for this kind of labeling it is possible to confirm results. If one has selected a portion of the dataset that meets their needs it would be possible to re-run the authors names through all the services and filter out any users that could not be agreed upon. This could improve the accuracy of the labels. Doing this with a smaller dataset would also reduce the cost of using services that require payment. Also, there are many names that are more common so the number of names needed will always be less than the number of authors in a dataset. This will further reduce the number of names to label and should mean that reasonable accuracy can be obtained for many common names.
-
-    \item Inferring gender from names is not an easy task (some examples and sources). It is also not always very clear how a service is determining the gender \cite{Santamaria2018}. So this is immediately a problem. The probability given can help to determine the likelihood of results being correct, but it still is only as good as the service. There are some stats given by Santamaria \cite{Santamaria2018} that comment on the accuracy of the above 4 services.
-
-    \item Aside from the accuracy of these methods being suspect, the major con is that for the most part they are paid services. Some of them do offer free limits, but only genderize is really worth it for any larger needs, and even then only with an offline backup of already labeled names. The good news is that there are many people sharing a small number of names, so a large number of samples can be labeled with a small database.
-
-    \item People are not always truthful with their names on these profiles, sometimes they do not even give a name. As a result there are fewer samples to work with if gender is desired. If country is going to be used to add accuracy to the label then it lowers the number of samples available further.
-
-    \item All services are less effective at labeling Asian names \cite{Santamaria2018}. This can present a problem for datasets that are using large numbers of samples from Asian countries.
-
-    \item The number of samples can be low for a name so even if the probability is high it may not be accurate.
-
-    \item The names collected show a much less accurate probability for female names. Most male names are classed as 0.9-1.0 and more female names fall into this category, but in some cases at most half of the names are in the 0.9-1.0 category. This suggests that there are some issues with classifying female names properly. Wether it is that more female names are unisex or that there are low samples for them is unknown (to me. Could use a table?).
+    \item With several decent sources available for this kind of labeling it is possible to validate the results. When a set of samples is taken from the database gender could be requested from one or two of the other services. Samples that could not be agreed upon by all results could be discarded to improve the accuracy of the labels. Using a subset of the data would also reduce the cost of using services that require payment as opposed to trying to validate all the names at once.
     
-    \item These methods of gender labeling are firmly rooted in the gender binary. The gender labels of names will be more likely to be connected to cultural norms and biological sex and may not accurately represent the individual' gender.
+    \item There are many common names in every country that show up in the data often. Keeping a local database of name and gender labels can significantly reduce the calls needed to an API over time.
+
+    \item The probability given can help to determine the likelihood of results being correct, but it still is only as good as the service. Santamaria et al. present some benchmarks on the accuracy of several services including genderize.io \cite{Santamaria2018}.
+
+    \item Most of the services offer some free requests, but other than genderize.io they are not enough for any serious use. They all offer payment options to increase limits, but can become expensive with a large number of requests.
+
+    \item the possibility of programmers not providing their real names could be a problem. In order to get good results a country is needed. This can reduce the number of samples available for use.
+
+    \item \begin{sloppypar} All services have been found to be less effective at labeling Asian names \cite{Santamaria2018}. This can present a problem for sources that have a large user base from Asian countries.\end{sloppypar}
+
+    \item A name may have a high probability of being a certain gender, but the number of samples may be low which makes that accuracy questionable.
+    
+    \item These methods of gender labeling are firmly rooted in the gender binary and cultural naming conventions. The gender labels of names will be most likely to be connected to cultural norms and biological sex. Therefore they may not accurately represent the individual's gender.
 \end{itemize}
 
 
 %% Overview of the process %%
 \subsection{Process Details}
 \subsubsection*{Process}
-The process used for collecting gender for names is relatively simple. Given a name the database is checked to see if it has the name already. If the name is not in the database it is looked up with the genderize.io API. If the API returns a result that result is added with the name to the database. If the API limit has been reached then a appropriate (what?) response is given. The scripts all have options (Do they?) to save results for later processing if gender cannot be determined. If there name is able to be labeled then the label and the probability are returned.
-
-The labels added to the scripts do not use country codes. As stated above it will be desireable to re-label the names on samples that are used by submitting the names and countries again to other APIs to see if results can be confirmed or refined. Because this will be done after it is likely that some authors will have been missed because they had unknown genders and so they were not added to the dataset. This may throw off the statistic of the samples a bit. The most important thing is to have enough good samples with reliable gender labels to use in experiments, so loosing a few users is acceptable. Better to have less data that is high quality than to have more data that is lower quality.
+A given name, country pair is looked up in the local database to see if the name has already been gendered. If the name has not already been gendered it is looked up with the genderize.io API. If no errors occur the name, country pair is added to the local database along with the returned gender information. If this process was called by another process a gender and gender probability are returned. Other processes are free to do what they need to with the results.
 
 \subsubsection*{Data}
-The data consists of just the gender and the probability the gender label is correct. The gender is a string 'male', 'female', or 'unknown' (Other APIs give different results). The probability is a float between 0.0 and 1.0. The Case of a name is ignored (is it?). There is also a 'count' field that is returned that is described as 'the number of entries examined to calculate the result' (cite). and if country code is given the country code is also part of the response. Also the name is part of the response.
+The data consists of just the gender and the probability the gender label is correct. The gender is a string 'male', 'female', or 'null'. The probability is a float between 0.0 and 1.0. The Case of a name is ignored. There is also a 'count' field in the response that is described as 'the number of entries examined to calculate the result' \cite{WEBSITE:GENDER1}. If a country code was used it is also part of the response.
 
 
 % Database ???? %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

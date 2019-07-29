@@ -242,7 +242,7 @@ class Database:
                 code, _ = error.args
                 if code == 2013:
                     print(
-                        "*** Database Connection Error: Retrying (" + i + ")", str(error))
+                        "*** Database Connection Error: Retrying (" + str(i+1) + ")", str(error))
                     time.sleep(30)
                     self.close()
                     self.connect(self._format)
@@ -286,7 +286,7 @@ class Database:
                 code, _ = error.args
                 if code == 2013:
                     print(
-                        "*** Database Connection Error: Retrying (" + i+1 + ")", str(error))
+                        "*** Database Connection Error: Retrying (" + str(i+1) + ")", str(error))
                     time.sleep(30)
                     self.close()
                     self.connect(self._format)
@@ -326,7 +326,7 @@ class Database:
                 code, _ = error.args
                 if code == 2013:
                     print(
-                        "*** Database Connection Error: Retrying (" + i+1 + ")", str(error))
+                        "*** Database Connection Error: Retrying (" + str(i+1) + ")", str(error))
                     time.sleep(30)
                     self.close()
                     self.connect(self._format)
