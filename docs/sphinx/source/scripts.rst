@@ -1,3 +1,5 @@
+.. _scripts:
+
 Scripts
 ===============
 
@@ -16,7 +18,7 @@ to chug away and download it, but it might not always be ideal to do
 this. I often stop and restart the program if I notice this. 
 
 
-
+.. _github-projects:
 
 Git Projects Collection
 -----------------------
@@ -26,6 +28,8 @@ Git Projects Collection
    :undoc-members:
    :show-inheritance:
 
+
+.. _github-commits:
 
 Git Commits Collection
 -----------------------
@@ -71,6 +75,8 @@ Select From Database
    :undoc-members:
    :show-inheritance:
 
+
+.. _combine_json:
 
 Combine Json
 ------------

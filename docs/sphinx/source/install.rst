@@ -12,6 +12,8 @@ On this page there can be technical information on getting setup to use the code
 .. run slrg-quickstart
 .. when running scripts and code do it from this folder
 
+.. _installation:
+
 Installation
 ------------
 
@@ -50,7 +52,7 @@ Configuration
 
 Some of the script information is stored in a configuration file. It can be convinient to save some fields so you don't have to type everything in everytime you run a script.
 
-See scripts(link) for information on passing some arguments as command line options.
+See :ref:`scripts <scripts>` for information on passing some arguments as command line options or function parameters.
 
 .. automodule:: config
    :members:

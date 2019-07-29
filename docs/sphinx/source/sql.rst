@@ -92,11 +92,35 @@ To get 150k random rows
     SELECT
         *
     FROM
-        `testingforgithubdata.git_data.python_projects`
+        `your saved table`  -- Replace with your table's name
     ORDER BY
         RAND()
     LIMIT
-        150000;
+        150000;  -- Adjust to the number of rows you want
+
+
+.. _download_results:
+
+To download results 10k at a time
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: sql
+
+    #standardSQL
+    SELECT
+        *
+    FROM
+        `your saved table`  -- Replace with your table's name
+    LIMIT
+        10000
+    OFFSET 0;
+
+1. Run the query
+2. Select 'Download as JSON'
+3. Increase the OFFSET by 10,000
+4. repeat until all the results are downloaded
+
+
 
 Database
 --------

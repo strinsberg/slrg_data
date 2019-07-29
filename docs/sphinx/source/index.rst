@@ -6,13 +6,9 @@
 SLRG Data Collection Documentation (DRAFT)
 ==========================================
 
-Here there can be an introduction the the project. A nice high level overview explaining some of what is in the documentation. For example, what is in the report and what is on the web page itself.
+This is the complete documentation for the data collection completed summer 2019 for Dr. Jackie Rice's Socioliguistics Reasearch group. It is a collection of information on the process of collecting source code from GitHub and Codeforces to be used in future research.
 
-Can link to the report/paper(s) that we have available |collection-report|. Perhaps eventually having a whole page devoted to them. A nice summary or something followed by a link to an actual pdf. That way you could also get to them from the table of contents and not just a link on this page.
-
-Anything other higher level stuff can be mentioned or linked here. If need be we can also make a few more pages before the *Getting Started* page to put in other less technical information.
-
-I suppose what we do here depends on the purpose of this documentation. If it is just to get new people on board and introduce them to the techniques and tools that we have used to build our dataset then probably less high level stuff will be needed. However, If we want people outside of those working on the project to use this then it may need some more explanations etc.
+The information presented on this site is primarily a tutorial. It will give instruction on how to collect meta data from GitHub and Codeforces and run scripts on that meta data that will collect and add source code samples to our database. It also contains information on the python package that contains the scripts and API documentation for all the code. Lastly, there is some information on the database and some of the SQL we used to work with our database and BigQuery. is For a higher level overview of the process see the |collection-report|.
 
 
 Contents
@@ -34,5 +30,4 @@ Contents
 
 .. |collection-report| raw:: html
 
-    <a href="./_static/technical_report.pdf" target="_blank">here</a>
-
+    <a href="./_static/technical_report.pdf" target="_blank">technical report</a>
