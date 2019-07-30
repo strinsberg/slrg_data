@@ -18,6 +18,11 @@
 \newpage
 \tableofcontents
 
+% List of figures/tables
+\newpage
+\listoffigures
+\listoftables
+
 
 % Introduction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
@@ -199,7 +204,7 @@ File information is gathered during the processing of a project record. It inclu
 \subsubsection*{Technical Issues}
 There are a number of calls to external services while collecting samples from GitHub projects. It can be difficult to properly handle all of the possible responses and connection issues. This makes it difficult to automate the process in a way that it can be guaranteed to run for long periods unattended.
 
-In order to process each file for it's contents and check the number of contributors it is necessary to clone the project repository. If a project is large or has media files it can take a long time to download. This can slow down collection and use a large amount of bandwidth. Many projects are cloned and don't result in any files being collected. By filtering projects for single contributors there are fewer large projects being collected, but it is not fool proof.
+In order to process each file for its contents and check the number of contributors it is necessary to clone the project repository. If a project is large or has media files it can take a long time to download. This can slow down collection and use a large amount of bandwidth. Many projects are cloned and do not result in any files being collected. By filtering projects for single contributors there are fewer large projects being collected, but it is not fool proof.
 
 
 %%% Git commits process
@@ -415,12 +420,20 @@ The data consists of just the gender and the probability the gender label is cor
 
 
 % Database ???? %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Database}
+To put the data tables her or not is the question?
+
+Talk about the database structure and organization?
+
+Give some quick SQL examples
 
 % Conclusion %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions}
 % Comment on the successes and failures?
 % Future improvements or additions
-Reserved for when I am closer to finished and can discuss the results with everyone else. Perhaps identify some future tasks or current deficiencies.
+\subsection{Threats To The Data Validity}
+
+\subsection{Future Expansion Of The Data}
 
 
 \newpage

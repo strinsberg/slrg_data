@@ -124,3 +124,104 @@ To download results 10k at a time
 
 Database
 --------
+
+Git Projects
+~~~~~~~~~~~~
+
+.. code-block:: sql
+
+    CREATE TABLE git_projects (
+        id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        user_id INT,
+        user_login TINYTEXT,
+        user_fullname TINYTEXT,
+        gender VARCHAR(30),
+        gender_probability FLOAT,
+        user_company TINYTEXT,
+        user_created TINYTEXT,  
+        user_type TINYTEXT,
+        user_country_code TINYTEXT,
+        user_state TINYTEXT, 
+        user_city TINYTEXT,
+        user_location TINYTEXT,
+        project_id INT NOT NULL, 
+        project_url TEXT,
+        project_name TINYTEXT,
+        project_language TINYTEXT, 
+        project_created TINYTEXT,
+        file_hash VARCHAR(255) NOT NULL,
+        file_name TINYTEXT,
+        file_contents MEDIUMTEXT,
+        file_lines INT,
+        UNIQUE (project_id, file_hash)) 
+    CHARACTER SET utf8mb4
+    COLLATE utf8mb4_unicode_ci;
+
+
+Git Commits
+~~~~~~~~~~~
+
+.. code-block:: sql
+
+    CREATE TABLE git_commits (
+        id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        user_id INT,
+        user_login TINYTEXT,
+        user_company TINYTEXT,
+        user_created TINYTEXT,  
+        user_type TINYTEXT,
+        user_country_code TINYTEXT,
+        user_state TINYTEXT, 
+        user_city TINYTEXT,
+        user_location TINYTEXT,
+        project_id INT NOT NULL, 
+        project_url TEXT,
+        project_name TINYTEXT,
+        project_language TINYTEXT, 
+        project_created TINYTEXT,
+        commit_id INT,
+        commit_sha TINYTEXT, 
+        commit_created TINYTEXT,
+        file_sha VARCHAR(200) NOT NULL,
+        file_name TINYTEXT,
+        file_contents MEDIUMTEXT,
+        file_changes INT,
+        UNIQUE (project_id, file_sha)) 
+    CHARACTER SET utf8mb4
+    COLLATE utf8mb4_unicode_ci;
+
+Codeforces
+~~~~~~~~~~
+
+.. code-block:: sql
+
+    CREATE TABLE cf_data (
+        submission_id INT NOT NULL,
+        source_code MEDIUMTEXT not null,
+        programming_language varchar(50) not null,
+        problem_name VARCHAR(255) NOT NULL,
+        difficulty INT,
+        participant_type TINYTEXT,
+        time TINYTEXT,
+        year SMALLINT,
+        month SMALLINT,
+        day SMALLINT,
+        handle VARCHAR(255) NOT NULL,
+        first_name TINYTEXT not null,
+        last_name TINYTEXT,
+        gender VARCHAR(30) not null,
+        gender_probability FLOAT,
+        country TINYTEXT not null,
+        city TINYTEXT,
+        organization TINYTEXT,
+        contribution INT,
+        user_rank TINYTEXT not null,
+        rating INT not null,
+        max_rank TINYTEXT,
+        max_rating INT,
+        registered TINYTEXT,
+        PRIMARY KEY (submission_id),
+        UNIQUE (handle, problem_name))
+    CHARACTER SET utf8mb4
+    COLLATE utf8mb4_unicode_ci;
+
