@@ -1,12 +1,14 @@
 \documentclass{article}
 \usepackage{graphicx}
-
+\usepackage{footnote}
+\makesavenoteenv{tabular}
+\makesavenoteenv{table}
 
 \begin{document}
 
 
 % Title Page
-\title{Data Collection Documentation (Draft 3)}
+\title{Data Collection Documentation (Draft 4)}
 \author{Steven Deutekom}
 \date{July 2019}
 \maketitle
@@ -24,12 +26,14 @@
 The goal of this project is to collect source code samples from individual authors from various online sources. It requires finding samples that have certain sociolinguistic characteristics such as gender, region, and experience. In addition to sociolinguistic characteristics, it is necessary that the samples are the work of only a single author. Data that meets these needs is being collected and used to create a dataset with information on authors and their source code.
 
 % Why are we doing it?
-The collected data will be used for sociolinguistic research into how people use programming languages. Current and future University of Lethbridge students will use this research to learn how sociolinguistic characteristics affect how programmers write code. Previous research was conducted with a small dataset of student programs. This new dataset will contain many samples from a larger set of programmers.
+The collected data will be used for sociolinguistic research into how people use programming languages. Current and future University of Lethbridge students will use this research to learn how sociolinguistic characteristics affect how programmers write code. Previous research was conducted with a small dataset of student programs \cite{Naz2015} \cite{Rafee2017}. This new dataset will contain many samples from a larger set of programmers.
 
 % What is coming in this documents?
 The document is broken into three main sections. Each section details one of the sources that was used to collect data. First, the collection methods used to gather source code from GitHub. Then, the methods used to collect source code from Codeforces. Lastly, the methods that were used to add gender data to the samples collected.
 
-Each section introduces the sources and collection methods. Then it discusses the pros and cons of the source. Next an overview of the process of collecting data is given, with diagrams to help visualize it. Following this a more in depth technical examination of the collection process takes place. Finally, some reflection on the source is given (if needed?).
+Each section introduces the sources and collection methods. Then it discusses the pros and cons of the source. Next an overview of the process of collecting data is given, with diagrams to help visualize it. Following this a more in depth technical examination of the collection process takes place. An overview of the data that is collected will be given along with a table showing the data types and Database schemas. Finally, any technical more technical issues that were encountered will be discussed.
+
+To conclude there will be some final thoughts on the projects. This will include a summary of threats to the validity of the data will be given. It will then finish with some discussion on ways to expand on the data in the future if desired.
 
 
 % GitHub %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -151,9 +155,46 @@ When all project records are processed or a given limit for number of records to
 \subsubsection*{Data}
 Data is collected for the user, project, and each file. The required user information collected is GitHub login, full name, country code, gender, and gender probability. All of these are collected as strings except for gender probability which is a number between 0.0 and 1.0. All of these fields will be present on any project record that is stored in the database. Other data collected on the user includes company, city, state, location, type, and time created. All of these are strings except for the time created which is a time stamp. These fields are not required for collection and can NULL. The time stamp will most likely always be there even though it is not required.
 
-The project information collected is project name, GitHub API url, programming language, and creation time. All of these fields are required and will always be present when making queries on the GhTorrent dataset vis BigQuery. All these fields are all strings except the creation time which is a time stamp. The programming language is the primary programming language used on the project and the project repository may contain files of other types.
+The project information collected is project name, GitHub API url, programming language, and creation time. These fields will always be present when making queries on the GhTorrent dataset vis BigQuery, but only the url and programming language are required. The fields are all strings except the creation time which is a time stamp. The programming language is the primary programming language used on the project and the project repository may contain files of other types.
 
 File information is gathered during the processing of a project record. It include the source code, number of source code lines, file path within the repository, and a hash of the file path. All these fields are strings except for the source code lines which is an integer. These fields are required for a sample to be added to the database.
+
+\begin{table}[t]
+    \begin{center}
+        \caption{GitHub Project's Data Fields}
+        \label{tab:git_data}
+        \begin{tabular}{|l | c | c | c |}
+            \hline
+            \textbf{Column Name} & \textbf{Type} & \textbf{MySQL Type} & \textbf{Required}\footnote{Required for the process. * indicates cannot be NULL in the Database.}\\
+            \hline
+            id & Int & int & PK*\\
+            user{\_}id & Int & int & No*\\
+            user{\_}login & String & varchar & Yes*\\
+            user{\_}fullname & String & tinytext & Yes*\\
+            gender & String & varchar & Yes*\\
+            gender{\_}probability & Float & float & Yes*\\
+            user{\_}company & String & tinytext & No\\
+            user{\_}created & String & tinytext & No\\
+            user{\_}type & String & tinytext & No\\
+            user{\_}country{\_}code & String & tinytext & Yes*\\
+            user{\_}state & String & tinytext & No\\
+            user{\_}city & String & tinytext & No\\
+            user{\_}location & String & tinytext & No\\
+            \hline
+            project{\_}id & Int & int & No*\\
+            project{\_}url & String & text & Yes*\\
+            project{\_}name & String & tinytext & No*\\
+            project{\_}language & String & tinytext & Yes*\\
+            project{\_}created & String & tinytext & No\\
+            \hline
+            file{\_}hash & String & varchar & Yes*\\
+            file{\_}name & String & tinytext & Yes*\\
+            file{\_}contents & String & mediumtext & Yes*\\
+            file{\_}lines & Int & int & Yes*\\
+            \hline
+        \end{tabular}
+    \end{center}
+\end{table}
 
 \subsubsection*{Technical Issues}
 There are a number of calls to external services while collecting samples from GitHub projects. It can be difficult to properly handle all of the possible responses and connection issues. This makes it difficult to automate the process in a way that it can be guaranteed to run for long periods unattended.
@@ -183,7 +224,23 @@ Data is collected for the user, project, commit, and each file. The user and pro
 
 The file information is also the same as the projects process except that file lines is replaced with file changes and the status of the file is collected. The changes are an integer and the status is a string. Both are collected when processing the commit data response from the GitHub API and they are required in order to add a source code sample to the database.
 
-
+\begin{table}[t]
+    \begin{center}
+        \caption{GitHub Commit's Data Fields (that differ from Table 1)}
+        \label{tab:commit_data}
+        \begin{tabular}{|l | c | c | c |}
+            \hline
+            \textbf{Column Name} & \textbf{Type} & \textbf{MySQL Type} & \textbf{Required}\\
+            \hline
+            commit{\_}id & Int & int & No*\\
+            commit{\_}sha & String & tinytext & Yes*\\
+            commit{\_}created & String & tinytext & No\\
+            file{\_}sha\footnote{Instead of file{\_}hash} & String & varchar & No*\\
+            file{\_}changes\footnote{Instead of file{\_}lines} & Int & int & Yes*\\
+            \hline
+        \end{tabular}
+    \end{center}
+\end{table}
 
 % Codeforces %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Collecting Source Code From Codeforces}
@@ -250,6 +307,43 @@ All the submission information used is required except for problem difficulty wh
 
 All Data collected from the API is in json format. It comes with more fields than are necessary for the process or for our research. Information on the API and additional fields can be found on the Codeforces website.
 
+\begin{table}[t]
+    \begin{center}
+        \caption{Codeforces User Data Fields}
+        \label{tab:cf_data}
+        \begin{tabular}{|l | c | c | c |}
+            \hline
+            \textbf{Column Name} & \textbf{Type} & \textbf{MySQL Type} & \textbf{Required}\\
+            \hline
+            handle & String & varchar & Yes\\
+            first{\_}name & String & tinytext & Yes\\
+            last{\_}name & String & tinytext & No\\
+            gender & String & varchar & Yes\\
+            gender{\_}probability & Float & float & Yes\\
+            country & String & tinytext & Yes\\
+            city & String & tinytext & No\\
+            organization & String & tinytext & No\\
+            contribution & String & tinytext & No\\
+            user{\_}rank & String & tinytext & Yes\\
+            rating & Int & int & Yes\\
+            max{\_}rank & String & tinytext & No\\
+            max{\_}rating & Int & int & No\\
+            registered & String & tinytext & No\\
+            \hline
+            submission{\_}id & Int & int & Yes PK\\
+            source{\_}code & String & mediumtext & Yes\\
+            programming{\_}language & String & varchar & Yes\\
+            problem{\_}name & String & varchar & Yes\\
+            participant{\_}type & String & tinytext & No\\
+            time & String & tinytext & No\\
+            year & Int & int & No\\
+            month & Int & int & No\\
+            day & Int & int & No\\
+            \hline
+        \end{tabular}
+    \end{center}
+\end{table}
+
 \subsubsection*{Technical Issues}
 There are some technical issues with using selenium. Because Selenium loads the pages in a web browser the process must wait for the page to load fully before it can continue. This means that there are some sleeps in the code for a couple seconds before scraping a popup and before clicking the next submission link after closing the popup. This slows down collection, but the failure rate is low so it is acceptable.
 
@@ -295,10 +389,29 @@ The gender labeling service that is used is genderize.io. 'It utilizes big datas
 %% Overview of the process %%
 \subsection{Process Details}
 \subsubsection*{Process}
-A given name, country pair is looked up in the local database to see if the name has already been gendered. If the name has not already been gendered it is looked up with the genderize.io API. If no errors occur the name, country pair is added to the local database along with the returned gender information. If this process was called by another process a gender and gender probability are returned. Other processes are free to do what they need to with the results.
+A given name is looked up in the local database to see if the it has already been gendered. If the name has not already been gendered it is looked up with the genderize.io API. If no errors occur the name is added to the local database along with the returned gender information. If this process was called by another process a gender and gender probability are returned. Other processes are free to do what they need to with the results.
+
+A country code was not used to gender the names in the dataset. When the collection started some of the details about the process were not fully understood. The quality of the gender data may be improved by verifying genders using country code. Once one has a dataset with desired samples the name and country code can be extracted and this list can be sent to one of the available APIs. The results can be used to re-gender the dataset or to confirm the accuracy of the previous gendering. For the highest accuracy it would probably be best to gender the samples with several APIs and keep those samples that were gendered the same by all of them.
 
 \subsubsection*{Data}
 The data consists of just the gender and the probability the gender label is correct. The gender is a string 'male', 'female', or 'null'. The probability is a float between 0.0 and 1.0. The Case of a name is ignored. There is also a 'count' field in the response that is described as 'the number of entries examined to calculate the result' \cite{WEBSITE:GENDER1}. If a country code was used it is also part of the response.
+
+\begin{table}[t]
+    \begin{center}
+        \caption{Gender Data Fields}
+        \label{tab:gen_data}
+        \begin{tabular}{| l |c | c | c |}
+            \hline
+            \textbf{Field} & \textbf{Type} & \textbf{Values} & \textbf{Required}\\
+            \hline
+            Gender & String & {male, female, null} & Yes\\
+            Probability & Float & [0.5, 1.0] & Yes\\ 
+            Count & Int & [0, INF] & No\\
+            Country Code & String & N/A & No\\
+            \hline
+        \end{tabular}
+    \end{center}
+\end{table}
 
 
 % Database ???? %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

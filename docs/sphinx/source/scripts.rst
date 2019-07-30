@@ -49,6 +49,8 @@ Codeforces Collection
    :show-inheritance:
 
 
+.. _gender-codeforces:
+
 Gender Codeforces User List
 ---------------------------
 
@@ -57,6 +59,8 @@ Gender Codeforces User List
    :undoc-members:
    :show-inheritance:
 
+
+.. _filter-codeforces:
 
 Filter Codeforces User List
 ---------------------------

@@ -4,45 +4,46 @@ The top-level auxiliary file: technical_report.aux
 The style file: apalike.bst
 Database file #1: technical_report.bib
 Warning--empty booktitle in Matyukhina2019
-You've used 8 entries,
+Warning--empty school in Naz2015
+You've used 10 entries,
             1935 wiz_defined-function locations,
-            530 strings with 4940 characters,
-and the built_in function-call counts, 3009 in all, are:
-= -- 313
-> -- 105
-< -- 8
-+ -- 36
-- -- 34
-* -- 221
-:= -- 528
-add.period$ -- 29
-call.type$ -- 8
-change.case$ -- 57
-chr.to.int$ -- 8
-cite$ -- 9
-duplicate$ -- 124
-empty$ -- 202
-format.name$ -- 46
-if$ -- 599
+            540 strings with 5142 characters,
+and the built_in function-call counts, 3538 in all, are:
+= -- 366
+> -- 119
+< -- 10
++ -- 40
+- -- 38
+* -- 259
+:= -- 633
+add.period$ -- 35
+call.type$ -- 10
+change.case$ -- 69
+chr.to.int$ -- 10
+cite$ -- 12
+duplicate$ -- 148
+empty$ -- 236
+format.name$ -- 52
+if$ -- 694
 int.to.chr$ -- 1
 int.to.str$ -- 0
 missing$ -- 5
-newline$ -- 46
-num.names$ -- 24
-pop$ -- 40
+newline$ -- 56
+num.names$ -- 30
+pop$ -- 51
 preamble$ -- 1
-purify$ -- 57
+purify$ -- 69
 quote$ -- 0
-skip$ -- 105
+skip$ -- 123
 stack$ -- 0
-substring$ -- 193
-swap$ -- 22
+substring$ -- 217
+swap$ -- 24
 text.length$ -- 2
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 48
-warning$ -- 1
-while$ -- 25
+type$ -- 60
+warning$ -- 2
+while$ -- 29
 width$ -- 0
-write$ -- 112
-(There was 1 warning)
+write$ -- 137
+(There were 2 warnings)
