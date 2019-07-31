@@ -168,34 +168,31 @@ File information is gathered during the processing of a project record. It inclu
     \begin{center}
         \caption{GitHub Project's Data Fields}
         \label{tab:git_data}
-        \begin{tabular}{|l | c | c | c |}
+        \begin{tabular}{|l | c | c |}
             \hline
-            \textbf{Column Name} & \textbf{Type} & \textbf{MySQL Type} & \textbf{Required}\footnote{Required for the process. * indicates cannot be NULL in the Database.}\\
+            \textbf{Field} & \textbf{Type} & \textbf{Required}\\
             \hline
-            id & Int & int & PK*\\
-            user{\_}id & Int & int & No*\\
-            user{\_}login & String & varchar & Yes*\\
-            user{\_}fullname & String & tinytext & Yes*\\
-            gender & String & varchar & Yes*\\
-            gender{\_}probability & Float & float & Yes*\\
-            user{\_}company & String & tinytext & No\\
-            user{\_}created & String & tinytext & No\\
-            user{\_}type & String & tinytext & No\\
-            user{\_}country{\_}code & String & tinytext & Yes*\\
-            user{\_}state & String & tinytext & No\\
-            user{\_}city & String & tinytext & No\\
-            user{\_}location & String & tinytext & No\\
+            Login & String & Yes\\
+            Fullname & String & Yes\\
+            Gender & String & Yes\\
+            Gender Probability & Float & Yes\\
+            Company & String & No\\
+            User Created & String & No\\
+            User Type & String & No\\
+            Country Code & String & Yes\\
+            State & String & No\\
+            City & String & No\\
+            Location & String & No\\
             \hline
-            project{\_}id & Int & int & No*\\
-            project{\_}url & String & text & Yes*\\
-            project{\_}name & String & tinytext & No*\\
-            project{\_}language & String & tinytext & Yes*\\
-            project{\_}created & String & tinytext & No\\
+            Project Url & String & Yes\\
+            Project Name & String & No\\
+            Programming Language & String & Yes\\
+            Project Created & String & No\\
             \hline
-            file{\_}hash & String & varchar & Yes*\\
-            file{\_}name & String & tinytext & Yes*\\
-            file{\_}contents & String & mediumtext & Yes*\\
-            file{\_}lines & Int & int & Yes*\\
+            File Hash & String & Yes\\
+            File Name & String & Yes\\
+            File Contents & String & Yes\\
+            File Lines & Int & Yes\\
             \hline
         \end{tabular}
     \end{center}
@@ -233,15 +230,14 @@ The file information is also the same as the projects process except that file l
     \begin{center}
         \caption{GitHub Commit's Data Fields (that differ from Table 1)}
         \label{tab:commit_data}
-        \begin{tabular}{|l | c | c | c |}
+        \begin{tabular}{|l | c | c |}
             \hline
-            \textbf{Column Name} & \textbf{Type} & \textbf{MySQL Type} & \textbf{Required}\\
+            \textbf{Field} & \textbf{Type} & \textbf{Required}\\
             \hline
-            commit{\_}id & Int & int & No*\\
-            commit{\_}sha & String & tinytext & Yes*\\
-            commit{\_}created & String & tinytext & No\\
-            file{\_}sha\footnote{Instead of file{\_}hash} & String & varchar & No*\\
-            file{\_}changes\footnote{Instead of file{\_}lines} & Int & int & Yes*\\
+            Commit Sha & String & Yes\\
+            Commit Created & String & No\\
+            File Sha\footnote{Instead of File Hash} & String & No\\
+            File Changes\footnote{Instead of File Lines} & Int & Yes\\
             \hline
         \end{tabular}
     \end{center}
@@ -314,36 +310,36 @@ All Data collected from the API is in json format. It comes with more fields tha
 
 \begin{table}[t]
     \begin{center}
-        \caption{Codeforces User Data Fields}
+        \caption{Codeforces Data Fields}
         \label{tab:cf_data}
         \begin{tabular}{|l | c | c | c |}
             \hline
-            \textbf{Column Name} & \textbf{Type} & \textbf{MySQL Type} & \textbf{Required}\\
+            \textbf{Field} & \textbf{Type} & \textbf{Required}\\
             \hline
-            handle & String & varchar & Yes\\
-            first{\_}name & String & tinytext & Yes\\
-            last{\_}name & String & tinytext & No\\
-            gender & String & varchar & Yes\\
-            gender{\_}probability & Float & float & Yes\\
-            country & String & tinytext & Yes\\
-            city & String & tinytext & No\\
-            organization & String & tinytext & No\\
-            contribution & String & tinytext & No\\
-            user{\_}rank & String & tinytext & Yes\\
-            rating & Int & int & Yes\\
-            max{\_}rank & String & tinytext & No\\
-            max{\_}rating & Int & int & No\\
-            registered & String & tinytext & No\\
+            Handle & String & Yes\\
+            First Name & String & Yes\\
+            Last Name & String & No\\
+            Gender & String & Yes\\
+            Gender Probability & Float & Yes\\
+            Country & String & Yes\\
+            City & String & No\\
+            Organization & String & No\\
+            Contribution & String & No\\
+            Rank & String & Yes\\
+            Rating & Int & Yes\\
+            Max Rank & String & No\\
+            Max Rating & Int & No\\
+            Registered & String & No\\
             \hline
-            submission{\_}id & Int & int & Yes PK\\
-            source{\_}code & String & mediumtext & Yes\\
-            programming{\_}language & String & varchar & Yes\\
-            problem{\_}name & String & varchar & Yes\\
-            participant{\_}type & String & tinytext & No\\
-            time & String & tinytext & No\\
-            year & Int & int & No\\
-            month & Int & int & No\\
-            day & Int & int & No\\
+            Submission id & Int & Yes\\
+            Source Code & String & Yes\\
+            Programming Language & String & Yes\\
+            Problem Name & String & Yes\\
+            Participant Type & String & No\\
+            Time & String & No\\
+            Year & Int & No\\
+            Month & Int & No\\
+            Day & Int & No\\
             \hline
         \end{tabular}
     \end{center}
@@ -419,13 +415,26 @@ The data consists of just the gender and the probability the gender label is cor
 \end{table}
 
 
-% Database ???? %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Database %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Database}
-To put the data tables her or not is the question?
 
-Talk about the database structure and organization?
+Our database is setup with MySQL 8. The tables in the data section of each process show the schema for that process's database tables. Each GitHub collection process has separate tables for each programming language. For simplicity all table rows contain a string of source code and all the information about where that code came from and it's author. This is not the most efficient database setup, but it makes retrieving source code easy.
 
-Give some quick SQL examples
+To work with the samples a query can be made to the database to select all rows that meet a certain set of conditions. These rows can be exported to csv or json and imported into whatever program or interpreter one is using. Once the records are imported they can be sorted or filtered to give desired groups. Most programming languages for data analysis have features that make this process simple compared to constructing complicated SQL queries to obtain a precise subset or grouping of the data. This also has the added benefit of loading all the data one might work with rather than making many queries and loading small subsets one at a time.
+
+For Example the following SQL will collect all records from users in Canada.
+    \begin{verbatim}
+        SELECT
+            *
+        FROM
+            git_projects_py
+        WHERE
+            user_country_code='ca';
+    \end{verbatim}
+The results of this query. can be imported into a programming environment and grouped by gender or author. One could also loop through all the records and apply functions to each source code sample. This could be useful when creating feature vectors to use with machine learning algorithms.
+
+Schemas for the database tables are listed in appendix A.
+
 
 % Conclusion %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions}
@@ -440,5 +449,140 @@ Give some quick SQL examples
 
 \bibliography{technical_report}
 \bibliographystyle{apalike}
+
+\newpage
+\section{Appendix A: Database Schemas}
+Each table shows the schema for one type of database table. Our database is split up into tables like 'git{\_}projects{\_}py' and 'git{\_}projects{\_}java', These tables share the same schema, but are separated by language.
+
+\begin{table}[h!]
+    \begin{center}
+        \caption{Schema for GitHub Projects Tables}
+        \label{tab:git_projects_schema}
+        \begin{tabular}{|l | c | c |}
+            \hline
+            \textbf{Column Name} & \textbf{MySQL Type} & \textbf{Nullable}\\
+            \hline
+            id & int & PK\\
+            user{\_}id & int & Yes\\
+            user{\_}login & varchar & No\\
+            user{\_}fullname & tinytext & No\\
+            gender & varchar & No\\
+            gender{\_}probability & float & No\\
+            user{\_}company  & tinytext & Yes\\
+            user{\_}created & tinytext & Yes\\
+            user{\_}type & tinytext & Yes\\
+            user{\_}country{\_}code & tinytext & No\\
+            user{\_}state & tinytext & Yes\\
+            user{\_}city & tinytext & Yes\\
+            user{\_}location & tinytext & Yes\\
+            \hline
+            project{\_}id & int & UK\\
+            project{\_}url & text & No\\
+            project{\_}name & tinytext & Yes\\
+            project{\_}language & tinytext & No\\
+            project{\_}created & tinytext & Yes\\
+            \hline
+            file{\_}hash & varchar & UK\\
+            file{\_}name & tinytext & No\\
+            file{\_}contents & mediumtext & No\\
+            file{\_}lines & int & No\\
+            \hline
+        \end{tabular}
+    \end{center}
+\end{table}
+
+\begin{table}[t!]
+    \begin{center}
+        \caption{Schema for GitHub Commits Tables}
+        \label{tab:git_commit_schema}
+        \begin{tabular}{|l | c | c |}
+            \hline
+            \textbf{Column Name} & \textbf{MySQL Type} & \textbf{Nullable}\\
+            \hline
+            id & int & PK\\
+            user{\_}id & int & Yes\\
+            user{\_}login & varchar & No\\
+            user{\_}fullname & tinytext & No\\
+            gender & varchar & No\\
+            gender{\_}probability & float & No\\
+            user{\_}company  & tinytext & Yes\\
+            user{\_}created & tinytext & Yes\\
+            user{\_}type & tinytext & Yes\\
+            user{\_}country{\_}code & tinytext & No\\
+            user{\_}state & tinytext & Yes\\
+            user{\_}city & tinytext & Yes\\
+            user{\_}location & tinytext & Yes\\
+            \hline
+            project{\_}id & int & UK\\
+            project{\_}url & text & No\\
+            project{\_}name & tinytext & Yes\\
+            project{\_}language & tinytext & No\\
+            project{\_}created & tinytext & Yes\\
+            \hline
+            commit{\_}id & int & Yes\\
+            commit{\_}sha & tinytext & No\\
+            commit{\_}created & tinytext & Yes\\
+            \hline
+            file{\_}sha & varchar & UK\\
+            file{\_}name & tinytext & No\\
+            file{\_}contents & mediumtext & No\\
+            file{\_}changes & int & No\\
+            \hline
+        \end{tabular}
+    \end{center}
+\end{table}
+
+\begin{table}[t]
+    \begin{center}
+        \caption{Schema for Codeforces Table}
+        \label{tab:cf_data}
+        \begin{tabular}{|l | c | c |}
+            \hline
+            \textbf{Column Name} & \textbf{MySQL Type} & \textbf{Nullable}\\
+            \hline
+            handle & varchar & No\\
+            first{\_}name & tinytext & No\\
+            last{\_}name & tinytext & Yes\\
+            gender & varchar & No\\
+            gender{\_}probability & float & No\\
+            country & tinytext & No\\
+            city & tinytext & Yes\\
+            organization & tinytext & Yes\\
+            contribution & tinytext & Yes\\
+            user{\_}rank & tinytext & No\\
+            rating & int & No\\
+            max{\_}rank & tinytext & Yes\\
+            max{\_}rating & int & Yes\\
+            registered & tinytext & Yes\\
+            \hline
+            submission{\_}id & int & PK\\
+            source{\_}code & mediumtext & No\\
+            programming{\_}language & varchar & No\\
+            problem{\_}name & varchar & No\\
+            participant{\_}type & tinytext & Yes\\
+            time & tinytext & Yes\\
+            year & int & Yes\\
+            month & int & Yes\\
+            day & int & Yes\\
+            \hline
+        \end{tabular}
+    \end{center}
+\end{table}
+
+\begin{table}
+    \begin{center}
+        \caption{Gender Data Fields}
+        \label{tab:gen_data}
+        \begin{tabular}{| l |c | c |}
+            \hline
+            \textbf{Column Name} & \textbf{MySQL Type} & \textbf{Nullable}\\
+            \hline
+            name & String & No\\
+            gender & String & No\\
+            probability & Float & No\\
+            \hline
+        \end{tabular}
+    \end{center}
+\end{table}
 
 \end{document}
