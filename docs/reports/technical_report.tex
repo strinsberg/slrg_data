@@ -438,11 +438,39 @@ Schemas for the database tables are listed in appendix A.
 
 % Conclusion %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions}
-% Comment on the successes and failures?
-% Future improvements or additions
-\subsection{Threats To The Data Validity}
+Using the processes described in this report it is possible to collect a large number of source code samples from GitHub and Codeforces. Our database contains more than 600,000 source code samples from over 100,000 distinct authors. It is also possible to add gender to these samples through the use of name APIs. This gendering process can have an acceptable level of accuracy if one is careful and chooses the right subset of data. The processes and dataset are tailored to the needs of sociolinguistic research, but could likely be used or adapted for other purposes as well.
 
-\subsection{Future Expansion Of The Data}
+\subsection{Threats To The Data Validity}
+It may be possible to collect a large amount of data, it does not mean that it is all good data. We have taken steps to ensure that it meets our needs, but there are still some difficulties. With proper steps the effect of these difficulties could be reduces, but there will always be some margin of error.
+
+\subsubsection*{Single Authors}
+\begin{itemize}
+    \item There are many third party libraries and other collections of code samples that people can add to GitHub projects. Our methods to use only files with single contributors cannot guarantee that the code added by that contributor was their own. Filtering out certain folders and files can help to reduce the possibility of this, but will not get all of them.
+    \item Using git's blame feature works really great to get only single author files, but this assumes that the file was exclusively developed with git. If the project was added to git after it was created it is impossible to tell how many people contributed to it.
+\end{itemize}
+
+\subsubsection*{Contents of Samples}
+\begin{itemize}
+    \item The file could be too short.
+    \item In some Codeforces samples templates are used to setup for a problem. This can make files seem longer, but may only contain a small amount of code written for the problem. The same kind of thing can be found with comments that begin files with license or other project information.
+    \item Codeforces contest programming may differ substantially from more general purpose programming. This means that it may not be comparable to other kinds of code. For GitHub the same problem could arise from different problem domains. Especially if samples were short.
+\end{itemize}
+
+\subsubsection*{Gender Issues}
+\begin{itemize}
+    \item Each API has its own process for gendering names and it is not always clear what these methods are. Using more than one API and comparing results may help to improve results.
+    \item All APIs have been shown to be less effective when gendering Asian names. This might not be as big a problem with GitHub because it is much more popular in the Europe and North America, but the Codeforces user base is overwhelmingly from countries like Russia, China, and India.
+    \item If country is unavailable or unused the gender results from the APIs may not be as accurate.
+    \item If gender results do not have high probabilities this could affect the accuracy of any predictions involving gender.
+\end{itemize}
+
+
+\subsection{Future Additions or Expansions}
+\begin{itemize}
+    \item Samples were only collected for three programming languages: Python, C++, and Java. The benefit of these languages is that they are all commonly used general purpose languages. There is a great deal of code available for each of them. They are also all procedural and object oriented programming languages. It might be worth collecting languages that are primarily functional or declarative languages. It could also be worthwhile to collect languages that are substantially different in syntax. Though it may be hard to find as many quality samples from languages that are less popular.
+    \item The importance of country in gender labeling was not discovered until after a good portion of the data was collected. It would be valuable to either re-gender the data using country codes, or to build a process to consult other services to compare and refine the gender labels.
+    \item It would also be valuable to find a process for removing contest templates or introductory comment sections from samples. Being able to automate the cleaning of the data in a reliable way would result in more time for analysis.
+\end{itemize}
 
 
 \newpage
@@ -571,7 +599,7 @@ Each table shows the schema for one type of database table. Our database is spli
 
 \begin{table}
     \begin{center}
-        \caption{Gender Data Fields}
+        \caption{Schema For Gender Table}
         \label{tab:gen_data}
         \begin{tabular}{| l |c | c |}
             \hline
