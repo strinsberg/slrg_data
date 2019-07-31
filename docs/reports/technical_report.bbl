@@ -1,58 +1,59 @@
-\begin{thebibliography}{}
+\begin{thebibliography}{10}
 
-\bibitem[genderiz.io, 2019]{WEBSITE:GENDER1}
-genderiz.io (2019).
+\bibitem{WEBSITE:GENDER1}
+genderiz.io.
 \newblock Home page.
-\newblock https://genderize.io/.
+\newblock https://genderize.io/, 2019.
 \newblock Accessed on 2019-25-07.
 
-\bibitem[GitHub, 2019]{WEBSITE:Git1}
-GitHub (2019).
+\bibitem{WEBSITE:Git1}
+GitHub.
 \newblock Github about.
-\newblock https://GitHub.com/about.
+\newblock https://GitHub.com/about, 2019.
 \newblock Accessed on 2019-22-07.
 
-\bibitem[Gousios, 2013]{Gousi13}
-Gousios, G. (2013).
+\bibitem{Gousi13}
+Georgios Gousios.
 \newblock The ghtorrent dataset and tool suite.
 \newblock In {\em Proceedings of the 10th Working Conference on Mining Software
-  Repositories}, MSR '13, pages 233--236, Piscataway, NJ, USA. IEEE Press.
+  Repositories}, MSR '13, pages 233--236, Piscataway, NJ, USA, 2013. IEEE
+  Press.
 
-\bibitem[Matyukhina et~al., 2019]{Matyukhina2019}
-Matyukhina, A., Stakhanova, N., {Dalla Preda}, M., and Perley, C. (2019).
+\bibitem{Matyukhina2019}
+Alina Matyukhina, Natalia Stakhanova, Mila {Dalla Preda}, and Celine Perley.
 \newblock {Adversarial Authorship Attribution in Open-Source Projects}.
-\newblock pages 291--302. Association for Computing Machinery (ACM).
+\newblock pages 291--302. Association for Computing Machinery (ACM), mar 2019.
 
-\bibitem[Mirzayanov, 2011]{WEBSITE:CF1}
-Mirzayanov, M. (2011).
+\bibitem{WEBSITE:CF1}
+Mike Mirzayanov.
 \newblock Frequently asked questions.
-\newblock https://codeforces.com/help.
+\newblock https://codeforces.com/help, 2011.
 \newblock Accessed on 2019-25-07.
 
-\bibitem[Naz, 2015]{Naz2015}
-Naz, F. (2015).
+\bibitem{Naz2015}
+Fariha Naz.
 \newblock {\em {Do Sociolinguistic Variations Exist In Programming?}}
-\newblock Thesis, University of Lethbridge.
+\newblock Thesis, University of Lethbridge, 2015.
 
-\bibitem[Rafee, 2017]{Rafee2017}
-Rafee, M.~H. (2017).
+\bibitem{Rafee2017}
+Mahmudul~Hasan Rafee.
 \newblock {\em {Computer Program Categorization With Machine Learning}}.
-\newblock Thesis, University of Lethbridge.
+\newblock Thesis, University of Lethbridge, 2017.
 
-\bibitem[Santamar{\'{i}}a and Mihaljevi{\'{c}}, 2018]{Santamaria2018}
-Santamar{\'{i}}a, L. and Mihaljevi{\'{c}}, H. (2018).
+\bibitem{Santamaria2018}
+Luc{\'{i}}a Santamar{\'{i}}a and Helena Mihaljevi{\'{c}}.
 \newblock {Comparison and benchmark of name-to-gender inference services}.
-\newblock {\em PeerJ Computer Science}, 4:e156.
+\newblock {\em PeerJ Computer Science}, 4:e156, jul 2018.
 
-\bibitem[Wisse and Veenman, 2015]{Wisse2015}
-Wisse, W. and Veenman, C. (2015).
+\bibitem{Wisse2015}
+Wilco Wisse and Cor Veenman.
 \newblock {Scripting DNA: Identifying the JavaScript programmer}.
-\newblock {\em Digital Investigation}, 15:61--71.
+\newblock {\em Digital Investigation}, 15:61--71, dec 2015.
 
-\bibitem[Yang et~al., 2017]{Yang2017}
-Yang, X., Xu, G., Li, Q., Guo, Y., and Zhang, M. (2017).
+\bibitem{Yang2017}
+Xinyu Yang, Guoai Xu, Qi~Li, Yanhui Guo, and Miao Zhang.
 \newblock {Authorship attribution of source code by using back propagation
   neural network based on particle swarm optimization}.
-\newblock {\em PLoS ONE}, 12(11).
+\newblock {\em PLoS ONE}, 12(11), nov 2017.
 
 \end{thebibliography}

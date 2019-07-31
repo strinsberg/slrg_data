@@ -1,18 +1,20 @@
-\documentclass{article}
+\documentclass[12pt]{article}
 \usepackage{graphicx}
 \usepackage{footnote}
-\makesavenoteenv{tabular}
-\makesavenoteenv{table}
+\usepackage{inputenc}
+\usepackage{setspace}
 
 \begin{document}
 
+\begin{titlepage}
+    \title{Collecting Source Code Samples For Sociolinguistic Research}
+    \author{Steven Deutekom \\ University of Lethbridge}
+    \maketitle
+    \thispagestyle{empty}
+\end{titlepage}
 
-% Title Page
-\title{Data Collection Documentation (Draft 4)}
-\author{Steven Deutekom}
-\date{July 2019}
-\maketitle
 
+\pagenumbering{roman}
 
 % Table of Contents
 \newpage
@@ -23,9 +25,10 @@
 \listoffigures
 \listoftables
 
-
 % Introduction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
+\doublespacing
+\pagenumbering{arabic}
 \section{Introduction}
 % What are we doing?
 The goal of this project is to collect source code samples from individual authors from various online sources. It requires finding samples that have certain sociolinguistic characteristics such as gender, region, and experience. In addition to sociolinguistic characteristics, it is necessary that the samples are the work of only a single author. Data that meets these needs is being collected and used to create a dataset with information on authors and their source code.
@@ -51,8 +54,7 @@ To conclude there will be some final thoughts on the projects. This will include
 GitHub is one of the largest online code sharing/hosting website on the internet with over 36 million users and over 100 million repositories \cite{WEBSITE:Git1}. It has an API that allows access to information on users, repositories, commits, and more. Source code hosted in public repositories is available for anyone to freely access or use in projects. Data on users, as well as source code is collected from GitHub and added to the database. Two methods are used for this. The first looks at commit data and collects changes to files. The second looks at projects and collects full files of source code. Both support the goal of adding single author source code samples to the database.
 
 \subsubsection*{GhTorrent}
-\begin{sloppypar}
-GhTorrent is an offline database of data obtained from the GitHub API \cite{Gousi13}. It contains large quantities of data on GitHub users, projects, commits from as far back as 2012. This data is being collected to support research on software repositories and is available to the public for other research on GitHub. This source is used to collect information on GitHub commits and projects. We use this information to decide what projects and commits to attempt to collect source code samples from GitHub (clumsy). More information is available on the GhTorrent website\footnote{http://ghtorrent.org}.\end{sloppypar}
+GhTorrent is an offline database of data obtained from the GitHub API \cite{Gousi13}. It contains large quantities of data on GitHub users, projects, commits from as far back as 2012. This data is being collected to support research on software repositories and is available to the public for other research on GitHub. This source is used to collect information on GitHub commits and projects. This information is used to decide which projects and commits to try to collect source code samples for from GitHub. More information is available on the GhTorrent website\footnote{http://ghtorrent.org}.
 
 \subsubsection*{Google BigQuery}
 Google BigQuery is a part of the Google Cloud Platform. It allows the storage and querying of datasets online. These datasets and query results can be connected to other google cloud services and also downloaded. The GhTorrent dataset is accessible on BigQuery. Queries on the GhTorrent dataset are made  using and refined using BigQuery in order to find information on the desired commits and projects.
@@ -97,7 +99,7 @@ Google BigQuery is a part of the Google Cloud Platform. It allows the storage an
 
 %%% Ght and BigQuery process
 \subsubsection*{GhTorrent and Google BigQuery}
-SQL queries are made on the GhTorrent dataset via BigQuery. These queries are refined until the results are satisfactory. Once desired results are obtained they can be saved or downloaded. It is often best to save the results of a large query and then sample it with another query. These sample results can then be split and downloaded. If the results were split they can be recombined before being processed by one of the collection methods for GitHub. See Figure 1.
+SQL queries are made on the GhTorrent dataset via BigQuery. These queries are refined until the results are satisfactory. Once desired results are obtained they can be saved or downloaded. It is often best to save the results of a large query and then sample it with another query. These sample results can then be split and downloaded. If the results were split they can be recombined before being processed by one of the collection methods for GitHub.
 
 % Process Diagram
 \begin{figure}[t]
@@ -108,7 +110,7 @@ SQL queries are made on the GhTorrent dataset via BigQuery. These queries are re
 
 %%% Git projects process
 \subsubsection*{Collecting Git Projects}
-The list of GitHub project data collected from GhTorrent is loaded and each entry is processed. If the project referenced by an entry is valid its repository is cloned locally. Then every valid folder is searched to find valid single author files. All valid files are then processed by having their source code collected and further validated. If the source code is valid it is added, along with user and project information, to the database. Once a project is finished being processed the cloned repository is removed. See Figure 2.
+The list of GitHub project data collected from GhTorrent is loaded and each entry is processed. If the project referenced by an entry is valid its repository is cloned locally. Then every valid folder is searched to find valid single author files. All valid files are then processed by having their source code collected and further validated. If the source code is valid it is added, along with user and project information, to the database. Once a project is finished being processed the cloned repository is removed.
 
 % Process Diagram
 \begin{figure}[t]
@@ -119,7 +121,7 @@ The list of GitHub project data collected from GhTorrent is loaded and each entr
 
 %%% Git commits process
 \subsubsection*{Collecting Git Commits}
-The list of GitHub commit data collected from GhTorrent data is loaded and each entry is processed. First the entry's commit information is requested from the GitHub API. If this information is available, all the files that have changes are validated. If a set of changes is valid it is collected and has any extra symbols that were added by GitHub removed. Then the source code is added, along with user, project, and commit information, to the database.  See Figure 3.
+The list of GitHub commit data collected from GhTorrent data is loaded and each entry is processed. First the entry's commit information is requested from the GitHub API. If this information is available, all the files that have changes are validated. If a set of changes is valid it is collected and has any extra symbols that were added by GitHub removed. Then the source code is added, along with user, project, and commit information, to the database.
 
 % Process Diagram
 \begin{figure}[t]
@@ -140,7 +142,7 @@ The GhTorrent database is accessed via BigQuery\footnote{https://bigquery.cloud.
 
 Results are saved to a table in the users personal datasets. A dataset and table can be created to save the results of any query. Though there are only 10GB available in the free tier. Once saved if the results are too big then they are randomly sampled to reduce their size. To build our dataset approximately 150,000 records per programming language were collected. This allowed 6-10,000 users who's combined samples had 300 or more lines of code. When a sample is taken it is saved to a table so it can be downloaded within the constraints of BigQuery.
 
-The final table of results is able to be downloaded with a maximum of 10,000 rows at a time. The table is queried with SQL that allows it to be broken up into pieces that are downloaded as json files. Once each section of 10,000 records has been downloaded as json files they are combined with a script into one or more data files. These resulting data files are formatted so they are can be parsed by Python3's json library and loaded by our scripts.
+The final table of results is able to be downloaded with a maximum of 10,000 rows at a time. The table is queried with SQL that allows it to be broken up into pieces that are downloaded as json files. Once each section of 10,000 records has been downloaded as json files they are combined with a into one or more data files. These resulting data files are formatted so they are can be parsed by Python3's json library and iterated over by the GitHub processes.
 
 \subsubsection*{Data}
 The downloaded json files have each row of the query represented as a json record on it's own line. Each record is a collection of key value pairs, where the key is the column name. Because the records are not contained in a list they must be pre-processed before they can be loaded with Python3's json library. This is taken care of by the script that combines the downloaded results into one or more data files. Once processed each record is an entry in a list that can be iterated over. The columns in each record can be accessed by their corresponding column name from the SQL query that created them. The Fields for a user's company, state, city, and location are allowed to be NULL for our collection processes. The fields necessary for each process differ and will be described in the process's Data section.
@@ -248,7 +250,7 @@ The file information is also the same as the projects process except that file l
 
 
 %% Introduction to the source being used %%
-\subsection{Sources}
+\subsection{Data Source}
 \begin{sloppypar}
 Codeforces is a website that hosts programming contests and allows users to submit solutions to a large database of programming contest problems. The operators of the site describe it as a social network for people interested in contest programming and as a platform for hosting programming contests \cite{WEBSITE:CF1}. Submissions submitted by a user available on the user's profile. The website has an API that can be used to collect user and submission information, but not to collect submission source code. However, the source code for user submissions is accessible through their profile. Codeforces is one of the more popular sites available for contest programming and regularly hosts contests. As of May 2019 there were over 180k users that had participated in at least one ranked contest.
 \end{sloppypar}
@@ -361,8 +363,8 @@ The constructed links not always working is an issue. It can be possible to coll
 Gender information is not available for users of GitHub or Codeforces. One of the common ways to add gender labels to user information is with the persons first name. There are a number of websites and APIs that offer gender data for first names. Most of them also allow for increased accuracy with the addition of country codes. There is evidence to suggest that these services can give an acceptable level of accuracy for the gendering of names, though the process is not without issues \cite{Santamaria2018}.
 
 %% Introduction to the sources being used %%
-\subsection{Sources}
-The gender labeling service that is used is genderize.io. 'It utilizes big datasets of information, from user profiles across major social networks and exposes this data through its API' \cite{WEBSITE:GENDER1}. The API allows 1000 free name requests per day and is able to increase accuracy with added country data. All responses are stored in a local database to reduce the number of requests needed.
+\subsection{Data Source}
+There are several available gender APIs, but the genderize.io was used for this to label our data. 'It utilizes big datasets of information, from user profiles across major social networks and exposes this data through its API' \cite{WEBSITE:GENDER1}. The API allows 1000 free name requests per day and is able to increase accuracy with added country data. All responses are stored in a local database to reduce the number of requests needed. The genderize.io service was used because it allows many more names to be gendered for free. It is also substantially cheaper than some of the other services. For a comparison of gender API rates see appendix A.
 
 %% Discussion of the pros and cons and difficulties along with steps taken to try and overcome any issues. %%
 \subsection{Pros And Cons}
@@ -423,6 +425,8 @@ Our database is setup with MySQL 8. The tables in the data section of each proce
 To work with the samples a query can be made to the database to select all rows that meet a certain set of conditions. These rows can be exported to csv or json and imported into whatever program or interpreter one is using. Once the records are imported they can be sorted or filtered to give desired groups. Most programming languages for data analysis have features that make this process simple compared to constructing complicated SQL queries to obtain a precise subset or grouping of the data. This also has the added benefit of loading all the data one might work with rather than making many queries and loading small subsets one at a time.
 
 For Example the following SQL will collect all records from users in Canada.
+
+\begin{singlespacing}
     \begin{verbatim}
         SELECT
             *
@@ -431,9 +435,10 @@ For Example the following SQL will collect all records from users in Canada.
         WHERE
             user_country_code='ca';
     \end{verbatim}
+\end{singlespacing}
 The results of this query. can be imported into a programming environment and grouped by gender or author. One could also loop through all the records and apply functions to each source code sample. This could be useful when creating feature vectors to use with machine learning algorithms.
 
-Schemas for the database tables are listed in appendix A.
+Schemas for the database tables are listed in appendix B.
 
 
 % Conclusion %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -476,10 +481,37 @@ It may be possible to collect a large amount of data, it does not mean that it i
 \newpage
 
 \bibliography{technical_report}
-\bibliographystyle{apalike}
+\bibliographystyle{plain}
+
 
 \newpage
-\section{Appendix A: Database Schemas}
+\appendix
+
+\section{Available Gender APIs}
+
+Each gender service has different costs. The best for both free names and paid names is genderize.io. genderize, gender-api, and namsor all offer 1 name per credit. However, name-api offers a name per every 3 credits. So it's 10,000 free credits per month is only 3333 names. Also, the 100,000 credit per month price of \$55 would need to be multiplied by 3 to get the same number of names per month as the other services, but one would have to jump to the 1,000,000 credit per month tier which cost \$450/Month. The name-api service does offer paying for one time processing of batches of names, but these credits are more expensive.
+
+\begin{sloppypar} For more information on accuracy and other benchmarks of these services see \textit{Comparison and benchmark of name-to-gender inference services} \cite{Santamaria2018}. \end{sloppypar}
+
+\begin{table}[h!]
+    \begin{center}
+        \caption{Gender API comparison}
+        \label{tab:gen_apis}
+        \begin{tabular}{|l|c|c|}
+            \hline
+            \textbf{Service Url} & \textbf{Free Credits/Period} & \textbf{100,000 Credits/Month}\\
+            \hline
+            genderize.io & 1000/Day & \$9.00 \\
+            gender-api.com & 500/Month & \$80.00 \\
+            v2.namsor.com & 5000/Month & \$130.00 \\
+            name-api.org & 10,000/Month & \$55.00 \\
+            \hline
+        \end{tabular}
+    \end{center}
+\end{table}
+
+\newpage
+\section{Database Schemas}
 Each table shows the schema for one type of database table. Our database is split up into tables like 'git{\_}projects{\_}py' and 'git{\_}projects{\_}java', These tables share the same schema, but are separated by language.
 
 \begin{table}[h!]
@@ -519,7 +551,7 @@ Each table shows the schema for one type of database table. Our database is spli
     \end{center}
 \end{table}
 
-\begin{table}[t!]
+\begin{table}[h!]
     \begin{center}
         \caption{Schema for GitHub Commits Tables}
         \label{tab:git_commit_schema}
@@ -560,10 +592,10 @@ Each table shows the schema for one type of database table. Our database is spli
     \end{center}
 \end{table}
 
-\begin{table}[t]
+\begin{table}[h!]
     \begin{center}
         \caption{Schema for Codeforces Table}
-        \label{tab:cf_data}
+        \label{tab:cf_schema}
         \begin{tabular}{|l | c | c |}
             \hline
             \textbf{Column Name} & \textbf{MySQL Type} & \textbf{Nullable}\\
@@ -597,10 +629,10 @@ Each table shows the schema for one type of database table. Our database is spli
     \end{center}
 \end{table}
 
-\begin{table}
+\begin{table}[h!]
     \begin{center}
         \caption{Schema For Gender Table}
-        \label{tab:gen_data}
+        \label{tab:gen_schema}
         \begin{tabular}{| l |c | c |}
             \hline
             \textbf{Column Name} & \textbf{MySQL Type} & \textbf{Nullable}\\
