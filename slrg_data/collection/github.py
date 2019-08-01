@@ -77,15 +77,17 @@ class GitCollector(common.Collector):
         fullname, gender, gender_probability = self.get_fullname_and_gender(
             entry_data)
 
-        if fullname not in [None, ''] and gender not in ['nil', None]:
-            entry_data['user_fullname'] = fullname
-            entry_data['gender'] = gender
-            entry_data['gender_probability'] = gender_probability
-        elif gender is None:
-            self.gender_wait.append(entry_data)
-        else:
-            print("Gender " + gender + ": " +
-                  entry_data['login'])
+        if fullname not in [None, '']:
+            if gender not in ['nil', None]:
+                entry_data['user_fullname'] = fullname
+                entry_data['gender'] = gender
+                entry_data['gender_probability'] = gender_probability
+            elif gender is None and self.collection_info.save_missing:
+                print('Gender unavailable: Adding saving record')
+                self.gender_wait.append(entry_data)
+            else:
+                print("No Gender: " +
+                      entry_data['login'])
 
     def get_fullname_and_gender(self, entry_data):
         """Collect a github users fullname and gender data if possible.

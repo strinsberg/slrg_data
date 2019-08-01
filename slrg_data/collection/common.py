@@ -660,6 +660,7 @@ def get_gender_from_api(name):
             print("Connection Error:", str(err))
 
     if 'error' in data:
+        print(data)
         return (None, None)
     if data['gender']:
         return [data['gender'], float(data['probability'])]
