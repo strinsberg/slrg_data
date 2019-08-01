@@ -7,4 +7,4 @@ from . import select
 from . import combine_json
 from . import gender_codeforces
 from . import filter_codeforces
-from . import get_codeforce_user_list
+from . import get_codeforces_user_list

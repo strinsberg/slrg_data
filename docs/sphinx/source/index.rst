@@ -17,9 +17,9 @@ Contents
 .. toctree::
    :maxdepth: 2
 
+   install
    github
    codeforces
-   install
    scripts
    modules
    database

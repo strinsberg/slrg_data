@@ -1,5 +1,5 @@
-Python3 Package
-=========================
+Getting Started
+===============
 
 .. This should be information about the package in general. I think the overall structure of the webpage should not be about the python package, but instead about the project. Then we can have the python package as part of it, not as the whole focus. Or the documentation can be here only to use and support the python project in which case it will not need some of the sections I added.
 
@@ -52,7 +52,7 @@ Configuration
 
 Some of the script information is stored in a configuration file. It can be convinient to save some fields so you don't have to type everything in everytime you run a script.
 
-See :ref:`scripts <scripts>` for information on passing some arguments as command line options or function parameters.
+See the :ref:`Scripts section <scripts>` for information on passing some arguments as command line options or function parameters.
 
 .. automodule:: config
    :members:
