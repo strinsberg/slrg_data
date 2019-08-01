@@ -62,11 +62,18 @@ from . import collection
 from .help_text import COLLECT_GIT_PROJECTS as HELP_TEXT
 
 # Add the directory with the configuration file to the path
-sys.path.append(collection.common.SLRG_DIR)
-import config   # nopep8, pylint: disable=import-error
-
+try:
+    sys.path.append(collection.common.SLRG_DIR)
+    import config  # nopep8, pylint: disable=import-error
+except ModuleNotFoundError:
+    print('Config Error: Could not find config.py.',
+          'Try re-installing the slrg_data package.',
+          'If this does not work consult the config section of the documentation.')
+    sys.exit()
 
 # Script and Main Functions ############################################
+
+
 def _entry():
     """Entry point for the script."""
     _script(sys.argv[1:])
@@ -149,14 +156,14 @@ def main(lang=None, file=None, start=None, count=None, db_login=None,
                                                    login=db_login,
                                                    passwd=db_passwd)
         limits = collection.script.make_limits(
-            start, count, config.limits['git_projects'])
+            start, count, config.limits[script_name])
         git_data = collection.script.make_git_data(git_login, git_passwd,
                                                    config.git_acct)
         info = collection.script.make_git_info(lang, file, git_data, limits,
                                                script_name, config.config)
 
         log_dir = os.path.join(collection.common.SLRG_DIR,
-                               'git', 'projects', 'logs')
+                               'git/projects/logs')
         log = collection.common.Log(log_dir, script_name)
         collection.script.remove_old_logs(log_dir, config.max_logs_to_keep)
 

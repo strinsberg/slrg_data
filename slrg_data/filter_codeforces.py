@@ -63,15 +63,6 @@ import getopt
 from . import collection
 from .help_text import FILTER_CODEFORCES as HELP_TEXT
 
-# Add the directory with the configuration file to the path
-try:
-    sys.path.append(collection.common.SLRG_DIR)
-    import config  # nopep8, pylint: disable=import-error
-except ModuleNotFoundError:
-    print('Config Error: Could not find config.py.',
-          'Please make sure you have run slrg-install.')
-    sys.exit()
-
 
 # Script and Main Functions ############################################
 

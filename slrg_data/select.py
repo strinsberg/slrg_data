@@ -51,21 +51,18 @@ import os
 import json
 import csv
 
-# Importing when file is called as a script must be different
-if __name__ == '__main__':
-    import collection
-    from help_text import SELECT as HELP_TEXT
-else:
-    from . import collection
-    from .help_text import SELECT as HELP_TEXT
+# Local imports
+from . import collection
+from .help_text import SELECT as HELP_TEXT
 
 # Add the directory with the configuration file to the path
 try:
     sys.path.append(collection.common.SLRG_DIR)
-    import config  # nopep8
+    import config  # nopep8, pylint: disable=import-error
 except ModuleNotFoundError:
     print('Config Error: Could not find config.py.',
-          'Please make sure you have run slrg-install.')
+          'Try re-installing the slrg_data package.',
+          'If this does not work consult the config section of the documentation.')
     sys.exit()
 
 
@@ -146,9 +143,6 @@ def main(output_file=None, sql_file=None, output_format=None, db_login=None,
         output_file, output_format = _get_file_and_format(output_file,
                                                           output_format)
         sql = _get_query(sql_file)
-        # Should validate the query does not contain any unwanted statements
-        # put a script in query to take a list of allowed and list of
-        # not allowed operations and return true or false to let it through
 
         if db_login is None:
             db_login = config.database['login']

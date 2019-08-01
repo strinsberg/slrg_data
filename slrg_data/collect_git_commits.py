@@ -67,7 +67,8 @@ try:
     import config  # nopep8, pylint: disable=import-error
 except ModuleNotFoundError:
     print('Config Error: Could not find config.py.',
-          'Please make sure you have run slrg-install.')
+          'Try re-installing the slrg_data package.',
+          'If this does not work consult the config section of the documentation.')
     sys.exit()
 
 
@@ -162,7 +163,8 @@ def main(lang=None, file=None, start=None, count=None, db_login=None,
         info = collection.script.make_git_info(lang, file, git_data, limits,
                                                script_name, config.config)
 
-        log_dir = os.path.join(collection.common.SLRG_DIR, 'logs', script_name)
+        log_dir = os.path.join(collection.common.SLRG_DIR,
+                               'git/commits/logs', script_name)
         log = collection.common.Log(log_dir, script_name)
         collection.script.remove_old_logs(log_dir, config.max_logs_to_keep)
 

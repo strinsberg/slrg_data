@@ -63,7 +63,8 @@ try:
     import config  # nopep8, pylint: disable=import-error
 except ModuleNotFoundError:
     print('Config Error: Could not find config.py.',
-          'Please make sure you have run slrg-install.')
+          'Try re-installing the slrg_data package.',
+          'If this does not work consult the config section of the documentation.')
     sys.exit()
 
 
