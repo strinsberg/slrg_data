@@ -54,12 +54,8 @@ import sys
 import getopt
 
 # Local imports
-if __name__ == '__main__':
-    import collection
-    from help_text import GENDER_CODEFORCES as HELP_TEXT
-else:
-    from . import collection
-    from .help_text import GENDER_CODEFORCES as HELP_TEXT
+from . import collection
+from .help_text import GENDER_CODEFORCES as HELP_TEXT
 
 # Add the directory with the configuration file to the path
 try:
@@ -228,9 +224,3 @@ def _missing_gender(user_data):
     has not been given a gender.
     """
     return _has_first_name(user_data) and user_data['gender'] is None
-
-
-# Run ##################################################################
-
-if __name__ == "__main__":
-    _entry()

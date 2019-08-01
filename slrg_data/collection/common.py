@@ -8,6 +8,7 @@ import getpass
 import json
 import logging
 import os
+import site
 
 # 3rd party libraries
 import requests
@@ -20,7 +21,9 @@ from . import script
 # Constants ############################################################
 
 # Path to the slrg directory in the users home folder
-SLRG_DIR = os.path.join(os.path.expanduser('~'), 'slrg')
+site.getuserbase()
+SLRG_DIR = os.path.join(site.USER_BASE, 'slrg')
+print(SLRG_DIR)
 
 
 # Classes ##############################################################

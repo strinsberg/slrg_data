@@ -41,12 +41,8 @@ import os
 import getopt
 
 # Local imports
-if __name__ == '__main__':
-    import collection
-    from help_text import COLLECT_CODEFORCES as HELP_TEXT
-else:
-    from . import collection
-    from .help_text import COLLECT_CODEFORCES as HELP_TEXT
+from . import collection
+from .help_text import COLLECT_CODEFORCES as HELP_TEXT
 
 # Add the directory with the configuration file to the path
 try:
@@ -138,9 +134,3 @@ def main(file=None, start=None, count=None, db_login=None, db_passwd=None):
 
     collector = collection.codeforces.CfSeleniumCollector(database, info, log)
     return collector.main()
-
-
-# Run ##################################################################
-
-if __name__ == '__main__':
-    _entry()

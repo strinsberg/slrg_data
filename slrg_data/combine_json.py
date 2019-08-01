@@ -50,21 +50,8 @@ import sys
 import getopt
 
 # Local imports
-if __name__ == '__main__':
-    import collection
-    from help_text import COMBINE_JSON as HELP_TEXT
-else:
-    from . import collection
-    from .help_text import COMBINE_JSON as HELP_TEXT
-
-# Add the directory with the configuration file to the path
-try:
-    sys.path.append(collection.common.SLRG_DIR)
-    import config  # nopep8
-except ModuleNotFoundError:
-    print('Config Error: Could not find config.py.',
-          'Please make sure you have run slrg-install.')
-    sys.exit()
+from . import collection
+from .help_text import COMBINE_JSON as HELP_TEXT
 
 
 # Script and Main Functions ############################################
@@ -252,9 +239,3 @@ def _move_files(filenames, folder):
         for file in filenames:
             print("Deleting", file)
             os.remove(file)
-
-
-# Run ##################################################################
-
-if __name__ == '__main__':
-    main(sys.argv[1:])

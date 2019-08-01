@@ -5,7 +5,6 @@ setup(name='slrg_data',
       packages=['slrg_data', 'slrg_data.collection'],
       install_requires=['requests', 'beautifulsoup4', 'pymysql'],
       python_requires='>=3',
-      scripts=['slrg-install'],
       entry_points={
           'console_scripts': [
               'slrg-git-projects=slrg_data.collect_git_projects:_entry',

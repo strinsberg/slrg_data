@@ -58,17 +58,13 @@ import getopt
 import json
 
 # Local imports
-if __name__ == '__main__':
-    import collection
-    from help_text import COLLECT_GIT_PROJECTS as HELP_TEXT
-else:
-    from . import collection
-    from .help_text import COLLECT_GIT_PROJECTS as HELP_TEXT
+from . import collection
+from .help_text import COLLECT_GIT_PROJECTS as HELP_TEXT
 
 # Add the directory with the configuration file to the path
 try:
     sys.path.append(collection.common.SLRG_DIR)
-    import test_config as config  # nopep8, pylint: disable=import-error
+    import config  # nopep8, pylint: disable=import-error
 except ModuleNotFoundError:
     print('Config Error: Could not find config.py.',
           'Please make sure you have run slrg-install.')
@@ -177,9 +173,3 @@ def main(lang=None, file=None, start=None, count=None, db_login=None,
 
     except collection.script.ScriptInputError as err:
         print('\n***', err)
-
-
-# Run ##################################################################
-
-if __name__ == "__main__":
-    _entry()
