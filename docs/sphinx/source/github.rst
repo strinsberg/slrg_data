@@ -1,3 +1,5 @@
+.. _github:
+
 Github Collection
 =================
 

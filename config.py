@@ -1,17 +1,117 @@
 """Configuration values required for running the scripts.
 
-Where indicated values can be set to None and scripts will prompt for
-input when run.
+For most uses setting the database account information, collection languages, and GitHub account information will be the only things that may require setup.
 
-Attributes:
-    database: ??
-    table: ??
-    extensions: ??
-    exclude: ??
-    git_acct: ??
-    limits: ??
-    config: A dict of the config file's contents. Each of the above
-        attributes is a field in the dict.
+Unless otherwise indicated any values left as None will be asked for when running scripts. Unless they are not overridden by command line options or function parameters.
+
+See the :ref:`Scripts section <scripts>` for information on overriding the configuration file values with command line options or function parameters.
+
+.. warning:: Any passwords stored in the configuration file or passed to the scripts will be stored as plain text in the program. If you don't want this then leave password fields blank. Then passwords will be collected by pythons *getpass* module and passed directly to the *pymysql* and *requests* modules for operations that require authentication.
+
+Fields
+------
+
+database
+    * host
+        The host address of your database. If the database is on your computer then this will be localhost.
+    * name
+        The name of the database.
+    * login
+        The name of your account for the database.
+    * passwd
+        The password to your database account.
+
+table
+    **No values in table can be None**
+
+    Each process has it's own column schema and tables using that schema for each language collected.
+
+    If you collect for a different language with any of the processes you can add the name of the table :code:`'language': 'table_name'`.
+
+    * git_projects
+        - c++
+            Name of the table to store C++ samples.
+        - python
+            Name of the table to store Python samples.
+        - java
+            Name of the table to store Java samples.
+        - columns
+            A list of column names in tables for storing GitHub project samples.
+
+    * git_commits
+        - c++
+            Name of the table to store C++ samples.
+        - python
+            Name of the table to store Python samples.
+        - java
+            Name of the table to store Java samples.
+        - columns
+            A list of column names in tables for storing GitHub commits samples.
+
+    * codeforces
+        - name
+            Name of the table to store all samples.
+        - columns
+            A list of column names in tables for storing Codeforces submission
+            samples.
+
+extensions
+    **You must set these for the language you are collecting for. Otherwise no files will be collected.**
+
+    * Maps a programming language to a list of file extensions that will be collected for that language.
+    * For example :code:`'c++': ['.cc','.cpp']` would collect all C++ source code files but no headers. If you wanted to collect header files as well you could change it to be :code:`'c++': ['.cc','.cpp','.h','.hpp']`.
+
+exclude
+    **The lists cannot be None, But can be empty if you wish to collect everything with a valid extension**
+
+    * files
+        - A list of all file names that should be excluded from collection.
+    * dirs
+        - A list of all directories that should not be searched for files during collection.
+
+cf_languages
+    **Cannot be None.**
+    
+    If collect is left empty no samples will be collected. The exclude keeps a language that has a collected language as a part of its name from being collected. Ie) java/javascript or c/c++. If the longer names are not excluded they will be mistakenly collected.
+
+    * collect
+        - A list of programming languages to collect samples for.
+    * exclude
+        - A list of programming languages to exclude from collection.
+
+git_acct
+    * login
+        - A GitHub account username.
+    * passwd
+        - The password for the  github account.
+
+limits
+    * All scripts
+        - start
+            The first record to process when running a script. It is best to leave this as None and give it when running the scripts.
+        - count
+            The number of records to process before stopping. Useful if you don't want the scrip to run for too long or you only need a certain number of records to be processed.
+    * codeforces(only)
+        - subs_start
+            The first submission to collect when processing a user. Should most likely be left at 1 unless you have modified the script to collect from a submission page other than the first.
+        - subs_count
+            The maximum number of subs to collect. If selenium is being used this should never be more than 50.
+        - max_subs
+            The maximum number of samples to store in the database for a user.
+        - max_no_source
+            The maximum number of samples to try to collect that have no source before moving onto the next user. Don't change unless you are not using selenium.
+
+max_logs
+    * The maximum number of logs to keep. **Cannot be None**
+
+save_missing
+    * Wether or not to save records when the gender API rate limit has been reached. Records will be saved in a file when the script finishes in slrg/git/missing
+
+.. warning:: The scripts do not check on how many files are stored in the missing directory. If you set it to True and never clean the directory it could become very large over time.
+
+config
+    * A dict of the config file's contents. Each of the above attributes is a field in the dict.
+
 """
 
 # Information for the MySQL database connection
@@ -148,15 +248,15 @@ git_acct = {
 # Values can be None or given as command line options
 limits = {
     'git_projects': {
-        'start': 0,
+        'start': None,
         'count': 10000
     },
     'git_commits': {
-        'start': 0,
+        'start': None,
         'count': 10000
     },
     'codeforces': {
-        'start': 0,
+        'start': None,
         'count': 100,
         'sub_start': 1,  # Starts at 1 not 0
         'sub_count': 50,
@@ -166,7 +266,7 @@ limits = {
 }
 
 # Maximum logs to keep per file
-max_logs_to_keep = 20
+max_logs_to_keep = 10
 
 # Wether or not to save gender records that may have a gender, but the
 # gender API is down or there was an error looking up a name.

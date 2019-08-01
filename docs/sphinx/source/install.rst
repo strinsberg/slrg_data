@@ -1,61 +1,40 @@
 Getting Started
 ===============
 
-.. This should be information about the package in general. I think the overall structure of the webpage should not be about the python package, but instead about the project. Then we can have the python package as part of it, not as the whole focus. Or the documentation can be here only to use and support the python project in which case it will not need some of the sections I added.
+All of the scripts are contained within the python3 package *slrg_data*. This package is available to download <Where?>. Once you have downloaded it follow the instructions below to install the package and setup the configuration file.
 
-On this page there can be technical information on getting setup to use the code and scripts to support data collection. If a person was just going to use our information to inspire their own code they could probably skip this part.
-
-.. Should give all the information on how to install and setup the
-.. environment for using the app.
-.. use pip3 to install the module.
-.. navigate to a folder that you want to store your data and logs etc.
-.. run slrg-quickstart
-.. when running scripts and code do it from this folder
+The package must be installed to run the scripts. After installation continue to the :ref:`GitHub <github>` or :ref:`Codeforces <cf_collection>` sections for more information on collecting code samples from those sources.
 
 .. _installation:
 
 Installation
 ------------
 
-Download the slrg_data folder from <wherever we store it>.
+CD into the downloaded slrg_data folder and run::
 
-CD into the downloaded folder and run::
+    $ pip3 install --user .
 
-    $ pip3 install .
+.. note:: If pip3 is not installed on your system see https://pip.pypa.io/en/stable/installing/ for more information.
 
-**Note:** You will need to have python3-pip installed.
+The installation will install all the command line scripts. It will also create a directory with a configuration file and some other directories necessary for running the scripts.
 
-This will install all the scripts to be callable from the command line.
+* Linux: :code:`$ ~/.local/slrg`
+* Windows: :code:`%APPDATA%\Python\slrg`
 
-This will also install the slrg_data module so that it can be imported
-as a python3 module as below
+The install will also make the slrg_data package and its contents importable. 
 
     >>> import slrg_data
+    >>> import slrg_data.collect_git_projects
+    >>> from slrg_data import collect_git_projects
 
-More information on how to use the scripts from the command line or in the python3 interpreter is available in the (link) Scripts section.
-
-Setup
------
-
-To create a directory for the configuration file and other required folders
-Run::
-
-    $ slgr-install
-
-This will create an slrg directory in your home folder. This directories main purpose is to hold a configuration file and to store log files and other temporary files and folders. It is required to run the scripts.
-
+The :ref:`Scripts section <scripts>` has more information on using scripts from the command line or with imports.
 
 .. _config_lab:
 
 Configuration
 -------------
 
-Some of the script information is stored in a configuration file. It can be convinient to save some fields so you don't have to type everything in everytime you run a script.
-
-See the :ref:`Scripts section <scripts>` for information on passing some arguments as command line options or function parameters.
-
 .. automodule:: config
    :members:
    :undoc-members:
    :show-inheritance:
-
