@@ -123,7 +123,7 @@ class GitCollector(common.Collector):
         Args:
             collection_type (str): The kind of collection. projects or commits.
         """
-        if self.gender_wait:
+        if self.collection_info.save_missing and self.gender_wait:
             filename = "{}_{}_{}".format(self.gender_file,
                                          self.collection_info.language,
                                          str(time.time()))
@@ -583,11 +583,13 @@ class GitCollectionInfo(common.CollectionInfo):
         language (str): The language of the data being collected.
     """
 
-    def __init__(self, records, table, validation, limits, git_data, lang):
+    def __init__(self, records, table, validation, limits, git_data, lang,
+                 save_missing):
         super(GitCollectionInfo, self).__init__(
             records, table, validation, limits)
         self.git_data = git_data
         self.language = lang
+        self.save_missing = save_missing
 
 
 class GithubData:

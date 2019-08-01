@@ -168,6 +168,10 @@ limits = {
 # Maximum logs to keep per file
 max_logs_to_keep = 20
 
+# Wether or not to save gender records that may have a gender, but the
+# gender API is down or there was an error looking up a name.
+save_missing = False
+
 # To make it possible to pass the whole config file contents around
 # easily if needed
 config = {
@@ -179,4 +183,5 @@ config = {
     'git_acct': git_acct,
     'limits': limits,
     'cf_languages': cf_languages,
+    'save_missing': save_missing,
 }
