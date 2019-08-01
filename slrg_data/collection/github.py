@@ -117,18 +117,19 @@ class GitCollector(common.Collector):
 
         return fullname, gender, gender_probability
 
-    def clean_up(self):
-        """Extends :func:`Collector.clean_up() <slrg_data.collection.common.Collector.clean_up>`
-        to write entries that must wait until later to have gender
-        collected to a file.
-        """
-        super(GitCollector, self).clean_up()
+    def write_missing(self, collection_type):
+        """Run with cleanup to save any records missing gender.
 
+        Args:
+            collection_type (str): The kind of collection. projects or commits.
+        """
         if self.gender_wait:
-            common.write_json_data("{}_{}_{}".format(self.gender_file,
-                                                     self.collection_info.language,
-                                                     str(time.time())),
-                                   self.gender_wait)
+            filename = "{}_{}_{}".format(self.gender_file,
+                                         self.collection_info.language,
+                                         str(time.time()))
+            path = os.path.join(common.SLRG_DIR, 'git',
+                                collection_type, 'missing', filename)
+            common.write_json_data(path, self.gender_wait)
 
 
 class CommitsCollector(GitCollector):
@@ -328,6 +329,8 @@ class CommitsCollector(GitCollector):
         self.log.info("Files added/commit: {}/{:.0f} {:.0f}%".format(
             added, commits, (added / commits) * 100))
 
+        self.write_missing('commits')
+
 
 class ProjectsCollector(GitCollector):
     """Concrete Collector class for collecting source code samples using
@@ -430,7 +433,7 @@ class ProjectsCollector(GitCollector):
 
     def _make_repo(self, project_data):
         """Clones a repository and return a git.Repo object for it."""
-        repos_dir = os.path.join(common.SLRG_DIR, 'temp_repos')
+        repos_dir = os.path.join(common.SLRG_DIR, 'git/projects/temp_repos')
         temp_dir = "temp_{}".format(str(random.randint(0, 2000000)))
         repo_path = os.path.join(repos_dir, temp_dir)
 
@@ -568,6 +571,8 @@ class ProjectsCollector(GitCollector):
             added, files, (added / files) * 100))
         self.log.info("Files added/project: {}/{:.0f} {:.0f}%".format(
             added, projects, (added / projects) * 100))
+
+        self.write_missing('projects')
 
 
 class GitCollectionInfo(common.CollectionInfo):

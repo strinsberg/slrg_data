@@ -23,7 +23,6 @@ from . import script
 # Path to the slrg directory in the users home folder
 site.getuserbase()
 SLRG_DIR = os.path.join(site.USER_BASE, 'slrg')
-print(SLRG_DIR)
 
 
 # Classes ##############################################################
