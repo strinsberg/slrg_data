@@ -17,4 +17,15 @@ setup(name='slrg_data',
               'slrg-filter-codeforces=slrg_data.filter_codeforces:_entry'
           ]
       },
+      data_files=[
+          ('slrg', ['config.py']),
+          ('slrg/codeforces', []),
+          ('slrg/codeforces/logs', []),
+          ('slrg/git', []),
+          ('slrg/git/projects', []),
+          ('slrg/git/projects/logs', []),
+          ('slrg/git/projects/missing', []),
+          ('slrg/git/commits', []),
+          ('slrg/git/commits/logs', []),
+          ('slrg/git/commits/missing', [])],
       zip_safe=False)
