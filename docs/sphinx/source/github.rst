@@ -17,29 +17,101 @@ GhTorrent and Google BigQuery
 
 .. should I include some screen shots? Also, would it be better to put some of the smaller SQL samples in line so that a person does not have to jump to them?
 
+To collect data from the GhTorrent dataset we used BigQuery. I will go through this process below, but will not go into too much detail regarding how BigQuery works. For more information on creating projects, datasets, tables, and queries refer to the help for |big-query-classic-ui| and |big-query-new-ui|.
+
+I used the classic ui, but it will be unavailable after 2020, so you may have to use the new ui.
+
 .. note:: You will need a Google account to be able to work with the dataset on BigQuery. You will be required to accept their terms of service and set up a project. This project is were you will be able to store tables of query results.
 
-1. To get started open |ght-big-query| and select the red 'Compose Query' button at the top of the info panel on the right side of the screen. If the link above does not work you can access the dataset at http://ghtorrent.org/gcloud.html.
+1. To get started open |ght-big-query| and open a query editor for the ght dataset. If the link above does not work you can access the dataset at http://ghtorrent.org/gcloud.html.
 
-2. Under the input box for the SQL there is a row of buttons. Click the show options button on the far left. In the menu that opens unckeck the box that is titled 'use legacy sql'. You can then click the button again to hide the options.
+2. Under the query editor you can open some options. Do this and unckeck the box that is titled 'use legacy sql'.
 
-3. Now you can query the dataset for the desired data. You should use the :ref:`example queries <big_query_sql>` and adjust the projects.language field in the where clause for the desired programming language.
+3. For this example I will query the dataset to find java projects. For other queries refer to the :ref:`SQL queries section <big_query_sql>`::
 
-4. The results of the query will appear below the SQL input area. Above the top left corner there are buttons for saving the results. If your results are larger than 10,000 rows you will not be able to download them yet.
+    #standardSQL
+    SELECT
+        users.id,
+        users.login,
+        users.company,
+        users.created_at as users_created_at,
+        users.type,
+        users.country_code,
+        users.state,
+        users.city,
+        users.location,
+        projects.id as projects_id,
+        projects.url as projects_url,
+        projects.name as projects_name,
+        projects.language as projects_language,
+        projects.created_at as projects_created_at
+    FROM
+        `ghtorrent-bq.ght.projects` as projects
+    INNER JOIN
+        `ghtorrent-bq.ght.users` as users
+    ON
+        users.id = projects.owner_id
+    WHERE
+        projects.deleted != true and        -- No deleted projects
+        projects.forked_from is NULL and    -- No forked projects
+        users.deleted != true and           -- No deleted users
+        users.fake != true and              -- No fake users
+        users.country_code is not NULL and  -- Must have country
+        projects.language = 'Java';         --Change to desired language
 
-5. To save the results of your query select the 'Save as Table' button at the top right corner of the results preview. You will be asked to select a dataset to save the table in. Select the one that you created in your initial project. Don't save it to the ght dataset.
+4. A preview of the results will appear below. There are options to save to CSV, JSON, and as a table. If your results are larger than 10,000 rows you will not be able to download them yet.
 
-6. Once you have the table saved you have a few options.
+5. To save the results of your query select the 'Save as Table' button at the top right corner of the results preview. This will save the table in a dataset in one of your BigQuery Projects. Refer to the BigQuery help links above for instructions if you do not have a dataset set up.
 
-    1. If you want to download all the results you can query the table 10,000 rows at a time and select 'Download as JSON'. :ref:`SQL to get 10k rows at a time <download_results>`. Once you have them downloaded you can use the 
+6. Once you have the table saved you have a few options:
 
-    2. If you have more results than you need you can select the saved table and query it with :ref:`SQL to get a random sample <get_results>`. Adjust the limit to get the number of rows you want. This new set of results can be saved to a table of it's own. Then follow step 1 to download them.
+    1. If your results are too large and you want a smaller subset you can take a random sample of the data. Save the sample results to a new table and follow step 2::
 
-7. Once you have gotten the results that you want and downloaded them you must run the :ref:`Combine json script <combine_json>` to put all the results back into 1 or more data files that will be loadable by the scripts. You must run this script even if you only downloaded one file of results as they are not properly formatted for use with the scripts.
+        #standardSQL
+        SELECT
+            *
+        FROM
+            `my_project.my_dataset.2mill_results`  -- Replace with your table's name
+        ORDER BY
+            RAND()
+        LIMIT
+            150000;                                -- Adjust to the number of rows you want
 
-.. There should either be a short example of using the combine script here or a little more info in the script section. There will be usage info for the other scripts in this section so it might make sense. Maybe split this section into 2. one for getting results from ght and the other for what to do with those results before they can be processed by the other scripts.
+    2. If you want to download all the results in your table you can query the table 10,000 rows at a time and select 'Download as JSON'::
 
-When you have your desired set of GitHub project or commit data collected into data files you can follow the appropriate process below to start collecting source code samples.
+        #standardSQL
+        SELECT
+            *
+        FROM
+            `my_project.my_dataset.java_projects`  -- Replace with your table's name
+        LIMIT
+            10000
+        OFFSET 0;                       -- Increase by 10,000 until you have all results    
+
+7. The downloaded results must be combined and formated. The :ref:`Combine json script <combine_json>` will combine all json files in a folder into 1 or more data files. These files will be formatted for processing by the scripts.
+
+    * In the example I have downloaded 15 json files with 10,000 rows each. I want them to be in 2 data files so that I can run 2 scripts at a time. ceiling(15/2) = 8::
+
+        $ slrg-combine-json -o java -g 8
+        Combining results-20190618-152952.json
+        Combining results-20190618-153054.json
+        Combining results-20190618-153105.json
+        Combining results-20190618-153147.json
+        Combining results-20190618-153137.json
+        Combining results-20190618-153030.json
+        Combining results-20190618-153021.json
+        Combining results-20190618-153158.json
+        Combining results-20190618-153114.json
+        Combining results-20190618-153126.json
+        Combining results-20190618-153042.json
+        Combining results-20190618-152935.json
+        Combining results-20190618-152938.json
+        Combining results-20190618-153008.json
+        Combining results-20190618-153208.json
+        ** Created java.data
+        ** Created java2.data
+
+The resulting files java1.data and java2.data are now ready to be used with the GitHub collection scripts.
 
 
 .. _git-projects:
@@ -49,7 +121,7 @@ Projects Based Collection
 
 To show how to use the projects based collection script I will run through an example. I will be collecting java samples from the 'java1.data'. I will assume that I have already done some collection and the script is being re-started at with the 33,000 record in the file.
 
-..note:: The java1.data file in this example must have been collected with the :ref:`GitHub commits SQL <projects_sql>` via BigQuery.
+.. note:: The java1.data file in this example must have been collected with the :ref:`GitHub commits SQL <projects_sql>` via BigQuery.
 
 1. Navigate to the directory that the 'java1.data' file is being stored.::
 
@@ -121,6 +193,8 @@ To show how to use the projects based collection script I will run through an ex
         >>> start
         40000
         >>> start = collect_git_projects.main(lang=lang, start=start, file=file)
+    
+    * With the interpreter if the script exits due to an unhandled exception no value will be returned. In this case you will have to manually update the start variable before re-running the script.
 
 .. note:: The projects script temporarily clones repositories to validate files. This can use a lot of data.
 
@@ -132,9 +206,9 @@ Commits Based Collection
 
 Using this script is almost identical to the projects script.
 
-..note:: The java1.data file in this example must have been collected with the :ref:`GitHub commits SQL <commits_sql>` via BigQuery.
+.. note:: The java1.data file in this example must have been collected with the :ref:`GitHub commits SQL <commits_sql>` via BigQuery.
 
-1. Same as projects script.
+1. Same as projects.
 
 2. Same as projects, but with a different script name::
 
@@ -154,7 +228,7 @@ Using this script is almost identical to the projects script.
 
 4. The output will look a little different::
 
-    pass
+    Still Needed!!!
 
 5. Same as projects.
 
@@ -170,3 +244,11 @@ Using this script is almost identical to the projects script.
 .. |github-report| raw:: html
 
     <a href="./_static/technical_report.pdf#page=3" target="_blank">GitHub section</a>
+
+.. |big-query-new-ui| raw:: html
+
+    <a href="https://cloud.google.com/bigquery/docs/quickstarts/quickstart-web-ui" target="_blank">BigQuery new UI help</a>
+
+.. |big-query-classic-ui| raw:: html
+
+    <a href="https://cloud.google.com/bigquery/docs/quickstarts/quickstart-web-ui-classic" target="_blank">BigQuery classic UI help</a>

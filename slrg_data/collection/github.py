@@ -319,7 +319,7 @@ class CommitsCollector(GitCollector):
 
         Extends :func:`GitCollector.clean_up() <GitCollector.clean_up>`.
         """
-        common.Collector.clean_up(self)
+        super(CommitsCollector, self).clean_up()
 
         commits = self.totals['commits'] + 0.1
         self.log.info("Commits successfully processed: {:.0f}".format(commits))

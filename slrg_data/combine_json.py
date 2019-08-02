@@ -13,8 +13,8 @@ you want combined.
 
 ::
 
-    $ slrg-combine-json [-h] [-o <output file>] [-f < raw json folder> ]
-        [-g < group size > ] [<json files>]
+    $ slrg-combine-json [-h] [-o <output file>] [-f <raw json folder> ]
+        [-g <group size> ] [<json files>]
 
 Options
 ~~~~~~~
