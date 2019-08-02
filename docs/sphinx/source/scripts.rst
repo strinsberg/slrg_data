@@ -6,9 +6,11 @@ Scripts
 There are two different ways to run the scripts. There results are equivilent. Both methods will look for input files, and write any output files, relative to the directory they are run in.
 
 1. Running at the command line.
+
     * The details and command line options are listed along with each scripts
 
 2. Running from the interpreter.
+
     * Instead of command line options pass parameters to the keyword arguments of the scripts main function.
     * Collection scripts will return the number of the next entry to process. If the script is stopped you can pass the return value to the start keyword of the next call to main.
 
@@ -84,6 +86,8 @@ Filter Codeforces User List
    :undoc-members:
    :show-inheritance:
 
+
+.. _db_select:
 
 Select From Database
 --------------------

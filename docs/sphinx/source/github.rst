@@ -3,11 +3,11 @@
 Github Collection
 =================
 
-Below are walkthroughs for collecting source code samples from GitHub. They explain how to get project and commit data from GhTorrent via Google BigQuery. Then there is infomation on how to use the scripts for project and commit based collections.
+Below are some examples for collecting source code samples from GitHub. They explain how to get project and commit data from GhTorrent via Google BigQuery. Then there is infomation on how to use the scripts for project and commit based collections.
 
 More information can be found in the |github-report| of the technical report.
 
-In order to run the scripts the :ref:`slrg_data <installation>` python package must be installed. There is also some general information on how the scripts can be run and and some information for each one :ref:`in the Scripts section <scripts>`.
+In order to run the scripts the slrg_data package :ref:`must be installed <installation>` first. There is also some general information on how the scripts can be run and and some information for each one :ref:`in the Scripts section <scripts>`.
 
 
 .. _ght-big-query-lab:
@@ -264,7 +264,7 @@ Using this script is almost identical to the projects script. the minor differen
 
 .. |github-report| raw:: html
 
-    <a href="./_static/technical_report.pdf#page=3" target="_blank">GitHub section</a>
+    <a href="./_static/technical_report.pdf#page=5" target="_blank">GitHub section</a>
 
 .. |big-query-new-ui| raw:: html
 

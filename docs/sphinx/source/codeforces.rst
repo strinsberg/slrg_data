@@ -3,11 +3,11 @@
 Codeforces Collection
 =====================
 
-Below is a walkthrough for collecting source code samples from Codeforces. It first explains how to get a user list using the codeforces API. Then how to pre-process this user list to add things like gender or to collect a specific set of users. Finally, it explains how to run the script on a list of user records.
+Below is an example for collecting source code samples from Codeforces. It first explains how to get a user list using the codeforces API. Then how to pre-process this user list to add things like gender or to collect a specific set of users. Finally, it explains how to run the script on a list of user records.
 
 More information on the process can be found in the |codeforces-report| section of the technical report.
 
-In order to run the scripts the :ref:`slrg_data <installation>` python package must be installed. There is also some general information on how the scripts can be run and and some information for each one :ref:`in the Scripts section <scripts>`.
+In order to run the scripts the slrg_data package :ref:`must be installed <installation>` first. There is also some general information on how the scripts can be run and and some information for each one :ref:`in the Scripts section <scripts>`.
 
 
 Getting a User List
@@ -130,4 +130,4 @@ Collecting Source Code Samples
 
 .. |codeforces-report| raw:: html
 
-    <a href="./_static/technical_report.pdf#page=11" target="_blank">Codeforces section</a>
+    <a href="./_static/technical_report.pdf#page=20" target="_blank">Codeforces section</a>

@@ -23,7 +23,6 @@ Contents
    scripts
    modules
    database
-   sql
 
 
 .. links ..
