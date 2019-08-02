@@ -86,12 +86,14 @@ git_acct
         - The password for the  github account.
 
 limits
+    **No values can be None**
+    
     * All scripts
         - start
             The first record to process when running a script. It is best to leave this as None and give it when running the scripts.
         - count
             The number of records to process before stopping. Useful if you don't want the scrip to run for too long or you only need a certain number of records to be processed.
-    * codeforces(only)
+    * codeforces (only)
         - subs_start
             The first submission to collect when processing a user. Should most likely be left at 1 unless you have modified the script to collect from a submission page other than the first.
         - subs_count

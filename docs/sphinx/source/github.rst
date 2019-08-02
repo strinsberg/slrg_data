@@ -39,8 +39,7 @@ GhTorrent and Google BigQuery
 
 .. There should either be a short example of using the combine script here or a little more info in the script section. There will be usage info for the other scripts in this section so it might make sense. Maybe split this section into 2. one for getting results from ght and the other for what to do with those results before they can be processed by the other scripts.
 
-When you have your desired set of GitHub project or commit data collected into data files you can follow the apporpriate process below to start collecting source code samples.
-
+When you have your desired set of GitHub project or commit data collected into data files you can follow the appropriate process below to start collecting source code samples.
 
 
 .. _git-projects:
@@ -48,45 +47,82 @@ When you have your desired set of GitHub project or commit data collected into d
 Projects Based Collection
 -------------------------
 
-1. Navigate to the directory that the processed data files from BigQuery are stored.
+To show how to use the projects based collection script I will run through an example. I will be collecting java samples from the 'java1.data'. I will assume that I have already done some collection and the script is being re-started at with the 33,000 record in the file.
 
-2. Run the  with the desired data file as the argument to the -i option. Additional information on the available command line options is available with the :ref:`GitHub projects script <github-projects>` description.::
+..note:: The java1.data file in this example must have been collected with the :ref:`GitHub commits SQL <projects_sql>` via BigQuery.
 
-    $ slrg-git-projects -i <filename> [other options]
+1. Navigate to the directory that the 'java1.data' file is being stored.::
 
-3. Some information is required for the script to run. If an option is not given at the command line or set in the :ref:`configuration file <config_lab>` you will be asked for it. For example git account name and password.
+    $ cd ~/my_project/data
 
-4. Once all the information is given the script will start running. You should see something like this::
+2. Run the collection script. I have set my login and password for both the databse and the GitHub in the configuration file.
 
-    # 68207 ### Processing Project: MMDevBase ###
-    # 68208 ### Invalid project: NettyBook ###
-    # 68209 ### Invalid project: Dagger2Demo ###
-    # 68210 ### Gender nil: yangboz
-    Invalid project: fuzzy-boo ###
-    # 68211 ### Processing Project: tbc-ticket-dispenser-java ###
-    Processing File: .... td/src/main/java/kata/td/TicketDispenser.java
+    * From the command line::
+
+        $ slrg-git-projects -s 33000 -l java -i java1.data
+
+    * Or from the python interpreter::
+
+        >>> from slrg_data import collect_git_projects
+        >>> lang = 'java'
+        >>> start = 33000
+        >>> file = 'java1.data'
+        >>> start = collect_git_projects.main(lang=lang, start=start, file=file)
+
+    * For additional information on the available command line options and keyword parameters see the :ref:`GitHub projects script <github-projects>` description.
+
+    * For additional information on values that can be stored in the configuration file see the :ref:`Configuration section.<config_lab>`
+
+3. If I had not set the databse login and password I would be asked to enter them before the script started processing the data file.::
+
+    Database Username: my_username
+    Databse Password: my_password  # will not be shown when typed
+
+4. If all the correct information is given the script will start running. You should see something like this::
+
+    File: java1.data
+    # 33004 ### {'error': 'Request limit reached'}
+    No Gender: Cookizz
+    Invalid project: RxJavaStackTracer ###
+    # 33005 ### Processing Project: ITSLV_api ###
+    # 33006 ### Api issue: Not Found
+    Invalid project: juzu-example ###
+    # 33007 ### No Gender: mseclab
+    Invalid project: droidconit2014-symmetric-demo-step2 ###
+    # 33008 ### Processing Project: lego_sumo_fighter ###
+    Processing File: .... Source_code/principal.java
     -- Added
-    Processing File: .... td/src/main/java/kata/td/TurnNumberSequence.java
+    Processing File: .... Source_code/mover.java
     -- Added
-    Processing File: .... td/src/main/java/kata/td/TurnTicket.java
-    -- Added
-    # 68212 ### Invalid project: adblock_plus_ ###
+    # 33009 ### Api issue: Not Found
+    Invalid project: Compilers ###
 
-The script will run until a given limit of projects is processed, you press CTRL^c, or an error that cannot be recovered from is encountered. When it is finished it will display some information like this::
+
+5. The script will run until a given limit of projects is processed, you press CTRL^c, or an error that cannot be recovered from is encountered. When it is finished it will display some information like this::
 
     ------------------------------------------------------
-    File: java.data
-    Elapsed time: 2h53m13.40s
-    Start=64100, Count=10000
-    Total Entries Processed: 4422
-    Projects successfully processed: 2172
-    Files added/checked: 1820/1935 94%
-    Files added/project: 1820/2172 84%
+    File: java1.data
+    Elapsed time: 4h21m13.40s
+    Start=33000, Count=10000
+    Total Entries Processed: 7000
+    Projects successfully processed: 5172
+    Files added/checked: 4500/4890 92%
+    Files added/project: 4500/5172 87%
 
-The most important items are *Start* and *Total Entries Processed*. *Start* tells you what entry processing started on. If you start the script again the value of *Start* should be *Start + Total Entries Processed*. If the script was run as a function in the Python3 interpreter then this value is returned by the funtion.
+6. Restart the script to collect more records.
+
+    * From the command line you will need to enter the same command again, but update -s to be *Start* + *Total Entries Processed*.::
+
+        $ slrg-git-projects -s 40000 -l java -i java1.data
+    
+    * In the interpreter if you set the result of the main function to start you can simply run the same command again. The start variable will be updated appropriatly::
+
+        >>> start = collect_git_projects.main(lang=lang, start=start, file=file)
+        >>> start
+        40000
+        >>> start = collect_git_projects.main(lang=lang, start=start, file=file)
 
 .. note:: The projects script temporarily clones repositories to validate files. This can use a lot of data.
-
 
 
 .. _git-commits:
@@ -96,29 +132,33 @@ Commits Based Collection
 
 Using this script is almost identical to the projects script.
 
-1. Navigate to the directory that the processed data files from BigQuery are stored.
+..note:: The java1.data file in this example must have been collected with the :ref:`GitHub commits SQL <commits_sql>` via BigQuery.
 
-2. Run the  with the desired data file as the argument to the -i option. See :ref:`GitHub commits script <github-commits>` for more info.::
+1. Same as projects script.
 
-    $ slrg-git-commits -i <filename> [other options]
+2. Same as projects, but with a different script name::
 
-3. Once all the information is given the script will start running. You should see something like this::
+    * From the command line::
 
-    # 68207 ### Processing Project: MMDevBase ###
-    # 68208 ### Invalid project: NettyBook ###
-    # 68209 ### Invalid project: Dagger2Demo ###
-    # 68210 ### Gender nil: yangboz
-    Invalid project: fuzzy-boo ###
-    # 68211 ### Processing Project: tbc-ticket-dispenser-java ###
-    Processing File: .... td/src/main/java/kata/td/TicketDispenser.java
-    -- Added
-    Processing File: .... td/src/main/java/kata/td/TurnNumberSequence.java
-    -- Added
-    Processing File: .... td/src/main/java/kata/td/TurnTicket.java
-    -- Added
-    # 68212 ### Invalid project: adblock_plus_ ###
+        $ slrg-git-commits -s 33000 -l java -i java1.data
 
-When finished the script displays the same information as the projects script.
+    * Or from the python interpreter::
+
+        >>> from slrg_data import collect_git_commits
+        >>> lang = 'java'
+        >>> start = 33000
+        >>> file = 'java1.data'
+        >>> start = collect_git_commits.main(lang=lang, start=start, file=file)
+
+3. Same as projects.
+
+4. The output will look a little different::
+
+    pass
+
+5. Same as projects.
+
+6. Same as projects.
 
 
 .. links

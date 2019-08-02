@@ -6,6 +6,8 @@ SQL Examples
 BigQuery
 --------
 
+.. _project_sql:
+
 GitHub Projects
 ~~~~~~~~~~~~~~~
 
@@ -40,6 +42,8 @@ GitHub Projects
                 users.fake != true and  -- No fake users
                 users.country_code is not NULL and  -- Must have country
                 projects.language = 'Python';  --Change to desired language
+
+.. _commits_sql:
 
 GitHub commits
 ~~~~~~~~~~~~~~
