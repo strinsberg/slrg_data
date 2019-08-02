@@ -1,4 +1,4 @@
-.. _github:
+.. _git-collection:
 
 Github Collection
 =================
@@ -121,9 +121,9 @@ Projects Based Collection
 
 To show how to use the projects based collection script I will run through an example. I will be collecting java samples from the 'java1.data'. I will assume that I have already done some collection and the script is being re-started at with the 33,000 record in the file.
 
-.. note:: The java1.data file in this example must have been collected with the :ref:`GitHub commits SQL <projects_sql>` via BigQuery.
+.. note:: The java1.data file in this example must have been collected with the :ref:`GitHub commits SQL <projects-sql>` via BigQuery.
 
-1. Navigate to the directory that the 'java1.data' file is being stored.::
+1. Navigate to the directory that the 'java1.data' file is being stored::
 
     $ cd ~/my_project/data
 
@@ -133,7 +133,7 @@ To show how to use the projects based collection script I will run through an ex
 
         $ slrg-git-projects -s 33000 -l java -i java1.data
 
-    * Or from the python interpreter::
+    * From the python interpreter::
 
         >>> from slrg_data import collect_git_projects
         >>> lang = 'java'
@@ -206,7 +206,7 @@ Commits Based Collection
 
 Using this script is almost identical to the projects script.
 
-.. note:: The java1.data file in this example must have been collected with the :ref:`GitHub commits SQL <commits_sql>` via BigQuery.
+.. note:: The java1.data file in this example must have been collected with the :ref:`GitHub commits SQL <commits-sql>` via BigQuery.
 
 1. Same as projects.
 

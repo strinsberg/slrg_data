@@ -5,8 +5,7 @@ Usage
 
 Run::
 
-    $ slrg-codeforces [-h] [-l <programming language>]
-        [-i <input data file>] [-s <start index>]
+    $ slrg-codeforces [-h] [-i <input data file>] [-s <start index>]
         [-c <number of records to process>] [-u <database username>]
         [-p <database password>]
 

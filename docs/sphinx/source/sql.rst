@@ -6,7 +6,7 @@ SQL Examples
 BigQuery
 --------
 
-.. _project_sql:
+.. _projects-sql:
 
 GitHub Projects
 ~~~~~~~~~~~~~~~
@@ -43,7 +43,7 @@ GitHub Projects
                 users.country_code is not NULL and  -- Must have country
                 projects.language = 'Python';  --Change to desired language
 
-.. _commits_sql:
+.. _commits-sql:
 
 GitHub commits
 ~~~~~~~~~~~~~~

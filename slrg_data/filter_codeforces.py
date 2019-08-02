@@ -16,17 +16,19 @@ Run::
 Options
 ~~~~~~~
 If multiple values are given separate them by a space and surround
-    the list with quotes. Ie) 'canada russia'
+the list with quotes. Ie) 'canada russia'
+
 Values that are made of multiple word should have a ~ inserted
-    between the words. Ie) 'united~states' or 'legendary~grandmaster'
+between the words. Ie) 'united~states' or 'legendary~grandmaster'
+
 All category options default to accepting all values unless otherwise
-    specified.
+specified.
 
 **-h**
     Print help text.
 
 **-o <output file>**
-    The file to write the results to.
+    The file to write the results to. Default is filtered.data.
 
 **-i <codeforces user file>**
     The file containing a list of codeforces user records. If left blank

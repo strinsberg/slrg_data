@@ -7,7 +7,7 @@ There are two different ways to run the scripts. There results are equivilent. B
 
 1. Running at the command line.
     * The details and command line options are listed along with each scripts
-    
+
 2. Running from the interpreter.
     * Instead of command line options pass parameters to the keyword arguments of the scripts main function.
     * Collection scripts will return the number of the next entry to process. If the script is stopped you can pass the return value to the start keyword of the next call to main.
@@ -43,6 +43,8 @@ Git Commits Collection
    :show-inheritance:
 
 
+.. _codeforces-collection:
+
 Codeforces Collection
 -----------------------
 
@@ -61,7 +63,7 @@ Get Codeforces User List
    :show-inheritance:
 
 
-.. _gender-codeforces:
+.. _gender-cf:
 
 Gender Codeforces User List
 ---------------------------
@@ -72,7 +74,7 @@ Gender Codeforces User List
    :show-inheritance:
 
 
-.. _filter-codeforces:
+.. _filter-cf:
 
 Filter Codeforces User List
 ---------------------------

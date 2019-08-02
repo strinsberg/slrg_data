@@ -3,7 +3,7 @@ Getting Started
 
 All of the scripts are contained within the python3 package *slrg_data*. This package is available to download <Where?>. Once you have downloaded it follow the instructions below to install the package and setup the configuration file.
 
-The package must be installed to run the scripts. After installation continue to the :ref:`GitHub <github>` or :ref:`Codeforces <cf_collection>` sections for more information on collecting code samples from those sources.
+The package must be installed to run the scripts. After installation continue to the :ref:`GitHub <git-collection>` or :ref:`Codeforces <cf-collection>` sections for more information on collecting code samples from those sources.
 
 .. _installation:
 
