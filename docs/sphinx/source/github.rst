@@ -204,9 +204,9 @@ To show how to use the projects based collection script I will run through an ex
 Commits Based Collection
 ------------------------
 
-Using this script is almost identical to the projects script.
+Using this script is almost identical to the projects script. the minor differences mostly have to do with script names and the specifics of the output.
 
-.. note:: The java1.data file in this example must have been collected with the :ref:`GitHub commits SQL <commits-sql>` via BigQuery.
+.. note:: The commits_java1.data file in this example must have been collected with the :ref:`GitHub commits SQL <commits-sql>` via BigQuery.
 
 1. Same as projects.
 
@@ -214,23 +214,44 @@ Using this script is almost identical to the projects script.
 
     * From the command line::
 
-        $ slrg-git-commits -s 33000 -l java -i java1.data
+        $ slrg-git-commits -s 33000 -l java -i commits_java1.data
 
     * Or from the python interpreter::
 
         >>> from slrg_data import collect_git_commits
         >>> lang = 'java'
         >>> start = 33000
-        >>> file = 'java1.data'
+        >>> file = 'commits_java1.data'
         >>> start = collect_git_commits.main(lang=lang, start=start, file=file)
 
 3. Same as projects.
 
 4. The output will look a little different::
 
-    Still Needed!!!
+    File: commits_java1.data
+    # 0 ### Processing Commit: a834ebd643a505ef920c3779fd0887df929ca6db ###
+    # 1 ### Api issue: Not Found
+    # 2 ### Processing Commit: edceef4215404c5a67f18213c3c9ddb24d72b39b ###
+    # 3 ### Processing Commit: 6a1d86de12b70034095f6131668f8184b8cb9f50 ###
+    # 4 ### Processing Commit: 9796dc7d489969d649967fe2f515ca974786b49d ###
+    # 5 ### Processing Commit: 3a3503aa80af518093aacf528a56dc2a399b85c3 ###
+    Processing File: src/com/takebus/dao/StationDao.java ....
+    -- Added
+    Processing File: src/com/takebus/service/StationService.java ....
+    -- Added
+    # 6 ### Api issue: Not Found
 
-5. Same as projects.
+5. Same as projects, with slightly different output::
+
+    ------------------------------------------------------
+    File: commits_java1.data
+    Elapsed time: 0h3m38.24s
+    Start=0, Count=10000
+    Total Entries Processed: 221
+    Commits successfully processed: 137
+    Files added/checked: 94/1172 8%
+    Files added/commit: 94/137 69%
+
 
 6. Same as projects.
 

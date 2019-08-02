@@ -85,23 +85,43 @@ Collecting Source Code Samples
 
 4. If all the correct information is given the script will start running. The script uses the Selenium web driver and will open a web browser to use for the collection. While the script runs this web browser will load pages and open submission source code popups. In the command line you will see something like this::
 
-    Still needed!!!!
+    File: can_rus_female.data
+    ## 0 ## User: BrainDeveloper ####
+    -- Received Submissions
+    -- Already had subs: 0
+    Processing submission: 1322805 Matchmaker
+    -- 1 -- Added: Matchmaker
+    Processing submission: 1321627 Friends or Not
+    -- 2 -- Added: Friends or Not
+    Processing submission: 1297393 Unlucky Ticket
+    -- 3 -- Added: Unlucky Ticket
+    Processing submission: 1295665 Twins
+    -- 4 -- Added: Twins
+    Processing submission: 924452 Turing Tape
+    -- 5 -- Added: Turing Tape
+    Processing submission: 921397 Unary
 
 5. The script will run until a given limit of projects is processed, you press CTRL^c, or an error that cannot be recovered from is encountered. It will also end with an error if you interact with the web browser. When it is finished it will display some information like this::
 
-    Still needed!!!
+    ------------------------------------------------------
+    File: can_rus_female.data
+    Elapsed time: 0h1m35.75s
+    Start=43, Count=100
+    Total Entries Processed: 1
+    Users successfully processed: 1
+    Submissions added/checked 5/26 19%
 
 6. Restart the script to collect more records.
 
-    * From the command line you will need to enter the same command again, but update -s to be *Start* + *Total Users Processed*.::
+    * From the command line you will need to enter the same command again, but update -s to be *Start* + *Total Entries Processed*.::
 
-        $ slrg-collect-codeforces -i can_rus_female.data -s 1
+        $ slrg-collect-codeforces -i can_rus_female.data -s 44
     
     * In the interpreter if you set the result of the main function to start you can simply run the same command again. The start variable will be updated appropriatly::
 
         >>> start = collect_codeforce.main(start=start, file=file)
         >>> start
-        50
+        44
         >>> start = collect_codeforces.main(start=start, file=file)
     
     * With the interpreter if the script exits due to an unhandled exception no value will be returned. In this case you will have to manually update the start variable before re-running the script.
