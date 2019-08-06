@@ -570,6 +570,37 @@ def write_json_data(path, data):
         json.dump(data, file)
 
 
+class GenderCollector:
+    def __init__(self, database, table, write=lambda x: None):
+        self.database = database
+        self.table = table
+        self.write = write
+        self.api_limit = False
+
+    def get_gender(self, name):
+        assert name not in [None, ''], "No name given to get_gender"
+
+        name = name.lower()
+        # Need to add a little validation for names containing quotes
+
+        gender_info = get_gender_from_database(name, self.database, self.table)
+        if gender_info is not None:
+            self.write("-- Found in dataset: " + gender_info[0])
+            return (gender_info[0], float(gender_info[1]))
+
+        if not self.api_limit:
+            gender_info = get_gender_from_api(name)
+            if gender_info[0] is not None:
+                self.write("-- Found from api: " + gender_info[0])
+                update_gender_table(name, gender_info,
+                                    self.database, self.table)
+                return (gender_info[0], float(gender_info[1]))
+            else:
+                self.api_limit = True
+
+        return (None, None)
+
+
 def get_gender(name, database, table, write=lambda x: None):
     """Collects the gender of a name from the given database or the
     genderize.io API.

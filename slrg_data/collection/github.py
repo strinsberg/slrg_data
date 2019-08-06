@@ -45,6 +45,7 @@ class GitCollector(common.Collector):
         super(GitCollector, self).__init__(database, collection_info, log)
         self.collect_gender = collect_gender
         self.totals.update({'files': 0, 'added': 0})
+        self.gender_collector = common.GenderCollector(database, 'genders')
         self.gender_wait = []
         self.gender_file = 'missing_gender'
 
@@ -83,11 +84,13 @@ class GitCollector(common.Collector):
                 entry_data['gender'] = gender
                 entry_data['gender_probability'] = gender_probability
             elif gender is None and self.collection_info.save_missing:
-                print('Gender unavailable: Adding saving record')
+                print('Gender unavailable: Adding saving record ###')
                 self.gender_wait.append(entry_data)
-            else:
+            elif gender == 'nil':
                 print("No Gender: " +
-                      entry_data['login'])
+                      entry_data['login'], '###')
+            else:
+                print("Gender API unavailable ###")
 
     def get_fullname_and_gender(self, entry_data):
         """Collect a github users fullname and gender data if possible.
@@ -110,8 +113,7 @@ class GitCollector(common.Collector):
 
         if fullname not in [None, '']:
             name = fullname.split()[0]
-            gender, gender_probability = common.get_gender(
-                name, self.database, 'genders')
+            gender, gender_probability = self.gender_collector.get_gender(name)
         else:
             print("No User Name: " + entry_data['login'])
             gender = None
