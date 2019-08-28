@@ -584,6 +584,21 @@ def write_json_data(path, data):
 
 
 class GenderCollector:
+    """Collector for gender from the genderize.io api service.
+
+    It is a class so that it can keep track of the rate limiting and not
+    make extra calls to the api once that limit is reached.
+
+    Attributes:
+        database (Database): The database that local gender information
+            is stored in.
+        table (str): The name of the table for gender information in the
+            database.
+        write (function): A function to write any information to a log
+            file. Defaults to a function that does nothing.
+        api_limit (bool): Whether the rate limit has been reached.
+    """
+
     def __init__(self, database, table, write=lambda x: None):
         self.database = database
         self.table = table
@@ -591,6 +606,18 @@ class GenderCollector:
         self.api_limit = False
 
     def get_gender(self, name):
+        """Gets the gender and gender probability for a given name.
+
+        gender can be 'male', 'female', or 'nil'
+        gender probability can be 0.0 or in the range [0.5, 1.0]
+
+        Args:
+            name (str): A first name to gender.
+
+        Returns:
+            tuple: A tuple with gender (str) and gender probability
+            (float). If (None, None) the gender api was unavailable.
+        """
         assert name not in [None, ''], "No name given to get_gender"
 
         name = name.lower()
