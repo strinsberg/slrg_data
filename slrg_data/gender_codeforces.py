@@ -190,23 +190,34 @@ def _add_gender(user_list, database, gender_table, gender_file, miss_file):
             be gendered yet. Most likely because the gender API rate
             limit was reached.
     """
-    gender = []
+    gendered = []
     missing = []
+
+    gender_collector = collection.common.GenderCollector(
+        database, gender_table)
 
     try:
         for i, user in enumerate(user_list):
             if _has_first_name(user):
+                name = user['firstName']
+
+                gender, prob = gender_collector.get_gender(name)
                 collection.codeforces.add_gender(user, database, gender_table)
+
+                user['gender'] = gender
+                user['gender_probability'] = prob
+
                 print("#", i, " -- First name:",
-                      user['firstName'].split()[0],
-                      "**", user['gender'], "**")
+                      name.split()[0],
+                      "**", gender, "**")
+
                 if _has_gender(user):
-                    gender.append(user)
+                    gendered.append(user)
                 elif _missing_gender(user):
                     missing.append(user)
 
     finally:
-        collection.common.write_json_data(gender_file, gender)
+        collection.common.write_json_data(gender_file, gendered)
         collection.common.write_json_data(miss_file, missing)
 
 
