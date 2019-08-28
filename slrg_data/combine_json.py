@@ -6,6 +6,11 @@ not already in a list (like BigQuery).
 The combined .data files contain the JSON records in a list. These new
 files can be opened by the python json library as a list of dict.
 
+The original JSON files will be moved to a folder rather than being
+deleted. This way if they are needed again for some reason they will
+not have to be downloaded again. There is a command line option that
+will delete them if desired.
+
 Usage
 -----
 Run as a command line script in the folder that contains the JSON files
@@ -13,7 +18,7 @@ you want combined.
 
 ::
 
-    $ slrg-combine-json [-h] [-o <output file>] [-f <raw json folder> ]
+    $ slrg-combine-json [-h] [-d] [-o <output file>] [-f <raw json folder> ]
         [-g <group size> ] [<json files>]
 
 Options
@@ -21,6 +26,10 @@ Options
 
 **-h**
     print help text.
+
+**-d**
+    delete the original uncombined JSON files instead of moving them to
+    a folder.
 
 **-o <output file>**
     The name without an extension to use for the output files.
@@ -30,6 +39,7 @@ Options
 
 **-f <raw json folder>**
     The name of a folder to store the uncombined json files in.
+    This option will do nothing if the -d option is set.
     Default is to delete all uncombined json files.
 
 **-g <group size>**
@@ -103,10 +113,11 @@ def _script(argv):
         raw_folder = 'json_folder'
 
     main(files=filenames, out_file=out_file,
-         raw_folder=raw_folder, group_size=group_size)
+         raw_folder=raw_folder, group_size=group_size, delete=delete)
 
 
-def main(files=None, out_file=None, raw_folder=None, group_size=None):
+def main(files=None, out_file=None, raw_folder=None, group_size=None,
+         delete=False):
     """Main for script to combine json files into .data files.
 
     See module documentation for more details.
@@ -125,6 +136,7 @@ def main(files=None, out_file=None, raw_folder=None, group_size=None):
             file. If None it defaults to 10000 which in most cases
             should result in all .json files being combined into one
             output file.
+        delete (bool): If true the raw json files will be deleted after they are combined.
     """
     if out_file is None:
         out_file = input('Name for output file(s): ')
@@ -137,7 +149,13 @@ def main(files=None, out_file=None, raw_folder=None, group_size=None):
 
     combined = _combine_json(files, group_size)
     _write_results(out_file, combined)
-    _move_files(files, raw_folder)
+
+    if not delete:
+        _move_files(files, raw_folder)
+    else:
+        for file in files:
+            print("Deleting", file)
+            os.remove(file)
 
 
 # Helpers ##############################################################

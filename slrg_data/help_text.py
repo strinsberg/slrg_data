@@ -236,6 +236,10 @@ Options
 -h
     print help text.
 
+-d
+    delete the original uncombined JSON files instead of moving them to
+    a folder.
+
 -o <output file>
     The name without an extension to use for the output files.
     If more than one file is created a number will be added to all
@@ -244,7 +248,8 @@ Options
 
 -f <raw json folder>
     The name of a folder to store the uncombined json files in.
-    * Default is to DELETE all uncombined json files.
+    * This option will do nothing if the -d option is set.
+    ** Default is to DELETE all uncombined json files.
 
 -g <group size>
     The number of json files to combine for each data file created.
