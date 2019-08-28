@@ -133,4 +133,4 @@ def main(file=None, start=None, count=None, db_login=None, db_passwd=None):
     collection.script.remove_old_logs(log_dir, config.max_logs_to_keep)
 
     collector = collection.codeforces.CfSeleniumCollector(database, info, log)
-    return collector.main()
+    collector.main()

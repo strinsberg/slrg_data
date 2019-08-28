@@ -114,3 +114,4 @@ docs/sphinx/build
 docs/html
 *.aux
 *.toc
+.vscode

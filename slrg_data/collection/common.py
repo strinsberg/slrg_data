@@ -76,8 +76,6 @@ class Collector:
         finally:
             self.clean_up()
 
-        return self.idx + 1
-
     def set_up(self):
         """Does any setup that must happen before the data collection
         starts."""

@@ -125,8 +125,9 @@ def _script(argv):
             print(HELP_TEXT)
             return
 
-    main(lang=lang, file=file, start=start, count=count, db_login=db_login,
-         db_passwd=db_passwd, git_login=git_login, git_passwd=git_passwd)
+    main(lang=lang, file=file, start=start, count=count,
+         db_login=db_login, db_passwd=db_passwd, git_login=git_login,
+         git_passwd=git_passwd)
 
 
 def main(lang=None, file=None, start=None, count=None, db_login=None,
@@ -170,7 +171,7 @@ def main(lang=None, file=None, start=None, count=None, db_login=None,
         # Create and run collector
         collector = collection.github.ProjectsCollector(
             database, info, log, lang)
-        return collector.main()
+        collector.main()
 
     except collection.script.ScriptInputError as err:
         print('\n***', err)

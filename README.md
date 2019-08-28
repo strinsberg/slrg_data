@@ -20,7 +20,7 @@ or if you don't want to use pip3
 $ python3 setup.py install --user
 ```
 
-This will install severall scripts for you to access from the command line. And a .slrg folder with a configuration file and more in `~/.local` on linux and `%APPDATA%` on windows.
+This will install several scripts for you to access from the command line. And a .slrg folder with a configuration file and more in `~/.local` on linux and `%APPDATA%` on windows.
 
 More detailed info for each script and how to run them is available in the html documentation.
 
