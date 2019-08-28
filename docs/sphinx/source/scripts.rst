@@ -3,7 +3,8 @@
 Scripts
 ===============
 
-There are two different ways to run the scripts. There results are equivilent. Both methods will look for input files, and write any output files, relative to the directory they are run in.
+There are two different ways to run the scripts. There results are equivalent. Both methods will look for input files, and write any output files, relative to the directory they are run in.
+
 
 1. Running at the command line.
 
@@ -12,15 +13,14 @@ There are two different ways to run the scripts. There results are equivilent. B
 2. Running from the interpreter.
 
     * Instead of command line options pass parameters to the keyword arguments of the scripts main function.
-    * Collection scripts will return the number of the next entry to process. If the script is stopped you can pass the return value to the start keyword of the next call to main.
 
 All the scripts that need it have command line options and keyword parameters. Most of them refer to fields that can be set in the config file. If a value is not provided for an option that is required to run the script it will check the config file. If the value in the config file is None then the script will prompt you to enter a value. See the individual script below or the :ref:`Config section <config_lab>` for more information.
 
 There are two issues that can prevent the scripts form running for long periods unattended.
 
-    1. The services can occaisionally disconnect. The database, the websites, or the APIs. These disconnections are difficult to recover from as we don't want to abuse the service by continuing to request things when they are unavailable. Some steps are taken to wait and try again, but after a few tries the script will crash. Usually, it will work properly again when it is restarted.
+    1. The services can occasionally disconnect. The database, the websites, or the APIs. These disconnections are difficult to recover from as we don't want to abuse the service by continuing to request things when they are unavailable. Some steps are taken to wait and try again, but after a few tries the script will crash. Usually, it will work properly again when it is restarted.
 
-    2. Since we are cloning a project before processing it, there can be issues downloading large GitHub projects. There should not be too many attempts to download large projects as we are not cloning projects with more than one contributor. This can delay the process or result in a great deal of data useage.
+    2. Since we are cloning a project before processing it, there can be issues downloading large GitHub projects. There should not be too many attempts to download large projects as we are not cloning projects with more than one contributor. This can delay the process or result in a great deal of data usage.
 
 
 .. _github-projects:

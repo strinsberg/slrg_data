@@ -3,7 +3,7 @@
 Github Collection
 =================
 
-Below are some examples for collecting source code samples from GitHub. They explain how to get project and commit data from GhTorrent via Google BigQuery. Then there is infomation on how to use the scripts for project and commit based collections.
+Below are some examples for collecting source code samples from GitHub. They explain how to get project and commit data from GhTorrent via Google BigQuery. Then there is information on how to use the scripts for project and commit based collections.
 
 More information can be found in the |github-report| of the technical report.
 
@@ -25,7 +25,7 @@ I used the classic ui, but it will be unavailable after 2020, so you may have to
 
 1. To get started open |ght-big-query| and open a query editor for the ght dataset. If the link above does not work you can access the dataset at http://ghtorrent.org/gcloud.html.
 
-2. Under the query editor you can open some options. Do this and unckeck the box that is titled 'use legacy sql'.
+2. Under the query editor you can open some options. Do this and un-check the box that is titled 'use legacy sql'.
 
 3. For this example I will query the dataset to find java projects. For other queries refer to the :ref:`SQL queries section <big_query_sql>`::
 
@@ -110,6 +110,8 @@ I used the classic ui, but it will be unavailable after 2020, so you may have to
         Combining results-20190618-153208.json
         ** Created java.data
         ** Created java2.data
+        
+        -- Extra info will be printed to indicate deleting or moving results.json files
 
 The resulting files java1.data and java2.data are now ready to be used with the GitHub collection scripts.
 
@@ -127,7 +129,7 @@ To show how to use the projects based collection script I will run through an ex
 
     $ cd ~/my_project/data
 
-2. Run the collection script. I have set my login and password for both the databse and the GitHub in the configuration file.
+2. Run the collection script. I have set my login and password for both the database and the GitHub in the configuration file.
 
     * From the command line::
 
@@ -139,16 +141,16 @@ To show how to use the projects based collection script I will run through an ex
         >>> lang = 'java'
         >>> start = 33000
         >>> file = 'java1.data'
-        >>> start = collect_git_projects.main(lang=lang, start=start, file=file)
+        >>> collect_git_projects.main(lang=lang, start=start, file=file)
 
     * For additional information on the available command line options and keyword parameters see the :ref:`GitHub projects script <github-projects>` description.
 
     * For additional information on values that can be stored in the configuration file see the :ref:`Configuration section.<config_lab>`
 
-3. If I had not set the databse login and password I would be asked to enter them before the script started processing the data file.::
+3. If I had not set the database login and password I would be asked to enter them before the script started processing the data file.::
 
     Database Username: my_username
-    Databse Password: my_password  # will not be shown when typed
+    Database Password: my_password  # will not be shown when typed
 
 4. If all the correct information is given the script will start running. You should see something like this::
 
@@ -187,14 +189,10 @@ To show how to use the projects based collection script I will run through an ex
 
         $ slrg-git-projects -s 40000 -l java -i java1.data
     
-    * In the interpreter if you set the result of the main function to start you can simply run the same command again. The start variable will be updated appropriatly::
+    * In the interpreter::
 
+        >>> start = 40000
         >>> start = collect_git_projects.main(lang=lang, start=start, file=file)
-        >>> start
-        40000
-        >>> start = collect_git_projects.main(lang=lang, start=start, file=file)
-    
-    * With the interpreter if the script exits due to an unhandled exception no value will be returned. In this case you will have to manually update the start variable before re-running the script.
 
 .. note:: The projects script temporarily clones repositories to validate files. This can use a lot of data.
 
@@ -222,7 +220,7 @@ Using this script is almost identical to the projects script. the minor differen
         >>> lang = 'java'
         >>> start = 33000
         >>> file = 'commits_java1.data'
-        >>> start = collect_git_commits.main(lang=lang, start=start, file=file)
+        >>> collect_git_commits.main(lang=lang, start=start, file=file)
 
 3. Same as projects.
 

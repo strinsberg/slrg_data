@@ -70,7 +70,7 @@ class Collector:
             self.process_data(data)
 
         except DatabaseError as error:
-            self.log.error("Databse error caught in main", error)
+            self.log.error("Database error caught in main", error)
             raise DatabaseError(error)
 
         finally:
@@ -84,7 +84,7 @@ class Collector:
 
     def process_data(self, data):
         """Processes each record in the given list of records within the
-        limits in the collectio_info attribute.
+        limits in the collection_info attribute.
 
         Args:
             data (list): A list of dict records to process.
@@ -193,7 +193,7 @@ class Database:
         """
         self._format = _format
         if self.user is None:
-            self.user = input("Databse username: ")
+            self.user = input("Database username: ")
         if self.passwd is None:
             passwd = getpass.getpass(prompt="Database Password: ")
         else:
