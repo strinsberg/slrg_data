@@ -402,6 +402,64 @@ class Log:
         logging.info(message)
 
 
+class GenderCollector:
+    """Collector for gender from the genderize.io api service.
+
+    It is a class so that it can keep track of the rate limiting and not
+    make extra calls to the api once that limit is reached.
+
+    Attributes:
+        database (Database): The database that local gender information
+            is stored in.
+        table (str): The name of the table for gender information in the
+            database.
+        write (function): A function to write any information to a log
+            file. Defaults to a function that does nothing.
+        api_limit (bool): Whether the rate limit has been reached.
+    """
+
+    def __init__(self, database, table, write=lambda x: None):
+        self.database = database
+        self.table = table
+        self.write = write
+        self.api_limit = False
+
+    def get_gender(self, name):
+        """Gets the gender and gender probability for a given name.
+
+        gender can be 'male', 'female', or 'nil'
+        gender probability can be 0.0 or in the range [0.5, 1.0]
+
+        Args:
+            name (str): A first name to gender.
+
+        Returns:
+            (str, float): A tuple with gender and gender probability.
+            If (None, None) the gender api was unavailable.
+        """
+        assert name not in [None, ''], "No name given to get_gender"
+
+        name = name.lower()
+        # Need to add a little validation for names containing quotes
+
+        gender_info = get_gender_from_database(name, self.database, self.table)
+        if gender_info is not None:
+            self.write("-- Found in dataset: " + gender_info[0])
+            return (gender_info[0], float(gender_info[1]))
+
+        if not self.api_limit:
+            gender_info = get_gender_from_api(name)
+            if gender_info[0] is not None:
+                self.write("-- Found from api: " + gender_info[0])
+                update_gender_table(name, gender_info,
+                                    self.database, self.table)
+                return (gender_info[0], float(gender_info[1]))
+            else:
+                self.api_limit = True
+
+        return (None, None)
+
+
 # Collection Info and Data Classes #####################################
 
 class CollectionInfo:
@@ -581,64 +639,6 @@ def write_json_data(path, data):
     """Writes JSON data to a given path."""
     with open(path, 'w') as file:
         json.dump(data, file)
-
-
-class GenderCollector:
-    """Collector for gender from the genderize.io api service.
-
-    It is a class so that it can keep track of the rate limiting and not
-    make extra calls to the api once that limit is reached.
-
-    Attributes:
-        database (Database): The database that local gender information
-            is stored in.
-        table (str): The name of the table for gender information in the
-            database.
-        write (function): A function to write any information to a log
-            file. Defaults to a function that does nothing.
-        api_limit (bool): Whether the rate limit has been reached.
-    """
-
-    def __init__(self, database, table, write=lambda x: None):
-        self.database = database
-        self.table = table
-        self.write = write
-        self.api_limit = False
-
-    def get_gender(self, name):
-        """Gets the gender and gender probability for a given name.
-
-        gender can be 'male', 'female', or 'nil'
-        gender probability can be 0.0 or in the range [0.5, 1.0]
-
-        Args:
-            name (str): A first name to gender.
-
-        Returns:
-            tuple: A tuple with gender (str) and gender probability
-            (float). If (None, None) the gender api was unavailable.
-        """
-        assert name not in [None, ''], "No name given to get_gender"
-
-        name = name.lower()
-        # Need to add a little validation for names containing quotes
-
-        gender_info = get_gender_from_database(name, self.database, self.table)
-        if gender_info is not None:
-            self.write("-- Found in dataset: " + gender_info[0])
-            return (gender_info[0], float(gender_info[1]))
-
-        if not self.api_limit:
-            gender_info = get_gender_from_api(name)
-            if gender_info[0] is not None:
-                self.write("-- Found from api: " + gender_info[0])
-                update_gender_table(name, gender_info,
-                                    self.database, self.table)
-                return (gender_info[0], float(gender_info[1]))
-            else:
-                self.api_limit = True
-
-        return (None, None)
 
 
 def get_gender(name, database, table, write=lambda x: None):
