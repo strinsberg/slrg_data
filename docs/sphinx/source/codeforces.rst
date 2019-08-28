@@ -130,4 +130,4 @@ Collecting Source Code Samples
 
 .. |codeforces-report| raw:: html
 
-    <a href="./_static/technical_report.pdf#page=20" target="_blank">Codeforces section</a>
+    <a href="./_static/technical_report.pdf#page=21" target="_blank">Codeforces section</a>

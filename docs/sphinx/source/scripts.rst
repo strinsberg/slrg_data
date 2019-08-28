@@ -22,6 +22,8 @@ There are two issues that can prevent the scripts form running for long periods 
 
     2. Since we are cloning a project before processing it, there can be issues downloading large GitHub projects. There should not be too many attempts to download large projects as we are not cloning projects with more than one contributor. This can delay the process or result in a great deal of data usage.
 
+More information on gender collection can be found in the |gender-report| of
+the technical report.
 
 .. _github-projects:
 
@@ -109,3 +111,6 @@ Combine Json
    :show-inheritance:
 
 
+.. |gender-report| raw:: html
+
+    <a href="./_static/technical_report.pdf#page=30" target="_blank">Gender section</a>

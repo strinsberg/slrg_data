@@ -9,6 +9,23 @@ More information can be found in the |github-report| of the technical report.
 
 In order to run the scripts the slrg_data package :ref:`must be installed <installation>` first. There is also some general information on how the scripts can be run and and some information for each one :ref:`in the Scripts section <scripts>`.
 
+Github Accounts
+---------------
+
+There are 2 github accounts setup as of summer 2019 to assist with collection.
+They can be used instead of a personal account when running scripts, or to
+increase the available rate limit by using a different account for each script.
+
+Account 1
+
+    username: slrg_data
+    password: extractgithubdata
+
+Account 2
+
+    username: slrg_data2
+    password: 451@sfsf
+
 
 .. _ght-big-query-lab:
 

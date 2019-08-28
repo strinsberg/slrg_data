@@ -3,6 +3,9 @@ Database
 
 Our database is stored by the University of Lethbridge. It is a MySQL8 server. More information on MySQL8 can be found at https://dev.mysql.com/doc/refman/8.0/en/.
 
+Some more information may be available in the |database-report| of the technical
+report.
+
 Host Name
     :code:`mysql-8-p.uleth.ca`
 
@@ -350,3 +353,7 @@ To download results 10k at a time
     3. Increase the OFFSET by 10,000
     4. repeat until all the results are downloaded
 
+
+.. |database-report| raw:: html
+
+    <a href="./_static/technical_report.pdf#page=34" target="_blank">Database section</a>
