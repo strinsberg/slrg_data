@@ -354,6 +354,35 @@ To download results 10k at a time
     4. repeat until all the results are downloaded
 
 
+Statistics
+----------
+
+I have provided some charts and tables of basic statistics on the information in the database.
+
+|project-stats|
+|commit-stats|
+|codeforces-stats|
+|gender_stats|
+
+
+.. links
+
+.. |project-stats| raw:: html
+
+    <a href="./_static/projects_stats.html" target="_blank">Github Projects</a>
+
+.. |commit-stats| raw:: html
+
+    <a href="./_static/commits_stats.html" target="_blank">Github Commits</a>
+
+.. |codeforces-stats| raw:: html
+
+    <a href="./_static/codeforces_stats.html" target="_blank">Codeforces</a>
+
+.. |gender_stats| raw:: html
+
+    <a href="./_static/gender_stats.html" target="_blank">Genders</a>
+
 .. |database-report| raw:: html
 
     <a href="./_static/technical_report.pdf#page=34" target="_blank">Database section</a>
