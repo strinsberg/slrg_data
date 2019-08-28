@@ -175,6 +175,9 @@ def main(users_file=None, out_file=None, countries=[], genders=[],
                 print("#", i, " -- User:", user['handle'])
                 users.append(user)
 
+    except collection.script.ScriptInputError as err:
+        print('\n***', err)
+
     finally:
         collection.common.write_json_data(out_file, users)
 
@@ -242,9 +245,3 @@ def _field_greater(field, user, value):
     if field in user and float(user[field]) >= value:
         return True
     return False
-
-
-# Run ##################################################################
-
-if __name__ == "__main__":
-    _entry()

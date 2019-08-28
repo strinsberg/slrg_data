@@ -168,6 +168,10 @@ def main(users_file=None, db_login=None, db_passwd=None,
         database.connect()
         _add_gender(user_list, database, gender_table,
                     gender_file, missing_file)
+
+    except collection.script.ScriptInputError as err:
+        print('\n***', err)
+
     finally:
         database.close()
 
