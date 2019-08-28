@@ -117,20 +117,25 @@ def main(file=None, start=None, count=None, db_login=None, db_passwd=None):
         int: The index of the next user to process in the file of user
             records.
     """
-    script_name = 'codeforces'
+    try:
+        script_name = 'codeforces'
 
-    database = collection.script.make_database(config.database,
-                                               login=db_login,
-                                               passwd=db_passwd)
+        database = collection.script.make_database(config.database,
+                                                   login=db_login,
+                                                   passwd=db_passwd)
 
-    limits = collection.script.make_cf_limits(
-        start, count, config.limits[script_name])
-    info = collection.script.make_cf_info(
-        file, limits, script_name, config.config)
+        limits = collection.script.make_cf_limits(
+            start, count, config.limits[script_name])
+        info = collection.script.make_cf_info(
+            file, limits, script_name, config.config)
 
-    log_dir = os.path.join(collection.common.SLRG_DIR, 'codeforces/logs')
-    log = collection.common.Log(log_dir, script_name)
-    collection.script.remove_old_logs(log_dir, config.max_logs_to_keep)
+        log_dir = os.path.join(collection.common.SLRG_DIR, 'codeforces/logs')
+        log = collection.common.Log(log_dir, script_name)
+        collection.script.remove_old_logs(log_dir, config.max_logs_to_keep)
 
-    collector = collection.codeforces.CfSeleniumCollector(database, info, log)
-    collector.main()
+        collector = collection.codeforces.CfSeleniumCollector(
+            database, info, log)
+        collector.main()
+
+    except collection.script.ScriptInputError as err:
+        print('\n***', err)

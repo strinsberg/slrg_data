@@ -189,6 +189,7 @@ class Database:
         Raises:
             script.ScriptInputError: If the database credentials are
             invalid.
+            DatabaseError: If there are problems with the database.
         """
         self._format = _format
         if self.user is None:
@@ -205,11 +206,25 @@ class Database:
         try:
             self.database = pymysql.connect(
                 self.host, self.user, passwd, self.name, cursorclass=cursor)
+
         except pymysql.err.OperationalError as err:
             code, _ = err.args
             if code == 1045:
                 raise script.ScriptInputError(
                     'Input Error: Bad database username or password')
+            elif code == 2003:
+                raise script.ScriptInputError(
+                    'Input Error: Invalid datbase host')
+            else:
+                raise DatabaseError(str(err))
+
+        except pymysql.err.InternalError as err:
+            code, _ = err.args
+            if code == 1049:
+                raise script.ScriptInputError(
+                    'Input Error: Invalid database name')
+            else:
+                raise DatabaseError(str(err))
 
     def insert(self, columns, table, values):
         """Inserts given values into the columns of a given table.
