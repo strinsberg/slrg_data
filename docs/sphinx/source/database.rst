@@ -359,10 +359,14 @@ Statistics
 
 I have provided some charts and tables of basic statistics on the information in the database.
 
+This is meant to be an overview of the database and not a comphrehensive
+set of statistics.
+
 |project-stats|
+
 |commit-stats|
+
 |codeforces-stats|
-|gender_stats|
 
 
 .. links
@@ -379,9 +383,6 @@ I have provided some charts and tables of basic statistics on the information in
 
     <a href="./_static/codeforces_stats.html" target="_blank">Codeforces</a>
 
-.. |gender_stats| raw:: html
-
-    <a href="./_static/gender_stats.html" target="_blank">Genders</a>
 
 .. |database-report| raw:: html
 
