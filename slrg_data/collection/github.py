@@ -32,8 +32,6 @@ class GitCollector(common.Collector):
     on this part of the process.
 
     Attributes:
-        collect_gender (bool): Wether or not to collect gender for
-            entries.
         gender_wait (list): Any entries that cannot have gender assigned
             to them at the present time. Likely because the gender API
             rate limit has been reached.
@@ -41,9 +39,8 @@ class GitCollector(common.Collector):
             data to be written to.
     """
 
-    def __init__(self, database, collection_info, log, collect_gender=True):
+    def __init__(self, database, collection_info, log):
         super(GitCollector, self).__init__(database, collection_info, log)
-        self.collect_gender = collect_gender
         self.totals.update({'files': 0, 'added': 0})
         self.gender_collector = common.GenderCollector(database, 'genders')
         self.gender_wait = []
@@ -147,9 +144,9 @@ class CommitsCollector(GitCollector):
     process.
     """
 
-    def __init__(self, database, collection_info, log, collect_gender=True):
+    def __init__(self, database, collection_info, log):
         super(CommitsCollector, self).__init__(
-            database, collection_info, log, collect_gender)
+            database, collection_info, log)
         self.totals.update({'commits': 0})
         self.gender_file = 'commits_missing_gender'
 
@@ -201,11 +198,10 @@ class CommitsCollector(GitCollector):
                 information.
             entry (dict): A row of commit data from :ref:`GhTorrent via BigQuery <ght-big-query-lab>`.
         """
-        if self.collect_gender:
-            self.add_name_and_gender(entry)
-            if (entry['user_fullname'] is None
-                    or entry['gender'] is None):
-                return
+        self.add_name_and_gender(entry)
+        if (entry['user_fullname'] is None
+                or entry['gender'] is None):
+            return
 
         self.totals['commits'] += 1
         print("Processing Commit:", commit_data['sha'], "###")
@@ -346,9 +342,9 @@ class ProjectsCollector(GitCollector):
     see :ref:`Git Projects <git-projects>` for more information on this process.
     """
 
-    def __init__(self, database, collection_info, log, collect_gender=True):
+    def __init__(self, database, collection_info, log):
         super(ProjectsCollector, self).__init__(
-            database, collection_info, log, collect_gender)
+            database, collection_info, log)
         self.totals.update({'projects': 0})
         self.gender_file = 'projects_missing_gender'
 
@@ -363,12 +359,11 @@ class ProjectsCollector(GitCollector):
         print("#", self.idx, "###", end=" ")
 
         # Don't want to continue if the name or gender are not found
-        if self.collect_gender:
-            self.add_name_and_gender(project_data)
-            if (project_data['user_fullname'] is None
-                    or project_data['gender'] is None):
-                print("Invalid project: " + project_data['name'] + " ###")
-                return
+        self.add_name_and_gender(project_data)
+        if (project_data['user_fullname'] is None
+                or project_data['gender'] is None):
+            print("Invalid project: " + project_data['name'] + " ###")
+            return
 
         self.add_contributors(project_data)
         if not self.is_valid_project(project_data):

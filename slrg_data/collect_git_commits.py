@@ -170,7 +170,7 @@ def main(lang=None, file=None, start=None, count=None, db_login=None,
 
         # Create and run collector
         collector = collection.github.CommitsCollector(
-            database, info, log, lang)
+            database, info, log)
         collector.main()
 
     except collection.script.ScriptInputError as err:
