@@ -5,6 +5,8 @@ All of the scripts are contained within the python3 package *slrg_data*. Follow 
 
 The package must be installed to run the scripts. After installation continue to the :ref:`GitHub <git-collection>` or :ref:`Codeforces <cf-collection>` sections for more information on collecting code samples from those sources.
 
+.. warning:: The package was developed and tested on linux. It was tested to make sure it installed properly on Windows 10, but that is all. The package should work on windows, but may take more work if your computer is not already fully setup to run python3 programs.
+
 .. _installation:
 
 Installation
@@ -19,7 +21,7 @@ CD into the downloaded slrg_data folder and run::
 The installation will install all the command line scripts. It will also create a directory with a configuration file and some other directories necessary for running the scripts.
 
 * Linux: :code:`$ ~/.local/slrg`
-* Windows: :code:`%APPDATA%\Python\slrg`
+* Windows: :code:`%APPDATA%\Python\slrg` or :code:`<your_user_folder>\AppData\Roaming\Python\slrg`
 
 The install will also make the slrg_data package and its contents importable. 
 

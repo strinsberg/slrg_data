@@ -4,7 +4,8 @@ setup(
     name='slrg_data',
     version='0.1',
     packages=['slrg_data', 'slrg_data.collection'],
-    install_requires=['requests', 'beautifulsoup4', 'pymysql'],
+    install_requires=['requests', 'beautifulsoup4',
+                      'pymysql', 'gitpython', 'selenium'],
     python_requires='>=3',
     entry_points={
         'console_scripts': [

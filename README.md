@@ -22,5 +22,7 @@ $ python3 setup.py install --user
 
 This will install several scripts for you to access from the command line. And a .slrg folder with a configuration file and more in `~/.local` on linux and `%APPDATA%` on windows.
 
+**NOTE**: All development was done on Linux and I cannot guarantee that it will work exactly the same on Windows.
+
 More detailed info for each script and how to run them is available in the html documentation.
 
