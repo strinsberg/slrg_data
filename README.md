@@ -3,7 +3,7 @@ slrg_data python3 package
 
 Scripts to collect source code data from github and codeforces.
 
-There is more detailed instructions and information in the docs folder. A pdf of the technical report is in `slrg_data/docs/report`. A detailed walkthrough of how to use this package is available in html format in the html folder. To access it open the file `slrg_data/docs/html/index.html`.
+There is more detailed instructions and information in the docs folder. A pdf of the technical report is in `slrg_data/docs/report`. A detailed walkthrough of how to use this package is available in html format in the html folder. To access run `$ make docs` and open the file `slrg_data/docs/html/index.html`.
 
 Installation
 ------------
