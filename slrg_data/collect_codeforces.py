@@ -129,7 +129,8 @@ def main(file=None, start=None, count=None, db_login=None, db_passwd=None):
         info = collection.script.make_cf_info(
             file, limits, script_name, config.config)
 
-        log_dir = os.path.join(collection.common.SLRG_DIR, 'codeforces/logs')
+        log_dir = os.path.join(
+            collection.common.SLRG_DIR, 'codeforces', 'logs')
         log = collection.common.Log(log_dir, script_name)
         collection.script.remove_old_logs(log_dir, config.max_logs_to_keep)
 

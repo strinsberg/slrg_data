@@ -163,7 +163,8 @@ def main(lang=None, file=None, start=None, count=None, db_login=None,
         info = collection.script.make_git_info(lang, file, git_data, limits,
                                                script_name, config.config)
 
-        log_dir = os.path.join(collection.common.SLRG_DIR, 'git/commits/logs')
+        log_dir = os.path.join(collection.common.SLRG_DIR,
+                               'git', 'commits', 'logs')
         log = collection.common.Log(log_dir, script_name)
         collection.script.remove_old_logs(log_dir, config.max_logs_to_keep)
 

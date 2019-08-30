@@ -276,9 +276,3 @@ def _query_and_output(database, sql, out_file, _format, names=False):
 
     finally:
         database.close()
-
-
-# Run ##################################################################
-
-if __name__ == '__main__':
-    _entry()

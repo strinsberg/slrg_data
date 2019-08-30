@@ -164,7 +164,7 @@ def main(lang=None, file=None, start=None, count=None, db_login=None,
                                                script_name, config.config)
 
         log_dir = os.path.join(collection.common.SLRG_DIR,
-                               'git/projects/logs')
+                               'git', 'projects', 'logs')
         log = collection.common.Log(log_dir, script_name)
         collection.script.remove_old_logs(log_dir, config.max_logs_to_keep)
 
