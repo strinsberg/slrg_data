@@ -9,6 +9,12 @@ More information can be found in the |github-report| of the technical report.
 
 In order to run the scripts the slrg_data package :ref:`must be installed <installation>` first. There is also some general information on how the scripts can be run and and some information for each one :ref:`in the Scripts section <scripts>`.
 
+Both GitHub collection scripts add gender labels to programmers based on first
+names. So any GitHub user without a first name will be ignored. The scripts
+check for first names and add gender during execution. For more information see
+:ref:`Gender <gender_collection>`.
+
+
 Github Accounts
 ---------------
 

@@ -23,6 +23,20 @@ Getting a User List
 Processing a User List
 ----------------------
 
+Processing the user list is necessary to obtain a list of user records that will
+load with pythons json library. It is also good to select a specific set of
+users before collecting source code.
+
+There are 2 scripts to do this. One to add genders to a group of users and one
+to filter out a specific set of users.
+
+Due to rate limiting it can be best to filter
+out a smaller set of users before adding gender. Then filtering those users
+again if needed, such as when looking for only users with a gender probability
+above a certain threshold.
+
+**See** :ref:`Gender <gender_collection>` for more info on rate limiting and a link to the gender section in the technical report.
+
 Adding Gender
 ~~~~~~~~~~~~~
 
