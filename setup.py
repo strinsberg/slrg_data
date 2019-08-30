@@ -16,7 +16,7 @@ setup(
             'slrg-git-commits=slrg_data.collect_git_commits:_entry',
             'slrg-gender-codeforces=slrg_data.gender_codeforces:_entry',
             'slrg-filter-codeforces=slrg_data.filter_codeforces:_entry',
-            'slrg-cf_users=slrg.data.get_codeforces_user_list:_entry'
+            'slrg-cf-users=slrg_data.get_codeforces_user_list:_entry'
         ]
     },
     data_files=[

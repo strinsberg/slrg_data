@@ -36,10 +36,11 @@ def _entry():
 
 def main():
     """Gets a list of rated users from codeforces and writes it to a file."""
+    print("Collecting Codeforces Users ...")
     r = requests.get(CF_USER_LIST_API)
     data = r.json()
 
-    if data['status'].lower() != 'success':
+    if data['status'] != 'OK':
         print("The request failed:", data)
         sys.exit()
 
